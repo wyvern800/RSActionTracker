@@ -32,5 +32,5 @@ public interface Constants {
 
     int ALT_L_MASK			= 1 << 3;
     int ALT_R_MASK			= 1 << 7;
-    public static final int ALT_MASK			= ALT_L_MASK   | ALT_R_MASK;
+    int ALT_MASK			= ALT_L_MASK   | ALT_R_MASK;
 }

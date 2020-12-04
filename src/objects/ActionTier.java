@@ -19,7 +19,8 @@ import javafx.scene.paint.Color;
                 TRESHOLD_ABILITY(2, Color.GREENYELLOW),
                         ULTIMATE_ABILITY(3, Color.LIGHTGOLDENRODYELLOW),
                             DEFENSIVE_ABILITY(3, Color.WHITE),
-                                    PRAYER( 4, Color.BLUE);
+                                    PRAYER( 4, Color.BLUE),
+                                            WEAPON_SPEC(4, Color.PINK);
 
 
         /**

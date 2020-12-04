@@ -27,6 +27,12 @@ public enum ActionList implements Constants {
             ActionTier.TRESHOLD_ABILITY, STRENGTH_PATH+"/quake.png"),
     BERSERK("Berserk", NativeKeyEvent.VC_R, true, false, false,
             ActionTier.ULTIMATE_ABILITY, STRENGTH_PATH+"/berserk.png"),
+    CLEAVE("Cleave", NativeKeyEvent.VC_4, false,false, false,
+            ActionTier.BASIC_ABILITY, STRENGTH_PATH+"/cleave.png"),
+    KICK("Kick", NativeKeyEvent.VC_3, true,false, false,
+            ActionTier.TRESHOLD_ABILITY, STRENGTH_PATH+"/kick.png"),
+    STOMP("Stomp", NativeKeyEvent.VC_F, true,false, false,
+            ActionTier.TRESHOLD_ABILITY, STRENGTH_PATH+"/stomp.png"),
 
     //Attack
     DESTROY("Destroy", NativeKeyEvent.VC_R, false,false, false,
@@ -35,6 +41,12 @@ public enum ActionList implements Constants {
             ActionTier.TRESHOLD_ABILITY, ATTACK_PATH+"/hurricane.png"),
     SLAUGHTER("Slaughter", NativeKeyEvent.VC_E, true,false, false,
             ActionTier.TRESHOLD_ABILITY, ATTACK_PATH+"/slaughter.png"),
+    SEVER("Sever", NativeKeyEvent.VC_3, false,false, false,
+          ActionTier.BASIC_ABILITY, ATTACK_PATH+"/sever.png"),
+    SMASH("Smash", NativeKeyEvent.VC_1, true,false, false,
+    ActionTier.BASIC_ABILITY, ATTACK_PATH+"/smash.png"),
+    BARGE("Barge", NativeKeyEvent.VC_A, true,false, false,
+            ActionTier.BASIC_ABILITY, ATTACK_PATH+"/barge.png"),
 
     // Defensive abilities
     // Defense
@@ -58,8 +70,14 @@ public enum ActionList implements Constants {
     ActionTier.ULTIMATE_ABILITY, DEFENSIVE_PATH+"/barricade.png"),
 
     // Hit points
-    TUSKAS_WRATH("Tuska's Wrath", NativeKeyEvent.VC_3,false,false, true,
+    TUSKAS_WRATH("Tuska's Wrath", NativeKeyEvent.VC_2,true,false, false,
             ActionTier.BASIC_ABILITY, HITPOINTS_PATH+"/tuska_wrath.png"),
+    SACRIFICE("Sacrifice", NativeKeyEvent.VC_4,true,false, false,
+            ActionTier.BASIC_ABILITY, HITPOINTS_PATH+"/sacrifice.png"),
+    ESSENCE_OF_FINALITY("Ess. of Finality", NativeKeyEvent.VC_I,false,false, false,
+            ActionTier.WEAPON_SPEC, HITPOINTS_PATH+"/eof.png"),
+    ONSLAUGHT("Onslaught", NativeKeyEvent.VC_P,false,false, false,
+            ActionTier.ULTIMATE_ABILITY, HITPOINTS_PATH+"/onslaught.png"),
 
     // Prayers
     ANGUISH("Anguish", NativeKeyEvent.VC_Z, false,true, false,
