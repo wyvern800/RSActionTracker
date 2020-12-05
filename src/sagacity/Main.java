@@ -1,4 +1,4 @@
-package sample;
+package sagacity;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import objects.Action;
 import objects.ActionList;
+import objects.ActionStyle;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -29,9 +30,14 @@ import java.util.logging.Logger;
  */
 public class Main extends Application implements NativeKeyListener, Constants {
     /**
+     * The combat style you'l be using on the abilities
+     * ActionStyle.MELEE For melee | ActionStyle.RANGED for ranged | ActionStyle.MAGIC for magic
+     */
+    private static final ActionStyle COMBAT_STYLE = ActionStyle.RANGED;
+    /**
      * The title
      */
-    private static String title = "RSActionLogger - by mattFerreira";
+    private static String title = "RSActionLogger - by wyvern800"; //Do not touch
 
     /**
      * {@code True} if in keys should be logged, {@code False} if not
@@ -72,7 +78,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
     /**
      * Max actions we're monitoring
      */
-    private static final int MAX_SIZE = 10;
+    private static final int MAX_SIZE = 10; //Do not touch
 
     private static Label start = new Label("Press F12 to toggle combat mode to start logging your actions.");
 
@@ -91,6 +97,9 @@ public class Main extends Application implements NativeKeyListener, Constants {
         List<Action> tempList = new ArrayList<>();
 
         for (ActionList actionList: ActionList.values()) {
+            if (actionList.getAction().getActionStyle() != COMBAT_STYLE
+                    && actionList.getAction().getActionStyle() != ActionStyle.NONE)
+                continue;
             tempList.add(actionList.getAction());
         }
         cachedActions.addAll(tempList);
@@ -114,7 +123,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
      */
     private static void update() {
         for (int i = 0; i < actions.size(); i++) {
-            Action actionToBeAdded = new Action(actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(),actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getActionImage().getImage());
+            Action actionToBeAdded = new Action(actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(),actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getActionImage().getImage(), actions.get(i).getActionStyle());
 
             HBox hbox = new HBox(1);
             Group group = new Group();

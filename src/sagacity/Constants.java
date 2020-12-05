@@ -1,9 +1,4 @@
-package sample;
-
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import objects.Action;
-import objects.ActionTier;
+package sagacity;
 
 /**
  * Default header

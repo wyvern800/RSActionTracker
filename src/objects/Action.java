@@ -1,11 +1,6 @@
 package objects;
-
-import javafx.scene.control.Tooltip;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import org.jnativehook.keyboard.NativeKeyEvent;
 
 /**
  * Represents an action
@@ -22,6 +17,7 @@ public class Action {
     private final boolean altPressed;
     private final ActionTier actionTier;
     private final ImageView actionImage;
+    private final ActionStyle actionStyle;
 
     /**
      * Gets the action tier
@@ -72,11 +68,19 @@ public class Action {
     }
 
     /**
-     * Gets the action name
-     * @return Gets the action name
+     * Gets the actionName
+     * @return The actionName
      */
     public String getActionName() {
         return actionName;
+    }
+
+    /**
+     * Gets tje actionStyle
+     * @return The actionStyle
+     */
+    public ActionStyle getActionStyle() {
+        return actionStyle;
     }
 
     /**
@@ -84,7 +88,7 @@ public class Action {
      * @param pressedKey The pressedKey
      * @param img The actionImage
      */
-    public Action(String actionName, int pressedKey, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier tier, Image img) {
+    public Action(String actionName, int pressedKey, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier tier, Image img, ActionStyle style) {
         this.actionName = actionName;
         this.pressedKey = pressedKey;
         this.ctrlPressed = ctrlPressed;
@@ -92,16 +96,13 @@ public class Action {
         this.altPressed = altPressed;
         this.actionImage = new ImageView();
         this.actionTier = tier;
+        this.actionStyle = style;
         actionImage.setImage(img);
         actionImage.setFitWidth(104);
         actionImage.setPreserveRatio(true);
         actionImage.setSmooth(true);
         actionImage.setCache(true);
-
-        // remove the rounding clip so that our effect can show through.
-        actionImage.setClip(null);
+        actionImage.setClip(null); // remove the rounding clip so that our effect can show through.
         actionImage.setPickOnBounds(true);
-        // apply a shadow effect.
-       //actionImage.setEffect(new DropShadow(10, tier.getAbilityBorder()));
     }
 }
