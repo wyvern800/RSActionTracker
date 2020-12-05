@@ -55,7 +55,7 @@ ABILITY_NAME("ability name prettyfied", NativeKeyEvent.VC_1, false, false, false
 | ABILITY_NAME    | Corruption Shot |NativeKeyEvent.VC_1| false| false | false | ActionTier.BASIC_ABILITY | STRENGTH_PATH+"/fury.png"| ActionStyle.MELEE|
 
 **ABILITY_NAME:** | Used for enumeration purposes only (can be anything).  
-**1st param: ** *String*  | used for the ability name showed on screen, Example: Corruption Shot.  
+**1st param:** *String*  | used for the ability name showed on screen, Example: Corruption Shot.  
 **2nd param:** *NativeKeyEvent*  | used to determine which key we are pressing to trigger the event. [See all keyevents here](https://javadoc.io/static/com.1stleg/jnativehook/2.0.3/org/jnativehook/keyboard/NativeKeyEvent.html "See all keyevents here")  
 **3rd param:** *boolean*  | **True** if key uses CTRL mask (if the key is combined with CTRL), **False** if not (singular key pressing. Example. K)  
 **4th param:** *boolean*  | **True** if key uses SHIFT mask (if the key is combined with SHIFT, Example: SHIFT+K), **False** if not.  
