@@ -22,13 +22,11 @@ Basic system used to log your actions during your RS3 boss encounters (to show f
 
 - [Setup](#setup)
   * [First Steps](#first-steps)
-    + [Sub-sub-heading](#sub-sub-heading)
-- [Heading](#heading-1)
-  * [Sub-heading](#sub-heading-1)
-    + [Sub-sub-heading](#sub-sub-heading-1)
-- [Heading](#heading-2)
-  * [Sub-heading](#sub-heading-2)
-    + [Sub-sub-heading](#sub-sub-heading-2)
+    + [How do I add more Actions to the ActionList](#how-do-i-add-more-actions-to-the-actionlist)
+    + [How do I add more ActionTiers](#how-do-i-add-more-actiontiers)
+    + [How do I add more ActionStyles](#how-do-i-add-more-actionstyles)
+- [Future implementations](#future-implementations)
+  * [Credits](#credits)
 
 ## Setup
 You will need a JDK 8x installed in your development, an IDE, I would recommend **IntelliJ Community** but you can use **Eclipse IDE** incase you want, both are free.
