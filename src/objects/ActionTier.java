@@ -14,14 +14,13 @@ import javafx.scene.paint.Color;
      * The actions tier storage
      */
     public enum ActionTier {
-        CONSUMABLE(0, Color.BLUEVIOLET),
-            BASIC_ABILITY( 1, Color.ORANGE),
-                TRESHOLD_ABILITY(2, Color.GREENYELLOW),
-                        ULTIMATE_ABILITY(3, Color.LIGHTGOLDENRODYELLOW),
-                            DEFENSIVE_ABILITY(3, Color.WHITE),
-                                    PRAYER( 4, Color.BLUE),
-                                            WEAPON_SPEC(4, Color.PINK);
-
+        CONSUMABLE(0, "#9500ff"),
+            BASIC_ABILITY( 1, "#ad4800"),
+                TRESHOLD_ABILITY(2, "#1b9400"),
+                        ULTIMATE_ABILITY(3, "#ebac00"),
+                            DEFENSIVE_ABILITY(3, "white"),
+                                    PRAYER( 4, "#7e8ec8"),
+                                            WEAPON_SPEC(4, "#bd0026");
 
         /**
          * The action id
@@ -39,13 +38,13 @@ import javafx.scene.paint.Color;
         /**
          * The ability border color
          */
-        private final Color abilityBorder;
+        private final String abilityBorder;
 
         /**
          * Gets the ability border color
          * @return The ability border Color
          */
-        public Color getAbilityBorder() {
+        public String getAbilityBorder() {
             return abilityBorder;
         }
 
@@ -54,7 +53,7 @@ import javafx.scene.paint.Color;
          * @param id The tier Id,
          * @param color The border color
          */
-        ActionTier(int id, Color color) {
+        ActionTier(int id, String color) {
             this.id = id;
             this.abilityBorder = color;
         }

@@ -20,7 +20,7 @@ public interface Constants {
     String CURSES_PATH = "resources/prayers/curses";
     String MAGIC_PATH = "resources/abilities/magic";
     String RANGED_PATH = "resources/abilities/ranged";
-
+    String ITEMS_PATH = "resources/abilities/items";
 
     int CTRL_L_MASK			= 1 << 1;
     int CTRL_R_MASK			= 1 << 5;

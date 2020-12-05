@@ -1,7 +1,6 @@
 package objects;
 
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import sample.Constants;
 
@@ -14,7 +13,7 @@ import sample.Constants;
  */
 public enum ActionList implements Constants {
     // Consumables
-    EAT_FOOD("Eat Food", NativeKeyEvent.VC_F1, false, false, false,
+    EAT_FOOD("Eat Food", NativeKeyEvent.VC_F5, false, false, false,
             ActionTier.CONSUMABLE, HITPOINTS_PATH+"/eat_a_food.png"),
 
     // Melee abilitiees
@@ -22,7 +21,7 @@ public enum ActionList implements Constants {
     FURY("Fury", NativeKeyEvent.VC_1, false, false, false,
             ActionTier.BASIC_ABILITY, STRENGTH_PATH+"/fury.png"),
     DISMEMBER("Dismember", NativeKeyEvent.VC_2, false, false, false,
-            ActionTier.TRESHOLD_ABILITY, STRENGTH_PATH+"/dismember.png"),
+            ActionTier.BASIC_ABILITY, STRENGTH_PATH+"/dismember.png"),
     QUAKE("Quake", NativeKeyEvent.VC_Q, true, false, false,
             ActionTier.TRESHOLD_ABILITY, STRENGTH_PATH+"/quake.png"),
     BERSERK("Berserk", NativeKeyEvent.VC_R, true, false, false,
@@ -47,6 +46,8 @@ public enum ActionList implements Constants {
     ActionTier.BASIC_ABILITY, ATTACK_PATH+"/smash.png"),
     BARGE("Barge", NativeKeyEvent.VC_A, true,false, false,
             ActionTier.BASIC_ABILITY, ATTACK_PATH+"/barge.png"),
+    BLOOD_TENDRILS("Blood Tendrils", NativeKeyEvent.VC_U, false,false, false,
+            ActionTier.TRESHOLD_ABILITY, ATTACK_PATH+"/tendrils.png"),
 
     // Defensive abilities
     // Defense
@@ -98,7 +99,11 @@ public enum ActionList implements Constants {
 
     // Ranged
     ESCAPE("Escape", NativeKeyEvent.VC_S, false,false, false,
-          ActionTier.BASIC_ABILITY, RANGED_PATH+"/escape.png")
+          ActionTier.BASIC_ABILITY, RANGED_PATH+"/escape.png"),
+
+    // Items
+    Repriser("A. Repriser", NativeKeyEvent.VC_F1, false,false, false,
+           ActionTier.DEFENSIVE_ABILITY, ITEMS_PATH+"/repriser.png")
     ;
 
     /**

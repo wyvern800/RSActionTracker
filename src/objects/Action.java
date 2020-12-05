@@ -93,7 +93,7 @@ public class Action {
         this.actionImage = new ImageView();
         this.actionTier = tier;
         actionImage.setImage(img);
-        actionImage.setFitWidth(100);
+        actionImage.setFitWidth(104);
         actionImage.setPreserveRatio(true);
         actionImage.setSmooth(true);
         actionImage.setCache(true);
@@ -102,8 +102,6 @@ public class Action {
         actionImage.setClip(null);
         actionImage.setPickOnBounds(true);
         // apply a shadow effect.
-        actionImage.setEffect(new DropShadow(10, tier.getAbilityBorder()));
-        Tooltip tooltip = new Tooltip(actionName);
-        Tooltip.install(actionImage, tooltip);
+       //actionImage.setEffect(new DropShadow(10, tier.getAbilityBorder()));
     }
 }

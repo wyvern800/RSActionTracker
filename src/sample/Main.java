@@ -2,11 +2,12 @@ package sample;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import objects.Action;
 import objects.ActionList;
@@ -17,8 +18,19 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import utils.FileWritter;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * Software used to log the actions from the player (this is not a keylogger)
+ *
+ * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @created 04/12/2020 - 14:14
+ * @project RSActionsLogging
+ */
 public class Main extends Application implements NativeKeyListener, Constants {
+    /**
+     * The title
+     */
     private static String title = "RSActionLogger - by mattFerreira";
 
     /**
@@ -72,11 +84,8 @@ public class Main extends Application implements NativeKeyListener, Constants {
         cachedActions = new ArrayList<>(MAX_SIZE);
         actions = new ArrayList<>();
         gridPane = new GridPane();
-        MAIN_SCENE = new Scene(gridPane, 1022, 97);
+        MAIN_SCENE = new Scene(gridPane, 1100, 110);
         gridPane.setStyle("-fx-background-color: black;");
-        gridPane.setPadding(new Insets(3, 3, 3, 3));
-        gridPane.setHgap(3);
-        gridPane.setVgap(3);
 
         // Adds all abilities to the cache
         List<Action> tempList = new ArrayList<>();
@@ -86,19 +95,18 @@ public class Main extends Application implements NativeKeyListener, Constants {
         }
         cachedActions.addAll(tempList);
 
+        // Adds the listener
         try {
             GlobalScreen.registerNativeHook();
         } catch (NativeHookException e) {
             e.printStackTrace();
         }
-        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+
+        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.WARNING);
         logger.setUseParentHandlers(false);
 
         GlobalScreen.addNativeKeyListener(this);
-
-        // Any
-        //cachedActions.addAll(Arrays.asList(tuskaWrath, anguish));
     }
 
     /**
@@ -107,23 +115,26 @@ public class Main extends Application implements NativeKeyListener, Constants {
     private static void update() {
         for (int i = 0; i < actions.size(); i++) {
             Action actionToBeAdded = new Action(actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(),actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getActionImage().getImage());
-            /*if (!gridPane.getChildren().isEmpty() && gridPane.getChildren().get(i) != null) {
-                gridPane.getChildren().remove(i);
-            }*/
-            /*long end = delays[i] + 3000; // 5 seconds
-            while (delays[i] < end)
-            {
-                delays[i] = System.currentTimeMillis();
-                System.out.println("delay");;
 
-            } else {*/ //TODO delay
+            HBox hbox = new HBox(1);
+            Group group = new Group();
 
-            gridPane.add(actionToBeAdded.getActionImage(), i, 0);
             Label actionName = new Label(actionToBeAdded.getActionName());
-            actionName.setStyle("-fx-text-fill: #fff; -fx-font-size: 15px; -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 )");
-            actionName.setMaxWidth(Double.MAX_VALUE);
+            actionName.setStyle("-fx-text-fill: #fff; -fx-font-size: 15px; -fx-effect: dropshadow( one-pass-box , black , 10 , 0.0 , 2 , 0 )");
             actionName.setAlignment(Pos.CENTER);
-            gridPane.add(actionName, i, 0);
+            actionName.setPrefSize(100, 100);
+
+            hbox.setSpacing(2); // Space between the squares
+            hbox.setPrefSize(60, 60);
+            hbox.setStyle("-fx-border-style: solid solid solid solid;\n" +
+                    "-fx-border-width: 2;\n" +
+                    "-fx-border-color: "+actionToBeAdded.getActionTier().getAbilityBorder());
+
+            group.getChildren().addAll(actionToBeAdded.getActionImage(), actionName);
+
+            hbox.getChildren().add(group);
+
+            gridPane.add(hbox, i, 0);
         }
     }
 
@@ -133,7 +144,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
      */
     @Override
     public void start(Stage mainStage) {
-        mainStage.setTitle("RSActionLogger - by mattFerreira");
+        mainStage.setTitle("RSActionLogger - by mattFerreira - Press F12 to enable/disable combat mode");
         mainStage.setScene(MAIN_SCENE);
         mainStage.setAlwaysOnTop(true);
         mainStage.setResizable(false);
@@ -143,7 +154,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
 
     /**
      * The bootstrapper
-     * @param args
+     * @param args Program arguments
      */
     public static void main(String[] args) {
         launch(args);
