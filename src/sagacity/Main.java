@@ -3,11 +3,16 @@ package sagacity;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import objects.Action;
 import objects.ActionList;
@@ -17,7 +22,13 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import utils.FileWritter;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,7 +69,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
     /**
      * The main scene
      */
-    public static Scene MAIN_SCENE;
+    public static Scene mainScene;
 
     /**
      * The scenes
@@ -89,9 +100,6 @@ public class Main extends Application implements NativeKeyListener, Constants {
         scenes = new ArrayList<>();
         cachedActions = new ArrayList<>(MAX_SIZE);
         actions = new ArrayList<>();
-        gridPane = new GridPane();
-        MAIN_SCENE = new Scene(gridPane, 1100, 110);
-        gridPane.setStyle("-fx-background-color: black;");
 
         // Adds all abilities to the cache
         List<Action> tempList = new ArrayList<>();
@@ -153,11 +161,54 @@ public class Main extends Application implements NativeKeyListener, Constants {
      */
     @Override
     public void start(Stage mainStage) {
-        mainStage.setTitle("RSActionLogger - by mattFerreira - Press F12 to enable/disable combat mode");
-        mainStage.setScene(MAIN_SCENE);
+        // create the menus
+        final Menu menu = new Menu("Menu");
+        final Menu abilities = new Menu("Abilities");
+        addMenuAction(abilities, () -> System.out.println("WIP"));
+        final Menu help = new Menu("Help");
+        addMenuAction(help, () -> {
+            try {
+                Desktop.getDesktop().browse(new URL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md").toURI());
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
+        // create menu items
+        final MenuItem menuItem = new MenuItem("Toggle combat mode");
+        addMenuItemAction(menuItem, () -> {
+            isCombatMode = !isCombatMode;
+            System.out.println("Combat mode is now "+(isCombatMode? "enabled": "disabled"));
+        });
+        // add menu items to menu
+        menu.getItems().add(menuItem);
+        // create a menubar
+        MenuBar menuBar = new MenuBar();
+        // add menu to menubar
+        menuBar.getMenus().addAll(menu, abilities, help);
+        // create a VBox
+        VBox verticalBox = new VBox(menuBar);
+        // create a scene
+        Scene mainScene = new Scene(verticalBox, 1100, 137);
+        // set a background color to the vertical box
+        verticalBox.setStyle("-fx-background-color: #000000;");
+        // create a grid pane
+        gridPane = new GridPane();
+        // add the grid pane to the vertical box
+        verticalBox.getChildren().add(gridPane);
+
+        mainStage.setTitle("RSActionLogger - by wyvern800 - Press F12 to enable/disable combat mode");
+        mainStage.setScene(mainScene);
         mainStage.setAlwaysOnTop(true);
         mainStage.setResizable(false);
+        mainStage.centerOnScreen();
+        mainStage.sizeToScene();
         mainStage.show();
+
+        // Center the window to screen
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        mainStage.setX((screenBounds.getWidth() - mainStage.getWidth()) / 2);
+        mainStage.setY((screenBounds.getHeight() - mainStage.getHeight()) / 2);
+
         Main.mainStage = mainStage;
     }
 
@@ -171,6 +222,35 @@ public class Main extends Application implements NativeKeyListener, Constants {
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
+    }
+
+    /**
+     * Adds a menuItem action when clicking on them
+     * @param menuItem The menuItem we are clicking
+     * @param action The action that should it do
+     */
+    private static void addMenuItemAction(MenuItem menuItem, Runnable action) {
+        menuItem.setOnAction(event -> {
+            action.run();
+            System.out.println("clicked at "+menuItem.getText());
+        });
+    }
+
+    /**
+     * Adds a menu action when clicking on them
+     * @param menu The menuItem we are clicking
+     * @param action The action that should it do
+     */
+    private static void addMenuAction(Menu menu, Runnable action) {
+        final MenuItem menuItem = new MenuItem("dummy");
+        menu.getItems().add(menuItem);
+
+        menu.addEventHandler(Menu.ON_SHOWN, event -> menu.hide());
+        menu.addEventHandler(Menu.ON_SHOWING, event -> {
+            menu.fire();
+            action.run();
+            System.out.println("clicked at "+menu.getText());
+        });
     }
 
     /**
@@ -256,7 +336,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
 
         // updates the screen
         update();
-        if (actions.size() > 9)
+        if (actions.size() > MAX_SIZE-1)
             actions.remove(0); // Removes the first element if list is full
 
         actionsDone++;
