@@ -20,12 +20,20 @@ Basic system used to log your actions during your RS3 boss encounters (to show f
 
 **Table of Contents**
 
-[TOC]
+- [Setup](#setup)
+  * [First Steps](#first-steps)
+    + [Sub-sub-heading](#sub-sub-heading)
+- [Heading](#heading-1)
+  * [Sub-heading](#sub-heading-1)
+    + [Sub-sub-heading](#sub-sub-heading-1)
+- [Heading](#heading-2)
+  * [Sub-heading](#sub-heading-2)
+    + [Sub-sub-heading](#sub-sub-heading-2)
 
 ## Setup
 You will need a JDK 8x installed in your development, an IDE, I would recommend **IntelliJ Community** but you can use **Eclipse IDE** incase you want, both are free.
 
-####First steps
+#### First steps
 1. Import the project in any IDE, and add the jNativeHook to the libraries if you're having issues related to imports.
 2. The main file for loading the application is **src.sagacity.Main.java**
 3. Open it up and set a combat style, there are three atm: **ActionStyle.MELEE, ActionStyle.RANGED and ActionStyle.MAGIC**
@@ -34,7 +42,7 @@ You will need a JDK 8x installed in your development, an IDE, I would recommend 
 
 ------------
 
-####How do I add more Actions to the ActionList?
+#### How do I add more Actions to the ActionList?
 1. Go to the file ActionList.java(**src.objects.ActionList.java**)
 2. And add this line edited as you want:
 ```java
@@ -42,7 +50,7 @@ ABILITY_NAME("ability name prettyfied", NativeKeyEvent.VC_1, false, false, false
             ActionTier.BASIC_ABILITY, STRENGTH_PATH+"/fury.png", ActionStyle.MELEE),
 ```
 
-#####Parameters:
+##### Parameters:  
 **ABILITY_NAME:** | Used for enumeration purposes only (can be anything).
 **1st param: ** *String*  | used for the ability name showed on screen, Example: Corruption Shot.
 **2nd param:** *NativeKeyEvent*  | used to determine which key we are pressing to trigger the event. [See all keyevents here](https://javadoc.io/static/com.1stleg/jnativehook/2.0.3/org/jnativehook/keyboard/NativeKeyEvent.html "See all keyevents here")
@@ -69,7 +77,7 @@ Now save it up, and reload the application, if you don't know how to, go to the 
 
 ------------
 
-####How do I add more ActionTiers?
+#### How do I add more ActionTiers?
 1. **NOTE:**  This is not needed as the tiers are already done, just incase you want.
 1. Go to the file ActionTier.java (**src.objects.ActionTier.java**)
 2. And edit the lines as you want.
@@ -84,7 +92,7 @@ CONSUMABLE(0, "#9500ff"),
 ```
 ------------
 
-####How do I add more ActionStyles?
+#### How do I add more ActionStyles?
 1. **NOTE:**  This is not needed as the tiers are already done, just incase you want.
 1. Go to the file ActionTier.java (**src.objects.ActionStyle.java**)
 2. And edit the lines as you want.
@@ -109,6 +117,6 @@ Thanks for reading until here, this took sometime and I hope you enjoy using my 
 
 Incase you like, please give me a Star here!
 
-###Credits
+### Credits
 [jNativeHook](https://github.com/kwhat/jnativehook/) - for the Keyboard keys listening.
 
