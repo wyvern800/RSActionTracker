@@ -15,11 +15,11 @@ import javafx.scene.paint.Color;
      */
     public enum ActionTier {
         CONSUMABLE(0, "#9500ff"),
-            BASIC_ABILITY( 1, "#ad4800"),
+            BASIC_ABILITY( 1, "#c96236"),
                 TRESHOLD_ABILITY(2, "#1b9400"),
                         ULTIMATE_ABILITY(3, "#ebac00"),
                             DEFENSIVE_ABILITY(3, "white"),
-                                    PRAYER( 4, "#7e8ec8"),
+                                    PRAYER( 4, "#007fff"),
                                             WEAPON_SPEC(4, "#bd0026");
 
         /**

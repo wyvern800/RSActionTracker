@@ -12,7 +12,7 @@ public interface Constants {
     boolean isDebugMode = false;
 
     // Show ability names on screen
-    boolean showAbilityName = false;
+    boolean showAbilityName = true;
 
     String STRENGTH_PATH = "resources/abilities/melee/strength";
     String ATTACK_PATH = "resources/abilities/melee/attack";

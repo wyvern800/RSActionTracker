@@ -152,11 +152,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     "-fx-border-width: 2;\n" +
                     "-fx-border-color: "+actionToBeAdded.getActionTier().getAbilityBorder());
 
+            group.getChildren().add(actionToBeAdded.getActionImage());
+
             if (showAbilityName) {
                 group.getChildren().add(actionName);
             }
-
-            group.getChildren().add(actionToBeAdded.getActionImage());
 
             hbox.getChildren().add(group);
 
