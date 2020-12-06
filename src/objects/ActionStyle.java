@@ -28,6 +28,19 @@ public enum ActionStyle {
     ;
 
     /**
+     * Wrapper method to get the action Style
+     * @param styleName The styleName
+     * @return The wrapped style
+     */
+    public static ActionStyle getWrappedActionStyle(String styleName) {
+        for (ActionStyle style : ActionStyle.values()) {
+            if (style.name().equals(styleName))
+                return style;
+        }
+        return null;
+    }
+
+    /**
      * Creates an attackStyle object
      * @param id The id
      */

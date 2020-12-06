@@ -49,6 +49,19 @@ import javafx.scene.paint.Color;
         }
 
         /**
+         * Gets the wrapped action tier
+         * @param tierName The tierName
+         * @return The wrapped tierName
+         */
+        public static ActionTier getWrappedActionTier(String tierName) {
+            for (ActionTier tier : ActionTier.values()) {
+                if (tier.name().equals(tierName))
+                    return tier;
+            }
+            return null;
+        }
+
+        /**
          * Creates a ability tier
          * @param id The tier Id,
          * @param color The border color

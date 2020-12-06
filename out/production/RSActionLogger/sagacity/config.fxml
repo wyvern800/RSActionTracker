@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.ConfigController">
+
+    <padding>
+        <Insets top="20" bottom="20" left="20" right="20"/>
+    </padding>
+
+    <TableView fx:id="table" editable="true">
+        <columns>
+            <TableColumn fx:id="actionName"
+                         text="ActionName"
+                         minWidth="40"
+                         maxWidth="40"/>
+            <TableColumn fx:id="pressedKey"
+                         text="KeyCode"/>
+            <TableColumn fx:id="ctrlPressed"
+                         text="CTRL?"
+                         minWidth="70"
+                         maxWidth="70"/>
+            <TableColumn fx:id="shiftPressed"
+                         text="SHIFT?"/>
+            <TableColumn fx:id="altPressed"
+                         text="ALT"/>
+            <TableColumn fx:id="actionTier"
+                         text="actionTier"/>
+            <TableColumn fx:id="actionImage"
+                         text="actionImage"/>
+            <TableColumn fx:id="actionStyle"
+                         text="actionStyle"/>
+        </columns>
+    </TableView>
+</VBox>
