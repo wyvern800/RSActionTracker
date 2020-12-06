@@ -54,13 +54,13 @@ ABILITY_NAME("ability name prettyfied", NativeKeyEvent.VC_1, false, false, false
 | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- |--------------- |
 | ABILITY_NAME    | Corruption Shot |NativeKeyEvent.VC_1| false| false | false | ActionTier.BASIC_ABILITY | STRENGTH_PATH+"/fury.png"| ActionStyle.MELEE|
 
-**ABILITY_NAME:** | Used for enumeration purposes only (can be anything).  
-**1st param:** *String*  | used for the ability name showed on screen, Example: Corruption Shot.  
-**2nd param:** *NativeKeyEvent*  | used to determine which key we are pressing to trigger the event. [See all keyevents here](https://javadoc.io/static/com.1stleg/jnativehook/2.0.3/org/jnativehook/keyboard/NativeKeyEvent.html "See all keyevents here")  
-**3rd param:** *boolean*  | **True** if key uses CTRL mask (if the key is combined with CTRL), **False** if not (singular key pressing. Example. K)  
-**4th param:** *boolean*  | **True** if key uses SHIFT mask (if the key is combined with SHIFT, Example: SHIFT+K), **False** if not.  
-**5th param:** *boolean*  | **True** if key uses ALT mask (if the key is combined with ALT, Example: ALT+K) | **False** if not.  
-**6th param:** *ActionTier*  | The tier of the ability, there are currently 7 default tiers, that can be used:  
+- **ABILITY_NAME:** | Used for enumeration purposes only (can be anything).  
+- **1st param:** *String*  | used for the ability name showed on screen, Example: Corruption Shot.  
+- **2nd param:** *NativeKeyEvent*  | used to determine which key we are pressing to trigger the event. [See all keyevents here](https://javadoc.io/static/com.1stleg/jnativehook/2.0.3/org/jnativehook/keyboard/NativeKeyEvent.html "See all keyevents here")  
+- **3rd param:** *boolean*  | **True** if key uses CTRL mask (if the key is combined with CTRL), **False** if not (singular key pressing. Example. K)  
+- **4th param:** *boolean*  | **True** if key uses SHIFT mask (if the key is combined with SHIFT, Example: SHIFT+K), **False** if not.  
+- **5th param:** *boolean*  | **True** if key uses ALT mask (if the key is combined with ALT, Example: ALT+K) | **False** if not.  
+- **6th param:** *ActionTier*  | The tier of the ability, there are currently 7 default tiers, that can be used:  
 ```java
  CONSUMABLE(0, "#9500ff"),
             BASIC_ABILITY( 1, "#ad4800"),
@@ -71,8 +71,8 @@ ABILITY_NAME("ability name prettyfied", NativeKeyEvent.VC_1, false, false, false
                                             WEAPON_SPEC(4, "#bd0026");
 ```
 Choose one, in this example we're using: ActionTier.BASIC_ABILITY, you can leave as that to test it.  
-**7th param:** *String*  | The path to the action image we're using, in the example case we're using STRENGTH_PATH+**fury.png** - **NOTE:** The *STRENGTH_PATH*  in this example is just a constant so we dont type the full directory to where the image is, you can use any other directory from your computer, i'd strongy recommend using the same folder directory to avoid fail when loading the files.  
-**8th param:** *ActionStyle*  | The action style used by this action, used to determine if the abiilty we're using is the same of the **COMBAT_STYLE** we setted up when loading our application.  Which means if we set the var. to** ActionStyle.RANGED**, only abilities we added to the list that contains **RANGED action style** will be triggered when pressing the keys. 
+- **7th param:** *String*  | The path to the action image we're using, in the example case we're using STRENGTH_PATH+**fury.png** - **NOTE:** The *STRENGTH_PATH*  in this example is just a constant so we dont type the full directory to where the image is, you can use any other directory from your computer, i'd strongy recommend using the same folder directory to avoid fail when loading the files.  
+- **8th param:** *ActionStyle*  | The action style used by this action, used to determine if the abiilty we're using is the same of the **COMBAT_STYLE** we setted up when loading our application.  Which means if we set the var. to** ActionStyle.RANGED**, only abilities we added to the list that contains **RANGED action style** will be triggered when pressing the keys. 
 
 **NOTE:** If the ability is wheter a defensive ability or consumable/items action that doesn't differ in any rotation, you must use **ActionStyle.NONE** as the last parameter, meaning the action can be triggered by any **COMBAT_STYLE**.  
   
