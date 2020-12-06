@@ -34,7 +34,7 @@ You will need a JDK 8x installed in your development, an IDE, I would recommend 
 
 #### First steps
 1. Import the project in any IDE, and add the jNativeHook to the libraries if you're having issues related to imports.
-2. The main file for loading the application is **src.sagacity.Main.java**
+2. The main file for loading the application is **src.Main.java**
 3. Open it up and set a combat style, there are three atm: **ActionStyle.MELEE, ActionStyle.RANGED and ActionStyle.MAGIC**
 4. After selecting a combat style, run the file  **Main.java**.
 5. If the application is open, when pressing any key, you'l be receiving a console print saying you're on idle mode, press F12 to toggle between idle mode/combat mode. (**NOTE: idle mode is for when you're talking, and doing other things instead combatting, then the keys won't be triggered**)

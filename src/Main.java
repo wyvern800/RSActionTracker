@@ -1,5 +1,3 @@
-package sagacity;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -21,8 +19,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.Mnemonic;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -34,6 +30,7 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+import sagacity.Constants;
 import utils.FileWritter;
 import utils.MasksConstants;
 import javafx.geometry.Insets;
@@ -48,7 +45,6 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Software used to log the actions from the player (this is not a keylogger)
@@ -114,7 +110,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * Max actions we're monitoring
      */
-    private static final int MAX_SIZE = 9; //Do not touch
+    private static final int MAX_SIZE = 10; //Do not touch
 
     /**
      * The constructor
@@ -157,36 +153,50 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
+     * Add an action to the screen
+     * @param i The index we're adding to
+     */
+    private static void addActionToScreen(int i) {
+        // Creating the action instance
+        Action newAction = new Action(configTable, actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(),actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getActionImage().getImage(), actions.get(i).getActionStyle());
+
+        // Creating the content boxes
+        HBox actionBox = new HBox(1);
+        Group actionGroup = new Group();
+
+        // Sets the backgrounds of the actionBoxes to black
+        actionGroup.setStyle("-fx-background-color: #000000;");
+        actionBox.setStyle("-fx-background-color: #000000;");
+
+        // Creating the actionName label
+        Label actionName = new Label(newAction.getActionName());
+        actionName.setStyle("-fx-text-fill: #fff; -fx-font-size: 15px; -fx-effect: dropshadow( one-pass-box , black , 10 , 0.0 , 2 , 0 )");
+        actionName.setAlignment(Pos.CENTER);
+        actionName.setPrefSize(100, 100);
+        actionBox.setSpacing(2); // Space between the squares
+        actionBox.setPrefSize(60, 60);
+        actionBox.setStyle("-fx-border-style: solid solid solid solid;\n" +
+                "-fx-border-width: 2;\n" +
+                "-fx-border-color: "+newAction.getActionTier().getAbilityBorder());
+
+        actionGroup.getChildren().add(newAction.getActionImage());
+        actionGroup.getChildren().add(actionName);
+
+        actionBox.getChildren().add(actionGroup);
+
+        actionName.setVisible(showActionName);
+
+        // Add the actionBox to the gridPane
+        gridPane.add(actionBox, i, 0);
+    }
+
+    /**
      * Updates the screen with the actions
      */
-    private static void update() {
+    private static void updateScreen() {
         // Loops through the personal actions and set them to screen
         for (int i = 0; i < actions.size(); i++) {
-            Action newAction = new Action(configTable, actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(),actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getActionImage().getImage(), actions.get(i).getActionStyle());
-
-            HBox actionBox = new HBox(1);
-            Group group = new Group();
-
-            Label actionName = new Label(newAction.getActionName());
-            actionName.setStyle("-fx-text-fill: #fff; -fx-font-size: 15px; -fx-effect: dropshadow( one-pass-box , black , 10 , 0.0 , 2 , 0 )");
-            actionName.setAlignment(Pos.CENTER);
-            actionName.setPrefSize(100, 100);
-            actionBox.setSpacing(2); // Space between the squares
-            actionBox.setPrefSize(60, 60);
-
-            actionBox.setStyle("-fx-border-style: solid solid solid solid;\n" +
-                    "-fx-border-width: 2;\n" +
-                    "-fx-border-color: "+newAction.getActionTier().getAbilityBorder());
-
-            group.getChildren().add(newAction.getActionImage());
-
-            if (showActionName) {
-                group.getChildren().add(actionName);
-            }
-
-            actionBox.getChildren().add(group);
-
-            gridPane.add(actionBox, i, 0);
+            addActionToScreen(i);
         }
     }
 
@@ -232,7 +242,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("config.png"));
         final MenuItem actionStyle = new MenuItem("Action Styles", getMenuIcon("config.png"));
         final MenuItem actionTier = new MenuItem("Action Tiers", getMenuIcon("config.png"));
-        addMenuItemAction(configureAbilities, () -> openSetupScreen(configTable));
+        addMenuItemAction(configureAbilities, Main::openSetupScreen);
         addMenuItemAction(actionStyle, Main::openActionStyles);
         addMenuItemAction(actionTier, Main::openActionTiers);
         configurations.getItems().addAll(configureAbilities, actionStyle, actionTier);
@@ -328,21 +338,14 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * Opens the setup screen
      */
-    private static void openSetupScreen(TableView<Action> configTable) {
+    private static void openSetupScreen() {
         ObservableList<Action> observableListData = FXCollections.observableArrayList(cachedActions);
 
+        // Resizes the icons to show for the setup screen
         observableListData.forEach(p-> {
             p.getActionImage().setFitWidth(30);
             p.getActionImage().setFitHeight(30);
         });
-
-
-        /*for (Action act : cachedActions) {
-            Action newAction = new Action(configTable, act.getActionName(), act.getPressedKey(), act.isCtrlPressed(), act.isShiftPressed(), act.isAltPressed(), act.getActionTier(), act.getActionImage().getImage(), act.getActionStyle());
-            newAction.getActionImage().setFitWidth(30);
-            newAction.getActionImage().setFitHeight(30);
-            data.add(newAction);
-        }*/
 
         Stage setupStage = new Stage();
 
@@ -462,40 +465,34 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         );
 
         configTable.setItems(observableListData);
-        configTable.setItems(observableListData);
         configTable.getColumns().addAll(actionName, actionImage, keyCode, ctrlMask, shiftMask, altMask, actionTier, actionStyle);
 
         HBox pane = new HBox();
         pane.setSpacing(10);
 
         // Action adding button
-        Button addButton = new Button("Insert Action", getMenuIcon("plus.png"));
+        Button addButton = new Button("Add Action", getMenuIcon("plus.png"));
+        /*scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.INSERT),
+                addButton::fire
+        );*/
         addButtonAction(addButton, () -> {
-            System.out.println("added a row");
-            Action newAction = new Action(configTable,randomName(), 0, false, false, false, ActionTier.BASIC_ABILITY,new Image(PLACEHOLDER_PATH+"/placeholder.png"), ActionStyle.NONE);
-            newAction.getActionImage().setFitWidth(30);
-            newAction.getActionImage().setFitHeight(30);
-            configTable.getItems().add(newAction);
-            configTable.scrollTo(observableListData.size());
-            cachedActions.add(newAction);
-            refreshTable();
+            processAddButtonAction(observableListData);
         });
 
         // Action removing button
         Button removeButton = new Button("Remove Action", getMenuIcon("remove.png"));
-        addButtonAction(removeButton, () -> {
-            System.out.println("removed="+ configTable.getSelectionModel().getSelectedItem().getActionName());
-            configTable.getItems().remove(configTable.getSelectionModel().getSelectedItem());
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.DELETE),
+                removeButton::fire
+        );
+        addButtonAction(removeButton, Main::processRemoveButtonAction);
 
-            cachedActions.remove(configTable.getSelectionModel().getSelectedItem());
-
-            refreshTable();
-        });
-
-        // Refresh list
+        // Refresh list burron
         Button refreshButton = new Button("Refresh List", getMenuIcon("refresh.png"));
         addButtonAction(refreshButton, Main::refreshTable);
 
+        // Change action icon button
         Button changeIconButton = new Button("Change Ability Icon", getMenuIcon("refresh.png"));
         addButtonAction(changeIconButton, Main::changeAbilityIcon);
 
@@ -541,6 +538,46 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         centerScreen(setupStage);
 
         addCloseEventHandler(setupStage, false);
+
+        refreshTable();
+    }
+
+    /**
+     * Processes the add button action
+     * @param observableListData The observableListData
+     */
+    private static void processAddButtonAction(ObservableList<Action> observableListData) {
+        System.out.println("added a row");
+        Action newAction = new Action(configTable,randomName(), 0, false, false, false, ActionTier.BASIC_ABILITY,new Image(PLACEHOLDER_PATH+"/placeholder.png"), ActionStyle.NONE);
+        newAction.getActionImage().setFitWidth(30);
+        newAction.getActionImage().setFitHeight(30);
+        configTable.getItems().add(newAction);
+        configTable.scrollTo(observableListData.size());
+        cachedActions.add(newAction);
+        refreshTable();
+    }
+
+    /**
+     * Processes the remove button action
+     */
+    private static void processRemoveButtonAction() {
+        if (configTable.getSelectionModel() == null || configTable.getSelectionModel().isEmpty()) {
+            System.out.println("Please select a row before deleting!");
+            return;
+        }
+        Action selectedRow = configTable.getSelectionModel().getSelectedItem();
+
+        // Just a normal check to avoid things from being deleted while not present on our list
+        /*Optional<Action> optAction = cachedActions.stream().filter(a-> a.getActionName().toLowerCase().equals(selectedRow.getActionName().toLowerCase())).findFirst();
+        if (!optAction.isPresent()) {
+            System.out.println("data doesn't exist, nothing is being deleted!");
+            return;
+        }*/
+
+        System.out.println("removed='"+ selectedRow.getActionName()+"'");
+        configTable.getItems().remove(configTable.getSelectionModel().getSelectedItem());
+
+        cachedActions.removeIf(p-> p.getActionName().toLowerCase().equals(selectedRow.getActionName().toLowerCase()));
 
         refreshTable();
     }
@@ -777,7 +814,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         updateTitle(mainStage);
 
         // updates the screen
-        update();
+        updateScreen();
 
         // Prints the key we pressed
         System.out.println("actionName='"+action.getActionName()+"', key="+(action.isCtrlPressed() ? "CTRL+" : action.isShiftPressed() ? "Shift+" : action.isAltPressed() ? "ALT+" : "")+key+");");
