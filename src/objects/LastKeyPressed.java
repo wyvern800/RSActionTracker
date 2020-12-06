@@ -1,7 +1,5 @@
 package objects;
 
-import org.jnativehook.keyboard.NativeKeyEvent;
-
 import java.time.LocalTime;
 
 /**
@@ -20,7 +18,7 @@ public class LastKeyPressed {
     /**
      * The nativeEvent key we used
      */
-    private final NativeKeyEvent nativeKeyEvent;
+    private final int keyCode;
 
     /**
      * Gets the usedTime
@@ -34,8 +32,8 @@ public class LastKeyPressed {
      * Gets the nativeKeyEvent
      * @return The nativeKeyEvent
      */
-    public NativeKeyEvent getNativeKeyEvent() {
-        return nativeKeyEvent;
+    public int getKeyCode() {
+        return keyCode;
     }
 
     /**
@@ -43,8 +41,8 @@ public class LastKeyPressed {
      * @param usedTime The time we last pressed the key
      * @param nativeKeyEvent The key we pressed
      */
-    public LastKeyPressed(LocalTime usedTime, NativeKeyEvent nativeKeyEvent) {
+    public LastKeyPressed(LocalTime usedTime, int nativeKeyEvent) {
         this.usedTime = usedTime;
-        this.nativeKeyEvent = nativeKeyEvent;
+        this.keyCode = nativeKeyEvent;
     }
 }

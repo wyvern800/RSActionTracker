@@ -13,24 +13,20 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import objects.Action;
-import objects.ActionList;
-import objects.ActionStyle;
-import objects.LastKeyPressed;
+import objects.*;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import utils.FileWritter;
+import utils.GlobalCooldownThread;
 import utils.MasksConstants;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.time.Duration;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -64,7 +60,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     private static Stage mainStage;
     private static int actionsDone;
-    private static LastKeyPressed lastKeyPressed;
+    public static LastKeyPressed lastKeyPressed;
 
     /**
      * The grid pane
@@ -219,6 +215,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         mainStage.setY((screenBounds.getHeight() - mainStage.getHeight()) / 2);
 
         Main.mainStage = mainStage;
+
+        new GlobalCooldownThread().start();
     }
 
     /**
@@ -298,7 +296,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         if (key == NativeKeyEvent.VC_F12) {
             isCombatMode = !isCombatMode;
             System.out.println("Combat mode is now "+(isCombatMode? "enabled": "disabled"));
-            lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent);
+            lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode());
         }
 
         Platform.runLater( () -> {
@@ -344,7 +342,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static void processKeyAction(Action action, NativeKeyEvent nativeKeyEvent) {
         int key = nativeKeyEvent.getKeyCode();
 
-        if ((key == lastKeyPressed.getNativeKeyEvent().getKeyCode())) {
+        if ((key == lastKeyPressed.getKeyCode())) {
             System.out.println("Key already pressed...");
             return;
         }
@@ -361,7 +359,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         actionsDone++;
         mainStage.setTitle(title + " - actions=" + actionsDone);
         FileWritter.write(TOTAl_ACTIONS[0], TOTAl_ACTIONS[1], new String[] {Integer.toString(actionsDone)});
-        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent);
+        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode());
 
         // Prints the key we pressed
         if (isDebugMode)
