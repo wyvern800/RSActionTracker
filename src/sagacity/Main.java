@@ -19,7 +19,6 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import utils.FileWritter;
-import utils.GlobalCooldownThread;
 import utils.MasksConstants;
 
 import java.awt.*;
@@ -85,7 +84,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * The personal pressed actions
      */
-    private static List<Action> actions;
+    public static List<Action> actions;
 
     /**
      * Max actions we're monitoring
@@ -215,8 +214,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         mainStage.setY((screenBounds.getHeight() - mainStage.getHeight()) / 2);
 
         Main.mainStage = mainStage;
-
-        new GlobalCooldownThread().start();
     }
 
     /**
