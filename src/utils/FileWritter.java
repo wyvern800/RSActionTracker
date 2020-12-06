@@ -8,20 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Default header
+ * File writter used to write things out
  *
  * @author Sagacity - http://rune-server.org/members/Sagacity
  * @created 04/12/2020 - 16:19
  * @project RSKeyLogging
  */
 public class FileWritter {
-    public static void write(int totalActions) {
+
+    /**
+     * Write something inside a file
+     * @param path The path of the file
+     * @param fileName The filename
+     * @param whatToWrite Array of what to write in that file
+     */
+    public static void write(String path, String fileName, String[] whatToWrite) {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("totalActions.txt"), StandardCharsets.UTF_8))) {
-            writer.write(""+totalActions);
+                new FileOutputStream(path+"/"+fileName), StandardCharsets.UTF_8))) {
+            for (String s : whatToWrite) {
+                writer.write(s);
+            }
         } catch (IOException ex) {
             // Report
+            System.out.println("Error while writting to file: "+fileName);
         }
-        /*ignore*/
     }
 }

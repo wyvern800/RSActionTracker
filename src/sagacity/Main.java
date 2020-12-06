@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -17,16 +16,21 @@ import javafx.stage.Stage;
 import objects.Action;
 import objects.ActionList;
 import objects.ActionStyle;
+import objects.LastKeyPressed;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import utils.FileWritter;
+import utils.MasksConstants;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,7 +43,7 @@ import java.util.logging.Logger;
  * @created 04/12/2020 - 14:14
  * @project RSActionsLogging
  */
-public class Main extends Application implements NativeKeyListener, Constants {
+public class Main extends Application implements NativeKeyListener, Constants, MasksConstants {
     /**
      * The combat style you'l be using on the abilities
      * ActionStyle.MELEE For melee | ActionStyle.RANGED for ranged | ActionStyle.MAGIC for magic
@@ -60,6 +64,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
      */
     private static Stage mainStage;
     private static int actionsDone;
+    private static LastKeyPressed lastKeyPressed;
 
     /**
      * The grid pane
@@ -147,7 +152,11 @@ public class Main extends Application implements NativeKeyListener, Constants {
                     "-fx-border-width: 2;\n" +
                     "-fx-border-color: "+actionToBeAdded.getActionTier().getAbilityBorder());
 
-            group.getChildren().addAll(actionToBeAdded.getActionImage(), actionName);
+            if (showAbilityName) {
+                group.getChildren().add(actionName);
+            }
+
+            group.getChildren().add(actionToBeAdded.getActionImage());
 
             hbox.getChildren().add(group);
 
@@ -242,7 +251,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
      * @param action The action that should it do
      */
     private static void addMenuAction(Menu menu, Runnable action) {
-        final MenuItem menuItem = new MenuItem("dummy");
+        final MenuItem menuItem = new MenuItem();
         menu.getItems().add(menuItem);
 
         menu.addEventHandler(Menu.ON_SHOWN, event -> menu.hide());
@@ -250,6 +259,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
             menu.fire();
             action.run();
             System.out.println("clicked at "+menu.getText());
+            event.consume();
         });
     }
 
@@ -288,6 +298,7 @@ public class Main extends Application implements NativeKeyListener, Constants {
         if (key == NativeKeyEvent.VC_F12) {
             isCombatMode = !isCombatMode;
             System.out.println("Combat mode is now "+(isCombatMode? "enabled": "disabled"));
+            lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent);
         }
 
         Platform.runLater( () -> {
@@ -300,20 +311,20 @@ public class Main extends Application implements NativeKeyListener, Constants {
                 if ((isControlDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Ctrl pressed
                     if (!action.isCtrlPressed())
                         continue;
-                    processKeyAction(action);
+                    processKeyAction(action, nativeKeyEvent);
                     System.out.println("control+" + key);
                 } else if ((isShiftDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Shift pressed
                     if (!action.isShiftPressed())
                         continue;
-                    processKeyAction(action);
+                    processKeyAction(action, nativeKeyEvent);
                     System.out.println("shift+" + key);
                 } else if ((isAltDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Alt pressed
                     if ( !action.isAltPressed())
                         continue;
-                processKeyAction(action);
+                processKeyAction(action, nativeKeyEvent);
                 System.out.println("alt+" + key);
                 } else if (action.getPressedKey() == key && (!action.isCtrlPressed() && !action.isAltPressed() && !action.isShiftPressed())) {
-                    processKeyAction(action);
+                    processKeyAction(action, nativeKeyEvent);
                 }
             }
 
@@ -330,20 +341,30 @@ public class Main extends Application implements NativeKeyListener, Constants {
      * Processes the key action
      * @param action The key action
      */
-    private static void processKeyAction(Action action) {
+    private static void processKeyAction(Action action, NativeKeyEvent nativeKeyEvent) {
+        int key = nativeKeyEvent.getKeyCode();
+
+        if ((key == lastKeyPressed.getNativeKeyEvent().getKeyCode())) {
+            System.out.println("Key already pressed...");
+            return;
+        }
         // Handles the keys pressing
         actions.add(action);
 
         // updates the screen
         update();
-        if (actions.size() > MAX_SIZE-1)
+        if (actions.size() > MAX_SIZE-1) {
             actions.remove(0); // Removes the first element if list is full
+            gridPane.getChildren().remove(0);
+        }
 
         actionsDone++;
         mainStage.setTitle(title + " - actions=" + actionsDone);
-        FileWritter.write(actionsDone);
+        FileWritter.write(TOTAl_ACTIONS[0], TOTAl_ACTIONS[1], new String[] {Integer.toString(actionsDone)});
+        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent);
 
         // Prints the key we pressed
+        if (isDebugMode)
         System.out.println("pressedKey='" + action.getPressedKey() + "', ability='" + action.getActionName() + "', borderColor='" + action.getActionTier().getAbilityBorder().toString() + "'");
     }
 
