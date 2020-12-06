@@ -48,6 +48,7 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Software used to log the actions from the player (this is not a keylogger)
@@ -115,28 +116,32 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     private static final int MAX_SIZE = 9; //Do not touch
 
-    private static Label start = new Label("Press F12 to toggle combat mode to start logging your actions.");
-
     /**
      * The constructor
      */
     public Main()  {
+        // Initializations
         scenes = new ArrayList<>();
         cachedActions = new ArrayList<>(MAX_SIZE);
         actions = new ArrayList<>();
 
-        // Adds all abilities to the cache
-        List<Action> tempList = new ArrayList<>();
-
-        for (ActionList actionList: ActionList.values()) {
+        // Load all actions to our cache
+        List<Action> tempActList = new ArrayList<>();
+        for (ActionList store: ActionList.values()) {
             /*if (actionList.getAction().getActionStyle() != COMBAT_STYLE
                     && actionList.getAction().getActionStyle() != ActionStyle.NONE)
                 continue;*/
-            tempList.add(actionList.getAction());
-            cachedActions.add(actionList.getAction());
+            tempActList.add(store.getAction());
+            cachedActions.add(store.getAction());
         }
 
-        cachedActions.addAll(tempList);
+        // Counter
+        List<String> tempActNames = new ArrayList<>();
+        for (Action store : tempActList) {
+            tempActNames.add(store.getActionName());
+        }
+        System.out.println("totalLoaded="+tempActNames.size()+", actionsList="+Arrays.toString(tempActNames.toArray()));
+
 
         // Adds the jNativeHook listener
         try {
@@ -144,11 +149,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         } catch (NativeHookException e) {
             e.printStackTrace();
         }
-
+        // Logging
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.WARNING);
         logger.setUseParentHandlers(false);
-
         GlobalScreen.addNativeKeyListener(this);
     }
 
@@ -156,6 +160,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * Updates the screen with the actions
      */
     private static void update() {
+        // Loops through the personal actions and set them to screen
         for (int i = 0; i < actions.size(); i++) {
             Action newAction = new Action(configTable, actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(),actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getActionImage().getImage(), actions.get(i).getActionStyle());
 
@@ -193,6 +198,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     @Override
     public void start(Stage mainStage) {
+        configTable = new TableView<>();
+
         // create the menus
         final Menu menu = new Menu("Toggles",  getMenuIcon("list.png"));
         final Menu configurations = new Menu("Setup", getMenuIcon("setup.png"));
@@ -219,15 +226,13 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             System.out.println("Ability name is now "+(showActionName ? "enabled": "disabled"));
         });
 
-        addMenuAction(stopResume, ()-> {
-            toggleCombatMode();
-        });
+        addMenuAction(stopResume, Main::toggleCombatMode);
 
         // Configurations menu
         final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("config.png"));
         final MenuItem actionStyle = new MenuItem("Action Styles", getMenuIcon("config.png"));
         final MenuItem actionTier = new MenuItem("Action Tiers", getMenuIcon("config.png"));
-        addMenuItemAction(configureAbilities, Main::openSetupScreen);
+        addMenuItemAction(configureAbilities, () -> openSetupScreen(configTable));
         addMenuItemAction(actionStyle, Main::openActionStyles);
         addMenuItemAction(actionTier, Main::openActionTiers);
         configurations.getItems().addAll(configureAbilities, actionStyle, actionTier);
@@ -323,17 +328,21 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * Opens the setup screen
      */
-    private static void openSetupScreen() {
-        configTable = new TableView<>();
-        ObservableList<Action> data = FXCollections.observableArrayList();
+    private static void openSetupScreen(TableView<Action> configTable) {
+        ObservableList<Action> observableListData = FXCollections.observableArrayList(cachedActions);
 
-        //data.addAll(cachedActions);
-        for (Action act : cachedActions) {
+        observableListData.forEach(p-> {
+            p.getActionImage().setFitWidth(30);
+            p.getActionImage().setFitHeight(30);
+        });
+
+
+        /*for (Action act : cachedActions) {
             Action newAction = new Action(configTable, act.getActionName(), act.getPressedKey(), act.isCtrlPressed(), act.isShiftPressed(), act.isAltPressed(), act.getActionTier(), act.getActionImage().getImage(), act.getActionStyle());
             newAction.getActionImage().setFitWidth(30);
             newAction.getActionImage().setFitHeight(30);
             data.add(newAction);
-        }
+        }*/
 
         Stage setupStage = new Stage();
 
@@ -452,7 +461,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 }
         );
 
-        configTable.setItems(data);
+        configTable.setItems(observableListData);
+        configTable.setItems(observableListData);
         configTable.getColumns().addAll(actionName, actionImage, keyCode, ctrlMask, shiftMask, altMask, actionTier, actionStyle);
 
         HBox pane = new HBox();
@@ -461,12 +471,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Action adding button
         Button addButton = new Button("Insert Action", getMenuIcon("plus.png"));
         addButtonAction(addButton, () -> {
-            System.out.println("add");
+            System.out.println("added a row");
             Action newAction = new Action(configTable,randomName(), 0, false, false, false, ActionTier.BASIC_ABILITY,new Image(PLACEHOLDER_PATH+"/placeholder.png"), ActionStyle.NONE);
             newAction.getActionImage().setFitWidth(30);
             newAction.getActionImage().setFitHeight(30);
             configTable.getItems().add(newAction);
-            configTable.scrollTo(data.size());
+            configTable.scrollTo(observableListData.size());
             cachedActions.add(newAction);
             refreshTable();
         });
@@ -476,13 +486,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         addButtonAction(removeButton, () -> {
             System.out.println("removed="+ configTable.getSelectionModel().getSelectedItem().getActionName());
             configTable.getItems().remove(configTable.getSelectionModel().getSelectedItem());
+
             cachedActions.remove(configTable.getSelectionModel().getSelectedItem());
 
-            int count = 0;
-            for (int i = 0; i < cachedActions.size(); i++) {
-                count++;
-            }
-            System.out.println("size="+count);
             refreshTable();
         });
 
@@ -535,6 +541,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         centerScreen(setupStage);
 
         addCloseEventHandler(setupStage, false);
+
+        refreshTable();
     }
 
     /**
@@ -593,7 +601,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
     /**
      * Create a table column
+     * @param column - the table column
      * @param preferedSize The preferred size {@code null} for automatic
+     * @param prop - The properties
      * @return The generated TableColumn
      */
     private static TableColumn addTableColumn(TableColumn column, Integer preferedSize, PropertyValueFactory prop) {
@@ -723,17 +733,14 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     if (!action.isCtrlPressed())
                         continue;
                     processKeyAction(action, nativeKeyEvent);
-                    System.out.println("control+" + key);
                 } else if ((isShiftDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Shift pressed
                     if (!action.isShiftPressed())
                         continue;
                     processKeyAction(action, nativeKeyEvent);
-                    System.out.println("shift+" + key);
                 } else if ((isAltDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Alt pressed
                     if ( !action.isAltPressed())
                         continue;
                 processKeyAction(action, nativeKeyEvent);
-                System.out.println("alt+" + key);
                 } else if (action.getPressedKey() == key && (!action.isCtrlPressed() && !action.isAltPressed() && !action.isShiftPressed())) {
                     processKeyAction(action, nativeKeyEvent);
                 }
@@ -755,15 +762,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static void processKeyAction(Action action, NativeKeyEvent nativeKeyEvent) {
         int key = nativeKeyEvent.getKeyCode();
 
-        if ((key == lastKeyPressed.getKeyCode())) {
-            System.out.println("Key already pressed...");
-            return;
-        }
         // Handles the keys pressing
         actions.add(action);
 
-        // updates the screen
-        update();
         if (actions.size() > MAX_SIZE) {
             actions.remove(0); // Removes the first element if list is full
             gridPane.getChildren().remove(0);
@@ -775,9 +776,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode());
         updateTitle(mainStage);
 
+        // updates the screen
+        update();
+
         // Prints the key we pressed
-        //if (isDebugMode)
-        //System.out.println("pressedKey='" + action.getPressedKey() + "', ability='" + action.getActionName() + "', borderColor='" + action.getActionTier().getAbilityBorder().toString() + "'");
+        System.out.println("actionName='"+action.getActionName()+"', key="+(action.isCtrlPressed() ? "CTRL+" : action.isShiftPressed() ? "Shift+" : action.isAltPressed() ? "ALT+" : "")+key+");");
     }
 
     private static void updateTitle(Stage stage) {
