@@ -50,7 +50,7 @@ ABILITY_NAME("ability name prettyfied", NativeKeyEvent.VC_1, false, false, false
 ```
 
 ##### Parameters:  
-| enum            | String          | NativeKeyEvent  | boolean         |    boolean      |      boolean    |    ActionTier   | String | ActionStyle |
+| enum            | String          | [NativeKeyEvent](https://javadoc.io/static/com.1stleg/jnativehook/2.0.3/org/jnativehook/keyboard/NativeKeyEvent.html "See all keyevents here")  | boolean         |    boolean      |      boolean    |    ActionTier   | String | ActionStyle |
 | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- |--------------- |
 | ABILITY_NAME    | Corruption Shot |NativeKeyEvent.VC_1| false| false | false | ActionTier.BASIC_ABILITY | STRENGTH_PATH+"/fury.png"| ActionStyle.MELEE|
 
@@ -70,12 +70,12 @@ ABILITY_NAME("ability name prettyfied", NativeKeyEvent.VC_1, false, false, false
                                     PRAYER( 4, "#7e8ec8"),
                                             WEAPON_SPEC(4, "#bd0026");
 ```
-Choose one, in this example we're using: ActionTier.BASIC_ABILITY, you can leave as that to test it.
-**7th param:** *String*  | The path to the action image we're using, in the example case we're using STRENGTH_PATH+**fury.png** - **NOTE:** The *STRENGTH_PATH*  in this example is just a constant so we dont type the full directory to where the image is, you can use any other directory from your computer, i'd strongy recommend using the same folder directory to avoid fail when loading the files.
+Choose one, in this example we're using: ActionTier.BASIC_ABILITY, you can leave as that to test it.  
+**7th param:** *String*  | The path to the action image we're using, in the example case we're using STRENGTH_PATH+**fury.png** - **NOTE:** The *STRENGTH_PATH*  in this example is just a constant so we dont type the full directory to where the image is, you can use any other directory from your computer, i'd strongy recommend using the same folder directory to avoid fail when loading the files.  
 **8th param:** *ActionStyle*  | The action style used by this action, used to determine if the abiilty we're using is the same of the **COMBAT_STYLE** we setted up when loading our application.  Which means if we set the var. to** ActionStyle.RANGED**, only abilities we added to the list that contains **RANGED action style** will be triggered when pressing the keys. 
 
-**NOTE:** If the ability is wheter a defensive ability or consumable/items action that doesn't differ in any rotation, you must use **ActionStyle.NONE** as the last parameter, meaning the action can be triggered by any **COMBAT_STYLE**.
-
+**NOTE:** If the ability is wheter a defensive ability or consumable/items action that doesn't differ in any rotation, you must use **ActionStyle.NONE** as the last parameter, meaning the action can be triggered by any **COMBAT_STYLE**.  
+  
 Now save it up, and reload the application, if you don't know how to, go to the Setup section in this document.
 
 ------------
