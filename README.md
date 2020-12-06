@@ -109,10 +109,10 @@ NONE(0),
 ------------
 
 ## Future implementations
-- [ ] UI for actions adding/removing (instead of plain coding)
+- [X] UI for actions adding/removing (instead of plain coding)
 - [ ] Upgraded version with more functionalities
     - [ ] Node.js API for easier management
-    - [ ] Menu with settings
+    - [X] Menu with settings
 
 ------------
 
