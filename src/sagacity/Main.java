@@ -2,14 +2,23 @@ package sagacity;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingNode;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -20,6 +29,7 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import utils.FileWritter;
 import utils.MasksConstants;
+import javafx.geometry.Insets;
 
 import java.awt.*;
 import java.io.IOException;
@@ -43,7 +53,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * The combat style you'l be using on the abilities
      * ActionStyle.MELEE For melee | ActionStyle.RANGED for ranged | ActionStyle.MAGIC for magic
      */
-    private static final ActionStyle COMBAT_STYLE = ActionStyle.RANGED;
+    private static final ActionStyle COMBAT_STYLE = ActionStyle.MELEE;
     /**
      * The title
      */
@@ -167,8 +177,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     public void start(Stage mainStage) {
         // create the menus
         final Menu menu = new Menu("Menu");
-        final Menu abilities = new Menu("Abilities");
-        addMenuAction(abilities, () -> System.out.println("WIP"));
+        final Menu abilities = new Menu("Actions");
+        //addMenuAction(abilities, () -> System.out.println("WIP"));
         final Menu help = new Menu("Help");
         addMenuAction(help, () -> {
             try {
@@ -178,13 +188,16 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             }
         });
         // create menu items
-        final MenuItem menuItem = new MenuItem("Toggle combat mode");
-        addMenuItemAction(menuItem, () -> {
+        final MenuItem toggleCombatMode = new MenuItem("Toggle combat mode");
+        final MenuItem configureAbilities = new MenuItem("Manage");
+        addMenuItemAction(toggleCombatMode, () -> {
             isCombatMode = !isCombatMode;
             System.out.println("Combat mode is now "+(isCombatMode? "enabled": "disabled"));
         });
+        addMenuItemAction(configureAbilities, Main::openConfigurationScreen);
         // add menu items to menu
-        menu.getItems().add(menuItem);
+        menu.getItems().add(toggleCombatMode);
+        abilities.getItems().add(configureAbilities);
         // create a menubar
         MenuBar menuBar = new MenuBar();
         // add menu to menubar
@@ -217,6 +230,90 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
+     * Opens the configuration screen
+     */
+    private static void openConfigurationScreen() {
+        TableView<Action> table = new TableView<>();
+        ObservableList<Action> data = FXCollections.observableArrayList();
+
+        List<Action> auxList = new ArrayList<>();
+        for (ActionList actionList: ActionList.values()) {
+            auxList.add(actionList.getAction());
+        }
+        data.addAll(auxList);
+
+        Stage stage = new Stage();
+
+        Scene scene = new Scene(new Group());
+        stage.setTitle("Action Management");
+        stage.setWidth(670);
+        stage.setHeight(500);
+
+        final Label label = new Label("Actions list (Currently only showing)");
+
+        table.setEditable(true);
+
+        TableColumn actionName = addTableColumn("actionName", "ActionName", null);
+        TableColumn keyCode = addTableColumn("pressedKey", "KeyCode", null);
+        TableColumn ctrlMask = addTableColumn("ctrlPressed", "CTRL?", null);
+        TableColumn shiftMask = addTableColumn("shiftPressed", "Shift?", null);
+        TableColumn altMask = addTableColumn("altPressed", "Alt?", null);
+        TableColumn actionTier = addTableColumn("actionTier", "ActionTier", null);
+        TableColumn actionImage = addTableColumn("actionImage", "Icon", null);
+        TableColumn actionStyle = addTableColumn("actionStyle", "ActionStyle", null);
+
+        table.setItems(data);
+        table.getColumns().addAll(actionName, actionImage, keyCode, ctrlMask, shiftMask, altMask, actionTier, actionStyle);
+
+        HBox pane = new HBox();
+        pane.setSpacing(10);
+
+        Button addButton = new Button("Add");
+        addButtonAction(addButton, () -> {
+            System.out.println("add");
+            table.getItems().add(new Action("teste", 0, false, false, false, null,null, null));
+            table.scrollTo(data.size()-1);
+            table.getFocusModel().focus(data.size());
+            table.getSelectionModel().focus(data.size());
+        });
+        Button removeButton = new Button("Remove");
+        addButtonAction(removeButton, () -> {
+            table.getItems().remove(table.getSelectionModel().getSelectedItem());
+        });
+
+        pane.getChildren().addAll(addButton, removeButton);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+        vbox.getChildren().addAll(label, table, pane);
+
+        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+
+        stage.setAlwaysOnTop(true);
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /**
+     * Create a table column
+     * @param columnValue The column value to be retrieved
+     * @param columnName The column name
+     * @param preferedSize The preferred size {@code null} for automatic
+     * @return The generated TableColumn
+     */
+    private static TableColumn addTableColumn(String columnValue, String columnName, Integer preferedSize) {
+        TableColumn column = new TableColumn(columnName);
+        if (preferedSize != null) {
+            column.setMinWidth(preferedSize);
+        }
+        column.setCellValueFactory(new PropertyValueFactory<Action, String>(columnValue));
+        column.setEditable(true);
+        return column;
+    }
+
+    /**
      * The bootstrapper
      * @param args Program arguments
      */
@@ -237,6 +334,18 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         menuItem.setOnAction(event -> {
             action.run();
             System.out.println("clicked at "+menuItem.getText());
+        });
+    }
+
+    /**
+     * Adds a new button action when clicking on it
+     * @param button The button we are clicking
+     * @param action The action that should it do
+     */
+    private static void addButtonAction(Button button, Runnable action) {
+        button.setOnAction(event -> {
+            action.run();
+            System.out.println("Clicked at button: "+button.getText());
         });
     }
 
