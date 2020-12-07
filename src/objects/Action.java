@@ -11,23 +11,23 @@ import javafx.scene.image.ImageView;
  * @project RSKeyLogging
  */
 public class Action {
-    private TableView tableView;
+    //private TableView tableView;
     private String actionName;
     private int pressedKey;
     private boolean ctrlPressed;
     private boolean shiftPressed;
     private boolean altPressed;
     private ActionTier actionTier;
-    private ImageView actionImage;
+    private transient ImageView actionImage;
     private ActionStyle actionStyle;
 
-    public TableView getTableView() {
+    /*public TableView getTableView() {
         return tableView;
-    }
+    }*/
 
-    public void setTableView(TableView tableView) {
+    /*public void setTableView(TableView tableView) {
         this.tableView = tableView;
-    }
+    }*/
 
     public void setActionName(String actionName) {
         this.actionName = actionName;
@@ -132,8 +132,8 @@ public class Action {
      * @param pressedKey The pressedKey
      * @param img The actionImage
      */
-    public Action(TableView table, String actionName, int pressedKey, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier tier, Image img, ActionStyle style) {
-        this.tableView = table;
+    public Action(/*TableView table, */String actionName, int pressedKey, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier tier, Image img, ActionStyle style) {
+        //this.tableView = table;
         this.actionName = actionName;
         this.pressedKey = pressedKey;
         this.ctrlPressed = ctrlPressed;

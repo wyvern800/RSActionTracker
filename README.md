@@ -34,9 +34,9 @@ You will need a JDK 8x installed in your development, an IDE, I would recommend 
 
 #### First steps
 1. Import the project in any IDE, and add the jNativeHook to the libraries if you're having issues related to imports.
-2. The main file for loading the application is **src.Main.java**
+2. The main file for loading the application is **src.sagacity.Main.java**
 3. Open it up and set a combat style, there are three atm: **ActionStyle.MELEE, ActionStyle.RANGED and ActionStyle.MAGIC**
-4. After selecting a combat style, run the file  **Main.java**.
+4. After selecting a combat style, run the file  **sagacity.Main.java**.
 5. If the application is open, when pressing any key, you'l be receiving a console print saying you're on idle mode, press F12 to toggle between idle mode/combat mode. (**NOTE: idle mode is for when you're talking, and doing other things instead combatting, then the keys won't be triggered**)
 
 ------------
@@ -110,16 +110,28 @@ NONE(0),
 
 ## Future implementations
 - [X] UI for actions adding/removing (instead of plain coding)
+- [ ] Persistance using JSON serialization
+    - [X] Implementated the saving basis
+    - [ ] Saving / loading all necessary data
 - [ ] Upgraded version with more functionalities
     - [ ] Node.js API for easier management
-    - [X] Menu with settings
-
+    - [X] Menu with basic settings implemented
+        - [X] Toggle combat mode hotkeys + buttons
+        - [X] Saving clicks per minute for stream purposes
+            - [ ] Calculation thread for CPM (Clicks per minute)
+        - [ ] Better & advanced functionatities
+- [ ] Free version released for streamers testing
+    - [ ] Premium version with more action slots and more functions...
 ------------
 
 Thanks for reading until here, this took sometime and I hope you enjoy using my software 💖
 
 Incase you like, please give me a Star here! | Support my future development by [subscribing to my Patreon](https://www.patreon.com/wyvern800 "View my Patreon page <3")  
 
+
+------------
+
 ### Credits
-[jNativeHook](https://github.com/kwhat/jnativehook/) - for the Keyboard keys listening.
+- [jNativeHook](https://github.com/kwhat/jnativehook/) - for the Keyboard keys listening.
+- [Gson](#) - for the database saving.
 

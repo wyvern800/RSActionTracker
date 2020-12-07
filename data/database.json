@@ -1,0 +1,463 @@
+{
+  "cachedActions": [
+    {
+      "actionName": "Fury",
+      "pressedKey": 2,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Dismember",
+      "pressedKey": 3,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Quake",
+      "pressedKey": 16,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Berserk",
+      "pressedKey": 19,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Cleave",
+      "pressedKey": 5,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Kick",
+      "pressedKey": 4,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Stomp",
+      "pressedKey": 33,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Hurricane",
+      "pressedKey": 17,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Slaughter",
+      "pressedKey": 18,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Sever",
+      "pressedKey": 4,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Smash",
+      "pressedKey": 2,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Barge",
+      "pressedKey": 30,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Blood Tendrils",
+      "pressedKey": 22,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Tuska\u0027s Wrath",
+      "pressedKey": 3,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Sacrifice",
+      "pressedKey": 5,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "MELEE"
+    },
+    {
+      "actionName": "Piercing Shot",
+      "pressedKey": 2,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Needle Strike",
+      "pressedKey": 3,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Tuska\u0027s Wrath",
+      "pressedKey": 4,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Snipe",
+      "pressedKey": 5,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Sacrifice",
+      "pressedKey": 2,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Ricochet",
+      "pressedKey": 3,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Binding Shot",
+      "pressedKey": 4,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Deadshot",
+      "pressedKey": 5,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Snap Shot",
+      "pressedKey": 16,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Rapid Fire",
+      "pressedKey": 17,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Bombardment",
+      "pressedKey": 18,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Unload",
+      "pressedKey": 33,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Corrupt. Shot",
+      "pressedKey": 30,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Frag. Shot",
+      "pressedKey": 19,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Shadow Tendrils",
+      "pressedKey": 19,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Death\u0027s Swiftness",
+      "pressedKey": 18,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "actionStyle": "RANGED"
+    },
+    {
+      "actionName": "Devotion",
+      "pressedKey": 47,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "DEFENSIVE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Freedom",
+      "pressedKey": 16,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "DEFENSIVE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Resonance",
+      "pressedKey": 60,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "DEFENSIVE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Provoke",
+      "pressedKey": 61,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "DEFENSIVE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Preparation",
+      "pressedKey": 62,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "DEFENSIVE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Reflect",
+      "pressedKey": 44,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Debilitate",
+      "pressedKey": 32,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Anticipation",
+      "pressedKey": 17,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "DEFENSIVE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Barricade",
+      "pressedKey": 48,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Ess. of Finality",
+      "pressedKey": 23,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "WEAPON_SPEC",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Onslaught",
+      "pressedKey": 25,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Anguish",
+      "pressedKey": 44,
+      "ctrlPressed": false,
+      "shiftPressed": true,
+      "altPressed": false,
+      "actionTier": "PRAYER",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Soul Split",
+      "pressedKey": 33,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "PRAYER",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Protect Ranged",
+      "pressedKey": 44,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "PRAYER",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Protect Magic",
+      "pressedKey": 45,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "PRAYER",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Protect Melee",
+      "pressedKey": 46,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "PRAYER",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Eat Food",
+      "pressedKey": 63,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "CONSUMABLE",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Repriser",
+      "pressedKey": 59,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "DEFENSIVE_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Surge",
+      "pressedKey": 30,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Escape",
+      "pressedKey": 31,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "actionStyle": "NONE"
+    }
+  ]
+}
