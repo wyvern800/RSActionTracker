@@ -118,7 +118,7 @@ NONE(0),
 
 Thanks for reading until here, this took sometime and I hope you enjoy using my software 💖
 
-Incase you like, please give me a Star here!
+Incase you like, please give me a Star here! | Support my future development by [subscribing to my Patreon](https://www.patreon.com/wyvern800 "View my Patreon page <3")  
 
 ### Credits
 [jNativeHook](https://github.com/kwhat/jnativehook/) - for the Keyboard keys listening.
