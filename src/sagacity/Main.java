@@ -17,12 +17,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -33,6 +35,7 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+import utils.FileManager;
 import utils.FileWritter;
 import utils.GsonUtil;
 import utils.MasksConstants;
@@ -57,24 +60,40 @@ import java.util.logging.Logger;
  * @project RSActionsLogging
  */
 public class Main extends Application implements NativeKeyListener, Constants, MasksConstants {
-    private static SavedData savedData;
+    /**
+     * The title
+     */
+    private static final String TITLE = "RSActionLogger - by wyvern800"; //Do not touch
 
-    public static SavedData getSavedData() {
-        return savedData;
-    }
+    public static Desktop desktop = Desktop.getDesktop();
 
     /**
      * The combat style you'l be using on the abilities
      * ActionStyle.MELEE For melee | ActionStyle.RANGED for ranged | ActionStyle.MAGIC for magic
      */
     private static final ActionStyle COMBAT_STYLE = ActionStyle.RANGED;
-    /**
-     * The title
-     */
-    private static String title = "RSActionLogger - by wyvern800"; //Do not touch
 
     // The actionStatus
     private static ActionStatus actionStatus = ActionStatus.IDLE;
+
+    // The configTable
+    private static TableView<Action> setupTableView;
+
+    /**
+     * Cached actions
+     */
+    public static List<Action> cachedActions;
+
+    /**
+     * The personal pressed actions (that is used to store session
+     */
+    public static List<Action> actions;
+
+    /**
+     * The scenes
+     */
+    private static List<Scene> scenes;
+
 
     /**
      * {@code True} if in keys should be logged, {@code False} if not
@@ -88,38 +107,25 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static Stage mainStage;
     private static int actionsDone;
     public static LastKeyPressed lastKeyPressed;
+    private static SavedData savedData;
 
     /**
      * The grid pane
      */
-    public static GridPane gridPane;
-
-    private static TableView<Action> configTable;
-
-    /**
-     * The main scene
-     */
-    public static Scene mainScene;
-
-    /**
-     * The scenes
-     */
-    private static List<Scene> scenes;
-
-    /**
-     * Cached actions
-     */
-    public static List<Action> cachedActions;
-
-    /**
-     * The personal pressed actions
-     */
-    public static List<Action> actions;
+    public static GridPane mainGridPane;
 
     /**
      * Max actions we're monitoring
      */
     private static final int MAX_SIZE = 10; //Do not touch
+
+    /**
+     * Gets the saved data
+     * @return The savedData
+     */
+    public static SavedData getSavedData() {
+        return savedData;
+    }
 
     /**
      * The constructor
@@ -135,6 +141,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Load all actions to our cache
         List<Action> tempActList = new ArrayList<>();
         for (ActionList store : ActionList.values()) {
+            if (store == null)
+                continue;
             tempActList.add(store.getAction());
             cachedActions.add(store.getAction());
         }
@@ -166,7 +174,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     private static void addActionToScreen(int i) {
         // Creating the action instance
-        Action newAction = new Action(/*configTable,*/ actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(), actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getActionImage().getImage(), actions.get(i).getActionStyle());
+        Action newAction = new Action(/*configTable,*/ actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(), actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getIconPath(), actions.get(i).getActionStyle());
 
         // Creating the content boxes
         HBox actionBox = new HBox(1);
@@ -195,7 +203,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         actionName.setVisible(showActionName);
 
         // Add the actionBox to the gridPane
-        gridPane.add(actionBox, i, 0);
+        mainGridPane.add(actionBox, i, 0);
     }
 
     /**
@@ -209,7 +217,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     private static Menu stopResume = new Menu("Stop");
-    private static final String[][] stopResumeLabel = {{"Start Logging", "list.png"}, {"Stop Logging", "list.png"}, {"Resume Logging", "list.png"}};
+    private static final String[][] stopResumeLabel = {{"Start Logging", "play.png"}, {"Stop Logging", "stop.png"}, {"Resume Logging", "play.png"}};
 
     /**
      * Starts the program
@@ -218,54 +226,75 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     @Override
     public void start(Stage mainStage) {
-        configTable = new TableView<>();
+        setupTableView = new TableView<>();
 
         // create the menus
-        final Menu menu = new Menu("Toggles", getMenuIcon("list.png"));
+        final Menu menu = new Menu("Options", getMenuIcon("list.png"));
         final Menu configurations = new Menu("Setup", getMenuIcon("setup.png"));
-        //addMenuAction(abilities, () -> System.out.println("WIP"));
-        final Menu help = new Menu("Help", getMenuIcon("help.png"));
+        final Menu links = new Menu("Links", getMenuIcon("help.png"));
+        final MenuItem help = new MenuItem("Help", getMenuIcon("config.png"));
+        final MenuItem about = new MenuItem("About", getMenuIcon("config.png"));
+        final MenuItem discord = new MenuItem("Discord", getMenuIcon("config.png"));
+        final MenuItem purchase = new MenuItem("Purchase a License", getMenuIcon("config.png"));
+        final SeparatorMenuItem sep2 = new SeparatorMenuItem();
+        links.getItems().addAll(help, discord, about, sep2, purchase);
         stopResume = new Menu(stopResumeLabel[0][0], getMenuIcon(stopResumeLabel[0][1]));
-        addMenuAction(help, () -> {
+        addMenuItemAction(help, ()-> {
             try {
                 Desktop.getDesktop().browse(new URL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md").toURI());
             } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
             }
         });
+        addMenuItemAction(about, ()-> {
+            System.out.println("about");
+        });
+        addMenuItemAction(discord, ()-> {
+            System.out.println("discord");
+        });
+        addMenuItemAction(purchase, ()-> {
+            System.out.println("purchase");
+        });
+        /*addMenuAction(help, () -> {
+            try {
+                Desktop.getDesktop().browse(new URL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md").toURI());
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });*/
         // Combat menu
-        final MenuItem toggleCombatMode = new MenuItem("Toggle Combat mode", getMenuIcon("config.png"));
-        final MenuItem toggleAbilityName = new MenuItem("Toggle Ability name", getMenuIcon("config.png"));
+        final MenuItem toggleCombatMode = new MenuItem("Toggle Idle mode", getMenuIcon("config.png"));
+        final MenuItem toggleAbilityName = new MenuItem("Toggle display ability name", getMenuIcon("config.png"));
         // add menu items to menu
         menu.getItems().addAll(toggleCombatMode, toggleAbilityName);
 
-        addMenuItemAction(toggleCombatMode, ()-> toggleCombatMode(false));
+        addMenuItemAction(toggleCombatMode, ()-> toggleIdleMode(false));
 
         addMenuItemAction(toggleAbilityName, () -> {
             showActionName = !showActionName;
             System.out.println("Ability name is now " + (showActionName ? "enabled" : "disabled"));
         });
 
-        addMenuAction(stopResume, ()-> toggleCombatMode(false));
+        addMenuAction(stopResume, ()-> toggleIdleMode(false));
 
         // Configurations menu
-        final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("config.png"));
+        final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("click.png"));
         final MenuItem actionStyle = new MenuItem("Action Styles", getMenuIcon("config.png"));
         actionStyle.setDisable(true);
         final MenuItem actionTier = new MenuItem("Action Tiers", getMenuIcon("config.png"));
         actionTier.setDisable(true);
         addMenuItemAction(configureAbilities, ()-> {
-            toggleCombatMode(true);
+            toggleIdleMode(true);
             openSetupScreen();
         });
         addMenuItemAction(actionStyle, Main::openActionStyles);
         addMenuItemAction(actionTier, Main::openActionTiers);
         configurations.getItems().addAll(configureAbilities, actionStyle, actionTier);
 
-        // add menu to menubar
+        // add menu to menu bar
         // Left bar
         MenuBar leftBar = new MenuBar();
-        leftBar.getMenus().addAll(menu, configurations, help);
+        leftBar.getMenus().addAll(menu, configurations, links);
         // Right bar
         MenuBar rightBar = new MenuBar();
         rightBar.getMenus().addAll(stopResume);
@@ -284,11 +313,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // set a background color to the vertical box
         verticalBox.setStyle("-fx-background-color: #000000;");
         // create a grid pane
-        gridPane = new GridPane();
+        mainGridPane = new GridPane();
         // add the grid pane to the vertical box
-        verticalBox.getChildren().add(gridPane);
+        verticalBox.getChildren().add(mainGridPane);
 
-        mainStage.setTitle(title);
+        mainStage.setTitle(TITLE);
         mainStage.setScene(mainScene);
         mainStage.setAlwaysOnTop(true);
         mainStage.setResizable(false);
@@ -307,7 +336,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 new KeyCodeCombination(KeyCode.F12),
                 () -> {
                     stopResume.fire();
-                    toggleCombatMode(false);
+                    toggleIdleMode(false);
                 }
         );
 
@@ -354,6 +383,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         System.out.println("actionStyles");
     }
 
+    private static void constructTable() {
+
+    }
+
     /**
      * Opens the setup screen
      */
@@ -371,11 +404,29 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Scene scene = new Scene(new Group());
         setupStage.setTitle("Action Management");
         setupStage.setWidth(600);
-        setupStage.setHeight(550);
+        setupStage.setHeight(565);
 
-        final Label label = new Label("ActionsList");
+        final HBox topPanel = new HBox();
+        final Label searchLabel = new Label("Search: ");
+        final TextField searchBar = new TextField();
+        searchBar.setPrefWidth(412);
+        searchBar.setFocusTraversable(false);
+        final Button searchButton = new Button("Search", getMenuIcon("search.png"));
+        searchButton.setFocusTraversable(false);
+        searchButton.setDisable(true);
+        searchBar.setDisable(true);
 
-        configTable.setEditable(true);
+        Separator sep = new Separator();
+        sep.setOrientation(Orientation.VERTICAL);
+
+        // Add all components to the top panel
+        topPanel.getChildren().addAll(searchLabel, sep, searchBar, searchButton);
+        topPanel.setSpacing(10);
+        topPanel.setPadding(new Insets(3, 0, 3, 0));
+
+        setupTableView.setEditable(true);
+        setupTableView.setFocusTraversable(false);
+        setupTableView.getSelectionModel().selectedItemProperty().addListener((obs) -> setupTableView.requestFocus());
 
         // Add the actionName
         TableColumn actionName = addTableColumn(new TableColumn<Action, String>("ActionName"), null, new PropertyValueFactory<Action, String>("actionName"), true);
@@ -532,8 +583,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 }
         );
 
-        configTable.setItems(observableListData);
-        configTable.getColumns().addAll(actionName, actionImage, keyCode, ctrlMask, shiftMask, altMask, actionTier, actionStyle);
+        setupTableView.setItems(observableListData);
+        setupTableView.getColumns().addAll(actionName, actionImage, keyCode, ctrlMask, shiftMask, altMask, actionTier, actionStyle);
 
         HBox pane = new HBox();
         pane.setSpacing(10);
@@ -544,26 +595,36 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 new KeyCodeCombination(KeyCode.INSERT),
                 addButton::fire
         );*/
+        addButton.setFocusTraversable(false);
         Main.addButtonAction(addButton, Main::processAddButtonAction);
 
         // Action removing button
         Button removeButton = new Button("Remove Action", getMenuIcon("remove.png"));
+        removeButton.setFocusTraversable(false);
         scene.getAccelerators().put(
                 new KeyCodeCombination(KeyCode.DELETE),
                 removeButton::fire
         );
         addButtonAction(removeButton, () ->
                 showConfirmationDialog(
-                        "Are you sure you want to delete: " + configTable.getSelectionModel().getSelectedItem().getActionName() + "?",
+                        "Are you sure you want to delete: " + setupTableView.getSelectionModel().getSelectedItem().getActionName() + "?",
+                        setupStage,
                         Main::processRemoveButtonAction));
 
         // Refresh list button
         Button refreshButton = new Button("Refresh List", getMenuIcon("refresh.png"));
+        refreshButton.setFocusTraversable(false);
         addButtonAction(refreshButton, Main::refreshTable);
 
         // Change action icon button
-        Button changeIconButton = new Button("Change Ability Icon", getMenuIcon("refresh.png"));
-        addButtonAction(changeIconButton, Main::changeAbilityIcon);
+        Button changeIconButton = new Button("Set Icon", getMenuIcon("image.png"));
+        changeIconButton.setFocusTraversable(false);
+        addButtonAction(changeIconButton, ()-> changeAbilityIcon(setupTableView.getSelectionModel().getSelectedItem(), setupStage));
+
+        // Change key bind
+        Button changeKeyBindButton = new Button("Set Keybind", getMenuIcon("keybind.png"));
+        changeKeyBindButton.setFocusTraversable(false);
+        addButtonAction(changeKeyBindButton, ()-> changeKeyBind(setupTableView.getSelectionModel().getSelectedItem()));
 
         Separator separator2 = new Separator();
         separator2.setOrientation(Orientation.VERTICAL);
@@ -577,10 +638,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         tp.setContent(pane);
         tp.setText("Options");
         tp.setExpanded(true);
+        tp.setFocusTraversable(false);
 
         hBox.getChildren().add(tp);
 
-        pane.getChildren().addAll(addButton, removeButton, separator2, changeIconButton, separator3, refreshButton);
+        // Add all components to the pane
+        pane.getChildren().addAll(addButton, removeButton, separator2, changeKeyBindButton, changeIconButton, separator3, refreshButton);
 
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
@@ -590,7 +653,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Separator separator = new Separator();
         separator.setOrientation(Orientation.HORIZONTAL);
 
-        vbox.getChildren().addAll(label, configTable, separator, hBox);
+        vbox.getChildren().addAll(topPanel, setupTableView, separator, hBox);
 
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
 
@@ -598,9 +661,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         setupStage.setResizable(false);
         setupStage.setScene(scene);
         setupStage.show();
-        configTable.setStyle("text-align: right");
 
-        configTable.setMaxWidth(576);
+        setupTableView.setMaxWidth(576);
 
         tp.setPrefWidth(576);
 
@@ -612,13 +674,14 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
-     * Shows a confirmation dialog
-     *
-     * @param contentText The contentText
+     * Shows a confirmation dialog pane
+     * @param contentText The description about the panel
+     * @param owner Which stage was this called from (the owner)
+     * @param exec The execution when clicking on OK button
      */
-    private static void showConfirmationDialog(String contentText, Runnable exec) {
+    private static void showConfirmationDialog(String contentText, Stage owner, Runnable exec) {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        a.initOwner(mainStage);
+        a.initOwner(owner);
         if (contentText != null) {
             a.setContentText(contentText);
         }
@@ -632,32 +695,32 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * Processes the add button action
      */
     private static void processAddButtonAction() {
-        System.out.println("added a row");
-        Action newAction = new Action(/*configTable,*/ generateRandomActionName(), 0, false, false, false, ActionTier.BASIC_ABILITY, new Image(PLACEHOLDER_PATH + "/placeholder.png"), ActionStyle.NONE);
+        Action newAction = new Action(/*configTable,*/ generateRandomActionName(), 0, false, false, false, ActionTier.BASIC_ABILITY, RESOURCES_PATH + "/placeholder.png", ActionStyle.NONE);
         newAction.getActionImage().setFitWidth(30);
         newAction.getActionImage().setFitHeight(30);
-        configTable.getItems().add(newAction);
+        setupTableView.getItems().add(newAction);
         cachedActions.add(newAction);
 
         getSavedData().setCachedActions(cachedActions);
 
-        /*configTable.getFocusModel().focus(25, null);*/
-        configTable.requestFocus();
+        setupTableView.scrollTo(newAction);
 
-        configTable.scrollTo(newAction);
+        setupTableView.requestFocus();
+        //configTable.getFocusModel().focus(25, null);
 
         refreshTable();
+        System.out.println("processAddButtonAction("+newAction.getActionName()+")");
     }
 
     /**
      * Processes the remove button action
      */
     private static void processRemoveButtonAction() {
-        if (configTable.getSelectionModel() == null || configTable.getSelectionModel().isEmpty()) {
+        if (setupTableView.getSelectionModel() == null || setupTableView.getSelectionModel().isEmpty()) {
             System.out.println("Please select a row before deleting!");
             return;
         }
-        Action selectedRow = configTable.getSelectionModel().getSelectedItem();
+        Action selectedRow = setupTableView.getSelectionModel().getSelectedItem();
 
         // Just a normal check to avoid things from being deleted while not present on our list
         /*Optional<Action> optAction = cachedActions.stream().filter(a-> a.getActionName().toLowerCase().equals(selectedRow.getActionName().toLowerCase())).findFirst();
@@ -667,7 +730,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }*/
 
         System.out.println("removed='" + selectedRow.getActionName() + "'");
-        configTable.getItems().remove(configTable.getSelectionModel().getSelectedItem());
+        setupTableView.getItems().remove(setupTableView.getSelectionModel().getSelectedItem());
 
         cachedActions.removeIf(p -> p.getActionName().toLowerCase().equals(selectedRow.getActionName().toLowerCase()));
 
@@ -710,16 +773,53 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * Refresh table
      */
     private static void refreshTable() {
-        configTable.refresh();
+        setupTableView.refresh();
         System.out.println("Table refreshed");
     }
 
     /**
-     * Change the ability icon
+     * Change the action icon
      */
-    private static void changeAbilityIcon() {
-        System.out.println("changeAbilityIcon");
+    private static void changeAbilityIcon(Action action, Stage stage) {
+        if (action == null) {
+            System.out.println("Action isn't selected");
+            return;
+        }
+        Optional<Action> optAction = cachedActions.stream().filter(p-> p.getActionName().toLowerCase().equals(action.getActionName().toLowerCase())).findFirst();
+        if (!optAction.isPresent()) {
+            System.out.println("action doesn't exist in database");
+        }
+        FileChooser fileChooser = new FileChooser();
+        FileManager.configureFileChooser(fileChooser, "Change Action Icon");
+        fileChooser.setTitle("Open Resource File");
+
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+           //FileManager.openFile(file);
+           String cwd = System. getProperty("user.dir");
+           action.setIconPath(new File(cwd).toURI().relativize(file.toURI()).getPath());
+           getSavedData().setCachedActions(cachedActions);
+           refreshTable();
+        }
+        System.out.println("changeAbilityIcon("+action.getActionName()+")");
     }
+
+    /**
+     * Changes the key bind
+     */
+    private static void changeKeyBind(Action action) {
+        if (action == null) {
+            System.out.println("Action isn't selected");
+            return;
+        }
+        Optional<Action> optAction = cachedActions.stream().filter(p-> p.getActionName().toLowerCase().equals(action.getActionName().toLowerCase())).findFirst();
+        if (!optAction.isPresent()) {
+            System.out.println("action doesn't exist in database");
+        }
+        System.out.println("changeKeyBind("+action.getActionName()+")");
+    }
+
+
 
     /**
      * Returns a random name for the action adding name
@@ -839,24 +939,26 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
-     * Toggles the combat mode
+     * Toggles the idle mode
      */
-    private static void toggleCombatMode(boolean disable) {
+    private static void toggleIdleMode(boolean disable) {
         if (disable) {
             isCombatMode = false;
         } else {
             isCombatMode = !isCombatMode;
         }
-        System.out.println("Combat mode is now " + (isCombatMode ? "enabled" : "disabled"));
+        System.out.println("Idle mode is now " + (isCombatMode ? "enabled" : "disabled"));
         lastKeyPressed = new LastKeyPressed(LocalTime.now(), NativeKeyEvent.VC_F11);
         actionStatus = (isCombatMode ? ActionStatus.LOGGING : ActionStatus.PAUSED);
         updateTitle(mainStage);
         if (!isCombatMode) {
             stopResume.setText(stopResumeLabel[2][0]);
-            System.out.println("start logging");
+            //stopResume = new Menu(stopResumeLabel[2][0], getMenuIcon(stopResumeLabel[2][1]));
+            System.out.println("stop logging");
         } else {
             stopResume.setText(stopResumeLabel[1][0]);
-            System.out.println("stop logging");
+            //stopResume = new Menu(stopResumeLabel[1][0], getMenuIcon(stopResumeLabel[1][1]));
+            System.out.println("start logging");
         }
     }
 
@@ -894,7 +996,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
             // Prints our current actions cache
             List<String> actionsCache = new ArrayList<>();
-            actions.forEach(action -> {
+            Main.actions.forEach(action -> {
                 actionsCache.add(action.getActionName());
             });
             System.out.println(actionsCache.toString());
@@ -914,7 +1016,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         if (actions.size() > MAX_SIZE) {
             actions.remove(0); // Removes the first element if list is full
-            gridPane.getChildren().remove(0);
+            mainGridPane.getChildren().remove(0);
         }
 
         actionsDone++;
@@ -931,7 +1033,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     private static void updateTitle(Stage stage) {
-        stage.setTitle(title + " | status=" + actionStatus + " | actionsDone=" + actionsDone + " | user=Sagacity");
+        stage.setTitle(TITLE + " | status=" + actionStatus + " | actionsDone=" + actionsDone + " | user=Sagacity");
     }
 
     @Override

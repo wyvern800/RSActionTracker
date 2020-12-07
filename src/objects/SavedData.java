@@ -15,7 +15,7 @@ import java.util.List;
  * @project RSKeyLogging
  */
 public class SavedData implements Constants {
-    public static final String SAVINGS_PATH = "data/database.json";
+    public static final String SAVINGS_PATH = DATA_PATH+"database.json";
 
     /**
      * Cached actions
@@ -23,21 +23,35 @@ public class SavedData implements Constants {
     private List<Action> cachedActions;
 
 
+    /**
+     * Gets the cached actions
+     * @return The cachedActions
+     */
     public List<Action> getCachedActions() {
         return cachedActions;
     }
 
 
+    /**
+     * Sets the cachedActions
+     * @param cachedActions The cachedActions
+     */
     public void setCachedActions(List<Action> cachedActions) {
         this.cachedActions = cachedActions;
-        save();
+        saveData();
     }
 
+    /**
+     * Creates the object
+     */
     public SavedData() {
         this.cachedActions = new ArrayList<>(Main.cachedActions);
     }
 
-    public void save() {
+    /**
+     * Saves the information to the database
+     */
+    public void saveData() {
         GsonUtil.save(Main.getSavedData(), SavedData.SAVINGS_PATH, SavedData.class);
     }
 }

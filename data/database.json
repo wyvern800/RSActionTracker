@@ -7,6 +7,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/strength/fury.png",
       "actionStyle": "MELEE"
     },
     {
@@ -16,6 +17,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/strength/dismember.png",
       "actionStyle": "MELEE"
     },
     {
@@ -25,6 +27,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/strength/quake.png",
       "actionStyle": "MELEE"
     },
     {
@@ -34,6 +37,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/strength/berserk.png",
       "actionStyle": "MELEE"
     },
     {
@@ -43,6 +47,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/strength/cleave.png",
       "actionStyle": "MELEE"
     },
     {
@@ -52,6 +57,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/strength/kick.png",
       "actionStyle": "MELEE"
     },
     {
@@ -61,6 +67,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/strength/stomp.png",
       "actionStyle": "MELEE"
     },
     {
@@ -70,6 +77,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/attack/hurricane.png",
       "actionStyle": "MELEE"
     },
     {
@@ -79,6 +87,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/attack/slaughter.png",
       "actionStyle": "MELEE"
     },
     {
@@ -88,6 +97,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/attack/sever.png",
       "actionStyle": "MELEE"
     },
     {
@@ -97,6 +107,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/attack/smash.png",
       "actionStyle": "MELEE"
     },
     {
@@ -106,6 +117,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/attack/barge.png",
       "actionStyle": "MELEE"
     },
     {
@@ -115,6 +127,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/melee/attack/tendrils.png",
       "actionStyle": "MELEE"
     },
     {
@@ -124,6 +137,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/hitpoints/tuska_wrath.png",
       "actionStyle": "MELEE"
     },
     {
@@ -133,6 +147,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/hitpoints/sacrifice.png",
       "actionStyle": "MELEE"
     },
     {
@@ -142,6 +157,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/piercing_shot.png",
       "actionStyle": "RANGED"
     },
     {
@@ -151,6 +167,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/needle_strike.png",
       "actionStyle": "RANGED"
     },
     {
@@ -160,6 +177,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/hitpoints/tuska_wrath.png",
       "actionStyle": "RANGED"
     },
     {
@@ -169,6 +187,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/snipe.png",
       "actionStyle": "RANGED"
     },
     {
@@ -178,6 +197,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/hitpoints/sacrifice.png",
       "actionStyle": "RANGED"
     },
     {
@@ -187,6 +207,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/ricochet.png",
       "actionStyle": "RANGED"
     },
     {
@@ -196,6 +217,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/binding_shot.png",
       "actionStyle": "RANGED"
     },
     {
@@ -205,6 +227,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/deadshot.png",
       "actionStyle": "RANGED"
     },
     {
@@ -214,6 +237,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/snap_shot.png",
       "actionStyle": "RANGED"
     },
     {
@@ -223,6 +247,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/rapid_fire.png",
       "actionStyle": "RANGED"
     },
     {
@@ -232,6 +257,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/bombardment.png",
       "actionStyle": "RANGED"
     },
     {
@@ -241,6 +267,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/unload.png",
       "actionStyle": "RANGED"
     },
     {
@@ -250,6 +277,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/corruption_shot.png",
       "actionStyle": "RANGED"
     },
     {
@@ -259,6 +287,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/fragmentation_shot.png",
       "actionStyle": "RANGED"
     },
     {
@@ -268,6 +297,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/shadow_tendrils.png",
       "actionStyle": "RANGED"
     },
     {
@@ -277,6 +307,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/swiftness.png",
       "actionStyle": "RANGED"
     },
     {
@@ -286,6 +317,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "DEFENSIVE_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/devotion.png",
       "actionStyle": "NONE"
     },
     {
@@ -295,6 +327,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "DEFENSIVE_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/freedom.png",
       "actionStyle": "NONE"
     },
     {
@@ -304,6 +337,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "DEFENSIVE_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/resonance.png",
       "actionStyle": "NONE"
     },
     {
@@ -313,6 +347,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "DEFENSIVE_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/provoke.png",
       "actionStyle": "NONE"
     },
     {
@@ -322,6 +357,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "DEFENSIVE_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/preparation.png",
       "actionStyle": "NONE"
     },
     {
@@ -331,6 +367,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/reflect.png",
       "actionStyle": "NONE"
     },
     {
@@ -340,6 +377,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/debilitate.png",
       "actionStyle": "NONE"
     },
     {
@@ -349,6 +387,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "DEFENSIVE_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/antecipation.png",
       "actionStyle": "NONE"
     },
     {
@@ -358,6 +397,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "./data/resources/abilities/defensive/barricade.png",
       "actionStyle": "NONE"
     },
     {
@@ -367,6 +407,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "WEAPON_SPEC",
+      "iconPath": "./data/resources/abilities/hitpoints/eof.png",
       "actionStyle": "NONE"
     },
     {
@@ -376,6 +417,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "./data/resources/abilities/hitpoints/onslaught.png",
       "actionStyle": "NONE"
     },
     {
@@ -385,6 +427,7 @@
       "shiftPressed": true,
       "altPressed": false,
       "actionTier": "PRAYER",
+      "iconPath": "./data/resources/prayers/curses/anguish.png",
       "actionStyle": "NONE"
     },
     {
@@ -394,6 +437,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "PRAYER",
+      "iconPath": "./data/resources/prayers/curses/soulsplit.png",
       "actionStyle": "NONE"
     },
     {
@@ -403,6 +447,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "PRAYER",
+      "iconPath": "./data/resources/prayers/curses/protect_ranged.png",
       "actionStyle": "NONE"
     },
     {
@@ -412,6 +457,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "PRAYER",
+      "iconPath": "./data/resources/prayers/curses/anti_magic.png",
       "actionStyle": "NONE"
     },
     {
@@ -421,6 +467,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "PRAYER",
+      "iconPath": "./data/resources/prayers/curses/anti_melee.png",
       "actionStyle": "NONE"
     },
     {
@@ -430,6 +477,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "CONSUMABLE",
+      "iconPath": "./data/resources/abilities/hitpoints/eat_a_food.png",
       "actionStyle": "NONE"
     },
     {
@@ -439,6 +487,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "DEFENSIVE_ABILITY",
+      "iconPath": "./data/resources/abilities/items/repriser.png",
       "actionStyle": "NONE"
     },
     {
@@ -448,6 +497,7 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/magic/surge.png",
       "actionStyle": "NONE"
     },
     {
@@ -457,6 +507,17 @@
       "shiftPressed": false,
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources/abilities/ranged/escape.png",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Incredible Action",
+      "pressedKey": 0,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "./data/resources//placeholder.png",
       "actionStyle": "NONE"
     }
   ]

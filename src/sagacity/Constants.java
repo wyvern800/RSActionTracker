@@ -8,20 +8,19 @@ package sagacity;
  * @project RSKeyLogging
  */
 public interface Constants {
-    // Show debug messages while executing
-    boolean isDebugMode = false;
+    String DATA_PATH = "./data/";
+    String RESOURCES_PATH = "./data/resources/";
 
-    String STRENGTH_PATH = "resources/abilities/melee/strength";
-    String ATTACK_PATH = "resources/abilities/melee/attack";
-    String HITPOINTS_PATH = "resources/abilities/hitpoints";
-    String DEFENSIVE_PATH = "resources/abilities/defensive";
-    String CURSES_PATH = "resources/prayers/curses";
-    String MAGIC_PATH = "resources/abilities/magic";
-    String RANGED_PATH = "resources/abilities/ranged";
-    String ITEMS_PATH = "resources/abilities/items";
+    String STRENGTH_PATH = RESOURCES_PATH+"abilities/melee/strength";
+    String ATTACK_PATH = RESOURCES_PATH+"abilities/melee/attack";
+    String HITPOINTS_PATH = RESOURCES_PATH+"abilities/hitpoints";
+    String DEFENSIVE_PATH = RESOURCES_PATH+"abilities/defensive";
+    String CURSES_PATH = RESOURCES_PATH+"prayers/curses";
+    String MAGIC_PATH = RESOURCES_PATH+"abilities/magic";
+    String RANGED_PATH = RESOURCES_PATH+"abilities/ranged";
+    String ITEMS_PATH = RESOURCES_PATH+"abilities/items";
 
+    String[] TOTAl_ACTIONS = {"./data/logs", "totalActions.txt"};
 
-    String[] TOTAl_ACTIONS = {"src/logs", "totalActions.txt"};
     String ICONS_PATH = "resources/icons";
-    String PLACEHOLDER_PATH = "resources/abilities";
 }

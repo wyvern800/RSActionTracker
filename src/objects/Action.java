@@ -3,6 +3,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.File;
+
 /**
  * Represents an action
  *
@@ -18,6 +20,7 @@ public class Action {
     private boolean shiftPressed;
     private boolean altPressed;
     private ActionTier actionTier;
+    private String iconPath;
     private transient ImageView actionImage;
     private ActionStyle actionStyle;
 
@@ -59,6 +62,14 @@ public class Action {
 
     public void setActionStyle(ActionStyle actionStyle) {
         this.actionStyle = actionStyle;
+    }
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
     }
 
     /**
@@ -130,9 +141,9 @@ public class Action {
     /**
      * Represents an action
      * @param pressedKey The pressedKey
-     * @param img The actionImage
+     * @param iconPath The actionImage
      */
-    public Action(/*TableView table, */String actionName, int pressedKey, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier tier, Image img, ActionStyle style) {
+    public Action(/*TableView table, */String actionName, int pressedKey, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier tier, String iconPath, ActionStyle style) {
         //this.tableView = table;
         this.actionName = actionName;
         this.pressedKey = pressedKey;
@@ -141,8 +152,9 @@ public class Action {
         this.altPressed = altPressed;
         this.actionImage = new ImageView();
         this.actionTier = tier;
+        this.iconPath = iconPath;
         this.actionStyle = style;
-        actionImage.setImage(img);
+        actionImage.setImage(new Image(new File(iconPath).toURI().toString()));
         actionImage.setFitWidth(104);
         actionImage.setPreserveRatio(true);
         actionImage.setSmooth(true);

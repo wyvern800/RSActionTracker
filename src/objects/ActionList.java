@@ -156,9 +156,9 @@ public enum ActionList implements Constants {
      * @param actionName The action name
      * @param keyCode The keyCod
      * @param actionTier The actionTier
-     * @param imgUrl the imgUrl
+     * @param iconPath the imgUrl
      */
-    ActionList(String actionName, int keyCode, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier actionTier, String imgUrl, ActionStyle actionStyle) {
-        this.action = new Action(/*null,*/actionName, keyCode, ctrlPressed, shiftPressed, altPressed, actionTier, new Image(imgUrl), actionStyle);
+    ActionList(String actionName, int keyCode, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier actionTier, String iconPath, ActionStyle actionStyle) {
+        this.action = new Action(/*null,*/actionName, keyCode, ctrlPressed, shiftPressed, altPressed, actionTier, iconPath, actionStyle);
     }
 }
