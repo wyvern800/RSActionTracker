@@ -8,17 +8,17 @@ package sagacity;
  * @project RSKeyLogging
  */
 public interface Constants {
-    String DATA_PATH = "./data/";
-    String RESOURCES_PATH = "./data/resources/";
+    String DATA_PATH = "data/";
+    String RESOURCES_PATH = "data/resources/";
 
-    String STRENGTH_PATH = RESOURCES_PATH+"abilities/melee/strength";
-    String ATTACK_PATH = RESOURCES_PATH+"abilities/melee/attack";
-    String HITPOINTS_PATH = RESOURCES_PATH+"abilities/hitpoints";
-    String DEFENSIVE_PATH = RESOURCES_PATH+"abilities/defensive";
-    String CURSES_PATH = RESOURCES_PATH+"prayers/curses";
-    String MAGIC_PATH = RESOURCES_PATH+"abilities/magic";
-    String RANGED_PATH = RESOURCES_PATH+"abilities/ranged";
-    String ITEMS_PATH = RESOURCES_PATH+"abilities/items";
+    String STRENGTH_PATH = "data/resources/abilities/melee/strength";
+    String ATTACK_PATH = "data/resources/abilities/melee/attack";
+    String HITPOINTS_PATH = "data/resources/abilities/hitpoints";
+    String DEFENSIVE_PATH = "data/resources/abilities/defensive";
+    String CURSES_PATH = "data/resources/prayers/curses";
+    String MAGIC_PATH = "data/resources/abilities/magic";
+    String RANGED_PATH = "data/resources/abilities/ranged";
+    String ITEMS_PATH = "data/resources/abilities/items";
 
     String[] TOTAl_ACTIONS = {"./data/logs", "totalActions.txt"};
 

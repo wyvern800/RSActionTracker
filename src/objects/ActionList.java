@@ -3,6 +3,10 @@ package objects;
 import javafx.scene.image.Image;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import sagacity.Constants;
+import sagacity.Main;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The actions storage
@@ -150,6 +154,18 @@ public enum ActionList implements Constants {
         return action;
     }
     ;
+
+    /**
+     * Generate a default list if the database was deleted / not exist (only used here)
+     */
+    public static void generateDefaultList() {
+        // Load all actions to our cache
+        for (ActionList store : ActionList.values()) {
+            if (store == null)
+                continue;
+            Main.cachedActions.add(store.getAction());
+        }
+    }
 
     /**
      * Creates a instance of the action in the list

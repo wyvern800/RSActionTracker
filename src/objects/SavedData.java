@@ -45,6 +45,7 @@ public class SavedData implements Constants {
      * Creates the object
      */
     public SavedData() {
+        ActionList.generateDefaultList();
         this.cachedActions = new ArrayList<>(Main.cachedActions);
     }
 

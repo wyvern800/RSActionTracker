@@ -133,26 +133,30 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     public Main() {
         // Initializations
         scenes = new ArrayList<>();
-        cachedActions = new ArrayList<>(MAX_SIZE);
+        cachedActions = new ArrayList<>();
         actions = new ArrayList<>();
         //cachedActions = getSavedData().getCachedActions();
         //actions = getSavedData().getActions();
 
         // Load all actions to our cache
-        List<Action> tempActList = new ArrayList<>();
+        /*List<Action> tempActList = new ArrayList<>();
         for (ActionList store : ActionList.values()) {
             if (store == null)
                 continue;
             tempActList.add(store.getAction());
             cachedActions.add(store.getAction());
-        }
+        }*/
 
         // Counter
-        List<String> tempActNames = new ArrayList<>();
+        /*List<String> tempActNames = new ArrayList<>();
         for (Action store : tempActList) {
             tempActNames.add(store.getActionName());
         }
-        System.out.println("totalLoaded=" + tempActNames.size() + ", actionsList=" + Arrays.toString(tempActNames.toArray()));
+        System.out.println("totalLoaded=" + tempActNames.size() + ", actionsList=" + Arrays.toString(tempActNames.toArray()));*/
+
+        loadDatabase();
+
+        cachedActions = getSavedData().getCachedActions();
 
         // Adds the jNativeHook listener
         try {
@@ -176,6 +180,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Creating the action instance
         Action newAction = new Action(/*configTable,*/ actions.get(i).getActionName(), actions.get(i).getPressedKey(), actions.get(i).isCtrlPressed(), actions.get(i).isShiftPressed(), actions.get(i).isAltPressed(), actions.get(i).getActionTier(), actions.get(i).getIconPath(), actions.get(i).getActionStyle());
 
+        // Sets the image size to fit the screen
+        newAction.getActionImage().setFitWidth(104);
+        newAction.getActionImage().setFitHeight(104);
+
         // Creating the content boxes
         HBox actionBox = new HBox(1);
         Group actionGroup = new Group();
@@ -195,6 +203,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 "-fx-border-width: 2;\n" +
                 "-fx-border-color: " + newAction.getActionTier().getAbilityBorder());
 
+        newAction.getActionImage().setFitWidth(104);
         actionGroup.getChildren().add(newAction.getActionImage());
         actionGroup.getChildren().add(actionName);
 
@@ -235,7 +244,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem help = new MenuItem("Help", getMenuIcon("config.png"));
         final MenuItem about = new MenuItem("About", getMenuIcon("config.png"));
         final MenuItem discord = new MenuItem("Discord", getMenuIcon("config.png"));
+        addMenuItemAction(discord, ()-> {
+            try {
+                Desktop.getDesktop().browse(new URL("https://discord.gg/yaUHKTWJSJ").toURI());
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
         final MenuItem purchase = new MenuItem("Purchase a License", getMenuIcon("config.png"));
+        purchase.setDisable(true);
         final SeparatorMenuItem sep2 = new SeparatorMenuItem();
         links.getItems().addAll(help, discord, about, sep2, purchase);
         stopResume = new Menu(stopResumeLabel[0][0], getMenuIcon(stopResumeLabel[0][1]));
@@ -248,9 +265,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         });
         addMenuItemAction(about, ()-> {
             System.out.println("about");
-        });
-        addMenuItemAction(discord, ()-> {
-            System.out.println("discord");
         });
         addMenuItemAction(purchase, ()-> {
             System.out.println("purchase");
@@ -342,8 +356,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
 
         addCloseEventHandler(mainStage, true);
-
-        loadDatabase();
     }
 
     /**
@@ -383,46 +395,21 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         System.out.println("actionStyles");
     }
 
-    private static void constructTable() {
+    //private static ObservableList<Action> observableListData;
 
-    }
+    private static void constructTableView(Stage ownerStage) {
+        //observableListData = FXCollections.observableArrayList(cachedActions);
+        ObservableList<Action> observableListData = FXCollections.observableArrayList(getSavedData().getCachedActions());
 
-    /**
-     * Opens the setup screen
-     */
-    private static void openSetupScreen() {
-        ObservableList<Action> observableListData = FXCollections.observableArrayList(cachedActions);
-
-        // Resizes the icons to show for the setup screen
-        observableListData.forEach(p -> {
-            p.getActionImage().setFitWidth(30);
-            p.getActionImage().setFitHeight(30);
+        cachedActions.forEach(a-> {
+            System.out.println(a.getIconPath());
         });
 
-        Stage setupStage = new Stage();
-
-        Scene scene = new Scene(new Group());
-        setupStage.setTitle("Action Management");
-        setupStage.setWidth(600);
-        setupStage.setHeight(565);
-
-        final HBox topPanel = new HBox();
-        final Label searchLabel = new Label("Search: ");
-        final TextField searchBar = new TextField();
-        searchBar.setPrefWidth(412);
-        searchBar.setFocusTraversable(false);
-        final Button searchButton = new Button("Search", getMenuIcon("search.png"));
-        searchButton.setFocusTraversable(false);
-        searchButton.setDisable(true);
-        searchBar.setDisable(true);
-
-        Separator sep = new Separator();
-        sep.setOrientation(Orientation.VERTICAL);
-
-        // Add all components to the top panel
-        topPanel.getChildren().addAll(searchLabel, sep, searchBar, searchButton);
-        topPanel.setSpacing(10);
-        topPanel.setPadding(new Insets(3, 0, 3, 0));
+        // Resizes the icons to show for the setup screen
+        /*observableListData.forEach(p -> {
+            p.getActionImage().setFitWidth(30);
+            p.getActionImage().setFitHeight(30);
+        });*/
 
         setupTableView.setEditable(true);
         setupTableView.setFocusTraversable(false);
@@ -437,7 +424,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
 
-            getSavedData().setCachedActions(cachedActions);
+                    getSavedData().setCachedActions(cachedActions);
                 }
         );
 
@@ -449,7 +436,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setPressedKey(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setPressedKey(t.getNewValue());
 
-            getSavedData().setCachedActions(cachedActions);
+                    getSavedData().setCachedActions(cachedActions);
                 }
         );
         // Add the ctrlMask
@@ -460,28 +447,27 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setCtrlPressed(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setCtrlPressed(t.getNewValue());
 
-            getSavedData().setCachedActions(cachedActions);
+                    getSavedData().setCachedActions(cachedActions);
                 }
         );
         // Add the shiftMask
-
         TableColumn shiftMask = addTableColumn(new TableColumn<Action, Boolean>("Shift?"), null, new PropertyValueFactory<Action, Boolean>("shiftPressed"), true);
         shiftMask.setCellFactory(
                 TextFieldTableCell.forTableColumn(new BooleanStringConverter()));
         shiftMask.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<Action, Boolean>>) t -> {
+                    if (!t.getNewValue().toString().equals("true") && !t.getNewValue().toString().equals("false")) {
+                        System.out.println("error");
+                        showErrorDialog("Invalid entry, this must be whether 'false' or 'true'", ownerStage, ()-> {
+                            setupTableView.getFocusModel().focus(new TablePosition<Action, Boolean>(setupTableView, setupTableView.getSelectionModel().getFocusedIndex(),null));
+                        });
+                        return;
+                    }
                     t.getTableView().getItems().get(
                             t.getTablePosition().getRow()).setShiftPressed(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setShiftPressed(t.getNewValue());
 
                     getSavedData().setCachedActions(cachedActions);
-                }
-        );
-        shiftMask.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, Boolean>>) t -> {
-                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setShiftPressed(t.getNewValue());
-                    cachedActions.get(t.getTablePosition().getRow()).setShiftPressed(t.getNewValue());
-
-                getSavedData().setCachedActions(cachedActions);
                 }
         );
         /*TableColumn<Action, Boolean> shiftTableColumn = new TableColumn<>("Shift?");
@@ -526,7 +512,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setAltPressed(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setAltPressed(t.getNewValue());
 
-            getSavedData().setCachedActions(cachedActions);
+                    getSavedData().setCachedActions(cachedActions);
                 }
         );
         // Add the actionTier
@@ -547,18 +533,18 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionTier(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setActionTier(t.getNewValue());
 
-            getSavedData().setCachedActions(cachedActions);
+                    getSavedData().setCachedActions(cachedActions);
                 }
         );
         TableColumn actionImage = addTableColumn(new TableColumn<Action, ImageView>("Icon"), null, new PropertyValueFactory<Action, ImageView>("actionImage"), false);
-        actionImage.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ImageView>>) t -> {
+        /*actionImage.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ImageView>>) t -> {
                     t.getTableView().getItems().get(
                             t.getTablePosition().getRow()).setActionImage(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setActionImage(t.getNewValue());
 
-            getSavedData().setCachedActions(cachedActions);
+                    getSavedData().setCachedActions(cachedActions);
                 }
-        );
+        );*/
         // Add the actionStyle
         TableColumn actionStyle = addTableColumn(new TableColumn<Action, ActionStyle>("Action Style"), 70, new PropertyValueFactory<Action, ActionStyle>("actionStyle"), true);
 
@@ -579,12 +565,44 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                             t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
 
-            getSavedData().setCachedActions(cachedActions);
+                    getSavedData().setCachedActions(cachedActions);
                 }
         );
 
-        setupTableView.setItems(observableListData);
         setupTableView.getColumns().addAll(actionName, actionImage, keyCode, ctrlMask, shiftMask, altMask, actionTier, actionStyle);
+        setupTableView.setItems(observableListData);
+    }
+
+    /**
+     * Opens the setup screen
+     */
+    private static void openSetupScreen() {
+        Stage setupStage = new Stage();
+
+        Scene scene = new Scene(new Group());
+        setupStage.setTitle("Action Management");
+        setupStage.setWidth(600);
+        setupStage.setHeight(565);
+
+        final HBox topPanel = new HBox();
+        final Label searchLabel = new Label("Search: ");
+        final TextField searchBar = new TextField();
+        searchBar.setPrefWidth(412);
+        searchBar.setFocusTraversable(false);
+        final Button searchButton = new Button("Search", getMenuIcon("search.png"));
+        searchButton.setFocusTraversable(false);
+        searchButton.setDisable(true);
+        searchBar.setDisable(true);
+
+        Separator sep = new Separator();
+        sep.setOrientation(Orientation.VERTICAL);
+
+        // Add all components to the top panel
+        topPanel.getChildren().addAll(searchLabel, sep, searchBar, searchButton);
+        topPanel.setSpacing(10);
+        topPanel.setPadding(new Insets(3, 0, 3, 0));
+
+        constructTableView(setupStage);
 
         HBox pane = new HBox();
         pane.setSpacing(10);
@@ -690,14 +708,31 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 .ifPresent(response -> exec.run());
     }
 
+    /**
+     * Show errro dialog
+     * @param contentText The description about the panel
+     * @param owner Which stage was this called from (the owner)
+     * @param exec The execution when clicking on OK button
+     */
+    private static void showErrorDialog(String contentText, Stage owner, Runnable exec) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.initOwner(owner);
+        if (contentText != null) {
+            a.setContentText(contentText);
+        }
+        a.showAndWait()
+                .filter(response -> response == ButtonType.OK)
+                .ifPresent(response -> exec.run());
+    }
+
 
     /**
      * Processes the add button action
      */
     private static void processAddButtonAction() {
-        Action newAction = new Action(/*configTable,*/ generateRandomActionName(), 0, false, false, false, ActionTier.BASIC_ABILITY, RESOURCES_PATH + "/placeholder.png", ActionStyle.NONE);
-        newAction.getActionImage().setFitWidth(30);
-        newAction.getActionImage().setFitHeight(30);
+        Action newAction = new Action(/*configTable,*/ generateRandomActionName(), 0, false, false, false, ActionTier.BASIC_ABILITY, RESOURCES_PATH + "placeholder.png", ActionStyle.NONE);
+        //newAction.getActionImage().setFitWidth(30);
+        //newAction.getActionImage().setFitHeight(30);
         setupTableView.getItems().add(newAction);
         cachedActions.add(newAction);
 
@@ -788,20 +823,28 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Optional<Action> optAction = cachedActions.stream().filter(p-> p.getActionName().toLowerCase().equals(action.getActionName().toLowerCase())).findFirst();
         if (!optAction.isPresent()) {
             System.out.println("action doesn't exist in database");
-        }
-        FileChooser fileChooser = new FileChooser();
-        FileManager.configureFileChooser(fileChooser, "Change Action Icon");
-        fileChooser.setTitle("Open Resource File");
+        } else {
+            Action selectedAction = optAction.get();
+            FileChooser fileChooser = new FileChooser();
+            FileManager.configureFileChooser(fileChooser, "Change Action Icon");
+            fileChooser.setTitle("Open Resource File");
 
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-           //FileManager.openFile(file);
-           String cwd = System. getProperty("user.dir");
-           action.setIconPath(new File(cwd).toURI().relativize(file.toURI()).getPath());
-           getSavedData().setCachedActions(cachedActions);
-           refreshTable();
+            File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+                //FileManager.openFile(file);
+                String cwd = System.getProperty("user.dir");
+                selectedAction.setIconPath(new File(cwd).toURI().relativize(file.toURI()).getPath());
+
+                cachedActions.set(cachedActions.indexOf(selectedAction), selectedAction);
+
+                //observableListData.set(cachedActions.indexOf(selectedAction), selectedAction);
+
+                getSavedData().setCachedActions(cachedActions);
+
+                refreshTable();
+            }
+            System.out.println("changeAbilityIcon(" + action.getActionName() + ")");
         }
-        System.out.println("changeAbilityIcon("+action.getActionName()+")");
     }
 
     /**
@@ -842,6 +885,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * @return The generated TableColumn
      */
     private static TableColumn addTableColumn(TableColumn column, Integer preferredSize, PropertyValueFactory prop, boolean isEditable) {
+        if (preferredSize != null) {
+            column.setMinWidth(preferredSize);
+        }
+        column.setCellValueFactory(prop);
+        column.setEditable(isEditable);
+        return column;
+    }
+
+    private static TableColumn<Action, String> addTableColumn2(TableColumn column, Integer preferredSize, PropertyValueFactory prop, boolean isEditable) {
         if (preferredSize != null) {
             column.setMinWidth(preferredSize);
         }
