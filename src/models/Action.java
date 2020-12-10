@@ -4,6 +4,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import objects.ActionStyle;
+import objects.ActionTier;
 
 /**
  * Default header
@@ -12,6 +16,7 @@ import javafx.beans.property.SimpleStringProperty;
  * @created 06/12/2020 - 03:52
  * @project RSKeyLogging
  */
+@Deprecated
 public class Action {
     private final SimpleStringProperty actionName;
     private final SimpleIntegerProperty pressedKey;
@@ -118,14 +123,14 @@ public class Action {
         this.actionStyle.set(actionStyle);
     }
 
-    public Action(SimpleStringProperty actionName, SimpleIntegerProperty pressedKey, SimpleBooleanProperty ctrlPressed, SimpleBooleanProperty shiftPressed, SimpleBooleanProperty altPressed, SimpleObjectProperty actionTier, SimpleObjectProperty actionImage, SimpleObjectProperty actionStyle) {
-        this.actionName = actionName;
-        this.pressedKey = pressedKey;
-        this.ctrlPressed = ctrlPressed;
-        this.shiftPressed = shiftPressed;
-        this.altPressed = altPressed;
-        this.actionTier = actionTier;
-        this.actionImage = actionImage;
-        this.actionStyle = actionStyle;
+    public Action(String actionName, Integer pressedKey, boolean ctrlPressed, boolean shiftPressed, boolean altPressed, ActionTier actionTier, ImageView actionImage, ActionStyle actionStyle) {
+        this.actionName = new SimpleStringProperty(actionName);
+        this.pressedKey = new SimpleIntegerProperty(pressedKey);
+        this.ctrlPressed = new SimpleBooleanProperty(ctrlPressed);
+        this.shiftPressed = new SimpleBooleanProperty(shiftPressed);
+        this.altPressed = new SimpleBooleanProperty(altPressed);
+        this.actionTier = new SimpleObjectProperty<>(actionTier);
+        this.actionImage = new SimpleObjectProperty<>(actionImage);
+        this.actionStyle = new SimpleObjectProperty<>(actionStyle);
     }
 }

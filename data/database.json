@@ -21,16 +21,6 @@
       "actionStyle": "MELEE"
     },
     {
-      "actionName": "Quake",
-      "pressedKey": 16,
-      "ctrlPressed": true,
-      "shiftPressed": false,
-      "altPressed": false,
-      "actionTier": "TRESHOLD_ABILITY",
-      "iconPath": "data/resources/abilities/melee/strength/quake.png",
-      "actionStyle": "MELEE"
-    },
-    {
       "actionName": "Berserk",
       "pressedKey": 19,
       "ctrlPressed": true,
@@ -102,7 +92,7 @@
     },
     {
       "actionName": "Smash",
-      "pressedKey": 2,
+      "pressedKey": 3,
       "ctrlPressed": true,
       "shiftPressed": false,
       "altPressed": false,
@@ -132,7 +122,7 @@
     },
     {
       "actionName": "Tuska\u0027s Wrath",
-      "pressedKey": 3,
+      "pressedKey": 2,
       "ctrlPressed": true,
       "shiftPressed": false,
       "altPressed": false,
@@ -498,16 +488,6 @@
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
       "iconPath": "data/resources/abilities/magic/surge.png",
-      "actionStyle": "NONE"
-    },
-    {
-      "actionName": "Escape",
-      "pressedKey": 31,
-      "ctrlPressed": false,
-      "shiftPressed": false,
-      "altPressed": false,
-      "actionTier": "BASIC_ABILITY",
-      "iconPath": "data/resources/abilities/ranged/escape.png",
       "actionStyle": "NONE"
     }
   ]

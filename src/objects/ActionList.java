@@ -1,12 +1,8 @@
 package objects;
 
-import javafx.scene.image.Image;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import sagacity.Constants;
 import sagacity.Main;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The actions storage
@@ -39,13 +35,13 @@ public enum ActionList implements Constants {
             ActionTier.TRESHOLD_ABILITY, ATTACK_PATH+"/slaughter.png", ActionStyle.MELEE),
     SEVER("Sever", NativeKeyEvent.VC_3, false,false, false,
           ActionTier.BASIC_ABILITY, ATTACK_PATH+"/sever.png", ActionStyle.MELEE),
-    SMASH("Smash", NativeKeyEvent.VC_1, true,false, false,
+    SMASH("Smash", NativeKeyEvent.VC_2, true,false, false,
     ActionTier.BASIC_ABILITY, ATTACK_PATH+"/smash.png", ActionStyle.MELEE),
     BARGE("Barge", NativeKeyEvent.VC_A, true,false, false,
             ActionTier.BASIC_ABILITY, ATTACK_PATH+"/barge.png", ActionStyle.MELEE),
     BLOOD_TENDRILS("Blood Tendrils", NativeKeyEvent.VC_U, false,false, false,
             ActionTier.TRESHOLD_ABILITY, ATTACK_PATH+"/tendrils.png", ActionStyle.MELEE),
-    TUSKAS_WRATH_1("Tuska's Wrath", NativeKeyEvent.VC_2,true,false, false,
+    TUSKAS_WRATH_1("Tuska's Wrath", NativeKeyEvent.VC_1,true,false, false,
             ActionTier.BASIC_ABILITY, HITPOINTS_PATH+"/tuska_wrath.png", ActionStyle.MELEE),
     SACRIFICE_1("Sacrifice", NativeKeyEvent.VC_4,true,false, false,
             ActionTier.BASIC_ABILITY, HITPOINTS_PATH+"/sacrifice.png", ActionStyle.MELEE),

@@ -1,4 +1,6 @@
 package objects;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -22,7 +24,6 @@ public class Action {
     private ActionTier actionTier;
     private String iconPath;
     private transient ImageView actionImage;
-    private transient Image image;
     private ActionStyle actionStyle;
 
     /*public TableView getTableView() {
@@ -137,9 +138,6 @@ public class Action {
         return actionStyle;
     }
 
-    public Image getImage() {
-        return image;
-    }
 
     /**
      * Represents an action
@@ -153,10 +151,10 @@ public class Action {
         this.ctrlPressed = ctrlPressed;
         this.shiftPressed = shiftPressed;
         this.altPressed = altPressed;
+        this.actionImage = new ImageView(new Image(new File(iconPath).toURI().toString()));
         this.actionTier = tier;
         this.iconPath = iconPath;
         this.actionStyle = style;
-        this.actionImage = new ImageView(new Image(new File(iconPath).toURI().toString()));
         //actionImage.setFitWidth(104);
         actionImage.setFitWidth(30);
         actionImage.setFitHeight(30);
