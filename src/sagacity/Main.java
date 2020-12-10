@@ -25,6 +25,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
@@ -37,14 +38,11 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
-import utils.FileManager;
-import utils.FileWritter;
-import utils.GsonUtil;
-import utils.MasksConstants;
+import utils.*;
 import javafx.scene.image.Image;
-
-import javax.swing.text.html.Option;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -54,7 +52,6 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Software used to log the actions from the player (this is not a keylogger)
@@ -82,11 +79,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
     // The configTable
     private static TableView<Action> setupTableView;
+    private static TableView<ActionTier> actionTierTableView;
+    private static TableView<ActionStyle> actionStyleTableView;
 
     /**
      * Cached actions
      */
     public static List<Action> cachedActions;
+    public static List<ActionTier> cachedActionTiers;
+    public static List<ActionStyle> cachedActionStyles;
 
     /**
      * The personal pressed actions (that is used to store session
@@ -94,16 +95,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     public static List<Action> actions;
 
     /**
-     * The scenes
-     */
-    private static List<Scene> scenes;
-
-
-    /**
      * {@code True} if in keys should be logged, {@code False} if not
      */
     private static boolean isCombatMode = false;
     private static boolean showActionName = true;
+    private static boolean showPatreonMsg = false;
 
     /**
      * Variables
@@ -136,30 +132,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     public Main() {
         // Initializations
-        scenes = new ArrayList<>();
         cachedActions = new ArrayList<>();
+        cachedActionTiers = new ArrayList<>();
+        cachedActionStyles = new ArrayList<>();
         actions = new ArrayList<>();
-        //cachedActions = getSavedData().getCachedActions();
-        //actions = getSavedData().getActions();
-
-        // Load all actions to our cache
-        /*List<Action> tempActList = new ArrayList<>();
-        for (ActionList store : ActionList.values()) {
-            if (store == null)
-                continue;
-            tempActList.add(store.getAction());
-            cachedActions.add(store.getAction());
-        }*/
-
-        // Counter
-        /*List<String> tempActNames = new ArrayList<>();
-        for (Action store : tempActList) {
-            tempActNames.add(store.getActionName());
-        }
-        System.out.println("totalLoaded=" + tempActNames.size() + ", actionsList=" + Arrays.toString(tempActNames.toArray()));*/
 
         loadDatabase();
 
+        cachedActionTiers = getSavedData().getCachedActionTiers();
+        cachedActionStyles = getSavedData().getCachedActionStyles();
         cachedActions = getSavedData().getCachedActions();
 
         // Adds the jNativeHook listener
@@ -177,8 +158,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
     /**
      * Add an action to the screen
-     *
-     * @param i The index we're adding to
+     * @param action The action we're adding
+     * @param nativeKeyEvent The nativeKeyEvent
      */
     private static void addActionToScreen(Action action, NativeKeyEvent nativeKeyEvent) {
         // Handles the keys pressing
@@ -187,10 +168,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         if (actions.size() > MAX_SIZE) {
             actions.remove(0); // Removes the first element if list is full
             mainGridPane.getChildren().remove(0);
-            ObservableList<Node> arroba = mainGridPane.getChildren();
-            arroba = new SortedList<>(arroba);
+            ObservableList<Node> copy = mainGridPane.getChildren();
+            copy = new SortedList<>(copy);
             mainGridPane.getChildren().clear();
-            mainGridPane.getChildren().addAll(arroba);
+            mainGridPane.getChildren().addAll(copy);
         }
 
         actionsDone++;
@@ -248,16 +229,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }
     }
 
-    /**
-     * Updates the screen with the actions
-     */
-    private static void updateScreen() {
-        // Loops through the personal actions and set them to screen
-        /*for (int i = 0; i < actions.size(); i++) {
-            addActionToScreen(i);
-        }*/
-    }
-
     private static Menu stopResume = new Menu("Stop");
     private static final String[][] stopResumeLabel = {{"Start Logging", "play.png"}, {"Stop Logging", "stop.png"}, {"Resume Logging", "play.png"}};
 
@@ -269,6 +240,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     @Override
     public void start(Stage mainStage) {
         setupTableView = new TableView<>();
+        actionTierTableView = new TableView<>();
+        actionStyleTableView = new TableView<>();
+        actionTierTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        actionStyleTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // create the menus
         final Menu menu = new Menu("Options", getMenuIcon("list.png"));
@@ -277,38 +252,18 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem help = new MenuItem("Help", getMenuIcon("config.png"));
         final MenuItem about = new MenuItem("About", getMenuIcon("config.png"));
         final MenuItem discord = new MenuItem("Discord", getMenuIcon("config.png"));
-        addMenuItemAction(discord, ()-> {
-            try {
-                Desktop.getDesktop().browse(new URL("https://discord.gg/yaUHKTWJSJ").toURI());
-            } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
-            }
-        });
+        addMenuItemAction(discord, ()-> sendOpenURL("https://discord.gg/yaUHKTWJSJ"));
         final MenuItem purchase = new MenuItem("Purchase a License", getMenuIcon("config.png"));
         purchase.setDisable(true);
         final SeparatorMenuItem sep2 = new SeparatorMenuItem();
         links.getItems().addAll(help, discord, about, sep2, purchase);
         stopResume = new Menu(stopResumeLabel[0][0], getMenuIcon(stopResumeLabel[0][1]));
-        addMenuItemAction(help, ()-> {
-            try {
-                Desktop.getDesktop().browse(new URL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md").toURI());
-            } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
-            }
-        });
+        addMenuItemAction(help, ()-> sendOpenURL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md"));
         addMenuItemAction(about, ()-> {
             System.out.println("about");
+            sendPatreonPopup(true);
         });
-        addMenuItemAction(purchase, ()-> {
-            System.out.println("purchase");
-        });
-        /*addMenuAction(help, () -> {
-            try {
-                Desktop.getDesktop().browse(new URL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md").toURI());
-            } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
-            }
-        });*/
+        addMenuItemAction(purchase, ()-> System.out.println("purchase"));
         // Combat menu
         final MenuItem toggleCombatMode = new MenuItem("Toggle Idle mode", getMenuIcon("config.png"));
         final MenuItem toggleAbilityName = new MenuItem("Toggle display ability name", getMenuIcon("config.png"));
@@ -326,17 +281,16 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         // Configurations menu
         final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("click.png"));
-        final MenuItem actionStyle = new MenuItem("Action Styles", getMenuIcon("config.png"));
-        actionStyle.setDisable(true);
-        final MenuItem actionTier = new MenuItem("Action Tiers", getMenuIcon("config.png"));
-        actionTier.setDisable(true);
+        final MenuItem actionStyle = new MenuItem("ActionStyles", getMenuIcon("config.png"));
+        final MenuItem actionTier = new MenuItem("ActionTiers", getMenuIcon("config.png"));
         addMenuItemAction(configureAbilities, ()-> {
             toggleIdleMode(true);
             openSetupScreen();
         });
-        addMenuItemAction(actionStyle, Main::openActionStyles);
-        addMenuItemAction(actionTier, Main::openActionTiers);
-        configurations.getItems().addAll(configureAbilities, actionStyle, actionTier);
+        addMenuItemAction(actionStyle, Main::openActionStyleScreen);
+        addMenuItemAction(actionTier, Main::openActionTierScreen);
+        final SeparatorMenuItem sep5 = new SeparatorMenuItem();
+        configurations.getItems().addAll(configureAbilities, sep5, actionTier, actionStyle);
 
         // add menu to menu bar
         // Left bar
@@ -378,6 +332,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         Main.mainStage = mainStage;
 
+        sendPatreonPopup(false);
+
         stopResume.setMnemonicParsing(true);
         mainStage.getScene().getAccelerators().put(
                 new KeyCodeCombination(KeyCode.F12),
@@ -387,8 +343,19 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 }
         );
 
-
         addCloseEventHandler(mainStage, true);
+    }
+
+    /**
+     * Sends a opening URL packet
+     * @param URL The url to be opened
+     */
+    private static void sendOpenURL(String URL) {
+        try {
+            Desktop.getDesktop().browse(new URL(URL).toURI());
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -410,30 +377,34 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
     }
 
-    private static void openActionTiers() {
-        System.out.println("actionTiers");
+    /**
+     * Sends a popup to tell people to support
+     */
+    private static void sendPatreonPopup(boolean byMenu) {
+        if (!showPatreonMsg && !byMenu)
+            return;
+        showLinkToPatreonDialog("RSActionLogger app. created by Matheus G. Ferreira",
+                "I hope you enjoy using my lovely app!",
+                "Have fun using my software, if you like, please consider becoming my patron on Patreon ♥ \n \n I'd love drinking a coffee with your donations! (Take in consideration " +
+                        "that helping isn't necessary but appreciated, so feel free to do whatever you prefer to!\n \n- Also if you want to support me directly, this is my PayPal email: wyvern800@hotmail.com,\n" +
+                        "- I'd also accept RSGP, so if you want, my discord tag is 'ferreirA#1058', thank you in advance! \n \n Git gud with ur dpsing u nooby scaper =]",
+                mainStage,
+                ()-> {
+                    sendOpenURL("https://www.patreon.com/wyvern800");
+                });
     }
 
-    private static void openActionStyles() {
-        System.out.println("actionStyles");
-    }
-
-    //private static ObservableList<Action> observableListData;
-
-    private static void constructTableView(Stage ownerStage) {
-        //observableListData = FXCollections.observableArrayList(cachedActions);
+    /**
+     * Constructs the setup stage tableView
+     * @param ownerStage Who called this tableView
+     */
+    private static void constructSetupTableView(Stage ownerStage) {
         ObservableList<Action> observableListData = FXCollections.observableArrayList(getSavedData().getCachedActions());
 
         cachedActions.forEach(a-> {
             a.setActionImage(new ImageView(new Image(new File(a.getIconPath()).toURI().toString())));
-            refreshTable();
+            //refreshTable();
         });
-
-        // Resizes the icons to show for the setup screen
-        /*observableListData.forEach(p -> {
-            p.getActionImage().setFitWidth(30);
-            p.getActionImage().setFitHeight(30);
-        });*/
 
         setupTableView.setEditable(true);
         setupTableView.setFocusTraversable(false);
@@ -541,7 +512,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 }
         );
         // Add the actionTier
-        TableColumn actionTier = addTableColumn(new TableColumn<Action, ActionTier>("Action Tier"), null, new PropertyValueFactory<Action, ActionTier>("actionTier"), true);
+        TableColumn actionTier = addTableColumn(new TableColumn<Action, ActionTier>("ActionTier"), null, new PropertyValueFactory<Action, ActionTier>("actionTier"), true);
         actionTier.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter() {
             @Override
             public String toString(Object interpolator) {
@@ -571,7 +542,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 }
         );*/
         // Add the actionStyle
-        TableColumn actionStyle = addTableColumn(new TableColumn<Action, ActionStyle>("Action Style"), 70, new PropertyValueFactory<Action, ActionStyle>("actionStyle"), true);
+        TableColumn actionStyle = addTableColumn(new TableColumn<Action, ActionStyle>("ActionStyle"), 70, new PropertyValueFactory<Action, ActionStyle>("actionStyle"), true);
 
         actionStyle.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter() {
             @Override
@@ -599,6 +570,280 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         setupTableView.getItems().clear();
         setupTableView.getColumns().addAll(actionName, actionImage, keyCode, ctrlMask, shiftMask, altMask, actionTier, actionStyle);
         setupTableView.setItems(observableListData);
+    }
+
+    /**
+     * Constructs the action tier table view
+     */
+    private static void constructActionTierTableView() {
+        ObservableList<ActionTier> observableListData = FXCollections.observableArrayList(getSavedData().getCachedActionTiers());
+
+        // Resizes the icons to show for the setup screen
+        /*observableListData.forEach(p -> {
+            p.getActionImage().setFitWidth(30);
+            p.getActionImage().setFitHeight(30);
+        });*/
+
+        actionTierTableView.setEditable(true);
+        actionTierTableView.setFocusTraversable(false);
+        actionTierTableView.getSelectionModel().selectedItemProperty().addListener((obs) -> actionTierTableView.requestFocus());
+
+        // Add the id
+        TableColumn id = addTableColumn(new TableColumn<ActionTier, Integer>("ID"), null, new PropertyValueFactory<ActionTier, Integer>("id"), false);
+        id.setCellFactory(
+                TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        id.setStyle("-fx-align: center");
+        /*id.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, String>>) t -> {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+                    cachedActions.get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+
+                    getSavedData().setCachedActions(cachedActions);
+                }
+        );*/
+
+        // Add the tier name
+        TableColumn tierName = addTableColumn(new TableColumn<ActionTier, String>("Name"), null, new PropertyValueFactory<ActionTier, String>("tierName"), false);
+        tierName.setCellFactory(
+                TextFieldTableCell.forTableColumn());
+        tierName.setStyle("-fx-align: center");
+
+        // Add the ability border color
+        TableColumn borderColor = addTableColumn(new TableColumn<ActionTier, String>("Border Color (HEX)"), null, new PropertyValueFactory<ActionTier, String>("abilityBorder"), false);
+        borderColor.setCellFactory(
+                TextFieldTableCell.forTableColumn());
+        borderColor.setStyle("-fx-align: center");
+
+        TableColumn colorPicker = addTableColumn(new TableColumn<ActionTier, ColorPicker>("Border Color"), null, new PropertyValueFactory<ActionTier, ColorPicker>("colorPicker"), false);
+        /*borderColor.setCellFactory(
+                TextFieldTableCell.forTableColumn());*/
+
+
+        borderColor.setStyle("-fx-align: center");
+
+        /*borderColor.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, String>>) t -> {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+                    cachedActions.get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+
+                    getSavedData().setCachedActions(cachedActions);
+                }
+        );*/
+
+        // Re-setups the table
+        actionTierTableView.getColumns().clear();
+        actionTierTableView.getItems().clear();
+        actionTierTableView.getColumns().addAll(id, tierName, /*borderColor,*/ colorPicker);
+        actionTierTableView.setItems(observableListData);
+    }
+
+    /**
+     * Constructs the action tier table
+     */
+    private static void constructActionStyleTableView() {
+        ObservableList<ActionStyle> observableListData = FXCollections.observableArrayList(getSavedData().getCachedActionStyles());
+
+        // Resizes the icons to show for the setup screen
+        /*observableListData.forEach(p -> {
+            p.getActionImage().setFitWidth(30);
+            p.getActionImage().setFitHeight(30);
+        });*/
+
+        actionStyleTableView.setEditable(true);
+        actionStyleTableView.setFocusTraversable(false);
+        actionStyleTableView.getSelectionModel().selectedItemProperty().addListener((obs) -> actionStyleTableView.requestFocus());
+
+        // Add the id
+        TableColumn id = addTableColumn(new TableColumn<ActionStyle, Integer>("ID"), null, new PropertyValueFactory<ActionStyle, Integer>("id"), false);
+        id.setCellFactory(
+                TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        id.setStyle("-fx-align: center");
+        /*id.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, String>>) t -> {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+                    cachedActions.get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+
+                    getSavedData().setCachedActions(cachedActions);
+                }
+        );*/
+
+        // Add the tier name
+        TableColumn styleName = addTableColumn(new TableColumn<ActionStyle, String>("Name"), 100, new PropertyValueFactory<ActionStyle, String>("styleName"), false);
+        styleName.setMinWidth(100);
+        styleName.setCellFactory(
+                TextFieldTableCell.forTableColumn());
+        styleName.setStyle("-fx-align: center");
+        /*borderColor.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, String>>) t -> {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+                    cachedActions.get(t.getTablePosition().getRow()).setActionName(t.getNewValue());
+
+                    getSavedData().setCachedActions(cachedActions);
+                }
+        );*/
+
+        // Re-setups the table
+        actionStyleTableView.getColumns().clear();
+        actionStyleTableView.getItems().clear();
+        actionStyleTableView.getColumns().addAll(id, styleName);
+        actionStyleTableView.setItems(observableListData);
+    }
+
+    /**
+     * Opens the action tier screen
+     */
+    private static void openActionTierScreen() {
+        Stage actionTierStage = new Stage();
+
+        Scene scene = new Scene(new Group());
+        actionTierStage.setTitle("ActionTier - List");
+        actionTierStage.setWidth(600);
+        actionTierStage.setHeight(565);
+
+        final HBox topPanel = new HBox();
+        final Label searchLabel = new Label("Search: ");
+        final TextField searchBar = new TextField();
+        searchBar.setPrefWidth(412);
+        searchBar.setFocusTraversable(false);
+        final Button searchButton = new Button("Search", getMenuIcon("search.png"));
+        searchButton.setFocusTraversable(false);
+        searchButton.setDisable(true);
+        searchBar.setDisable(true);
+
+        refreshTable();
+
+        Separator sep = new Separator();
+        sep.setOrientation(Orientation.VERTICAL);
+
+        // Add all components to the top panel
+        topPanel.getChildren().addAll(searchLabel, sep, searchBar, searchButton);
+        topPanel.setSpacing(10);
+        topPanel.setPadding(new Insets(3, 0, 3, 0));
+
+        constructActionTierTableView();
+
+        HBox pane = new HBox();
+        pane.setSpacing(10);
+
+        // Action adding button
+        final Button addButton = new Button("Add Tier", Main.getMenuIcon("plus.png"));
+        addButton.setFocusTraversable(false);
+        addButton.setDisable(true);
+        Main.addButtonAction(addButton, Main::processAddButtonAction);
+
+        // Action removing button
+        final Button removeButton = new Button("Remove Tier", getMenuIcon("remove.png"));
+        removeButton.setFocusTraversable(false);
+        removeButton.setDisable(true);
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.DELETE),
+                removeButton::fire
+        );
+        addButtonAction(removeButton, () ->
+                showConfirmationDialog(
+                        "Are you sure you want to delete: " + actionTierTableView.getSelectionModel().getSelectedItem().name() + "?",
+                        actionTierStage,
+                        Main::processRemoveButtonAction));
+
+        // Refresh list button
+        final Button refreshButton = new Button("Refresh", getMenuIcon("refresh.png"));
+        refreshButton.setFocusTraversable(false);
+        addButtonAction(refreshButton, Main::refreshTable);
+
+        // Copy to clipboard button
+        final Button copyToClipboardButton = new Button("_Copy to Clipboard", getMenuIcon("copy.png"));
+        copyToClipboardButton.setFocusTraversable(false);
+        copyToClipboardButton.setMnemonicParsing(true);
+        addButtonAction(copyToClipboardButton, ()-> {
+            if (actionTierTableView.getSelectionModel().isEmpty()) {
+                showErrorDialog("Select a row before copying!", actionTierStage, () -> {
+                });
+                return;
+            }
+            String enumName = actionTierTableView.getSelectionModel().getSelectedItem().name();
+            StringSelection stringSelection = new StringSelection(enumName);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
+            showInformationDialog("Copy to Clipboard", "You just copied the ActionTier called: "+enumName, "Now paste it on the Action you desire on the column called ActionTier!", actionTierStage);
+        });
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN),
+                copyToClipboardButton::fire
+        );
+
+        // Change action icon button
+        Button changeColorButton = new Button("Set Color", getMenuIcon("color.png"));
+        changeColorButton.setFocusTraversable(false);
+        changeColorButton.setDisable(true);
+        addButtonAction(changeColorButton, ()-> {
+            if (actionTierTableView.getSelectionModel().isEmpty()) {
+                showErrorDialog("Select a row before copying!", actionTierStage, () -> {
+                });
+                return;
+            }
+            final ColorPicker colorPicker = new ColorPicker(javafx.scene.paint.Color.web(actionTierTableView.getSelectionModel().getSelectedItem().getAbilityBorder()));
+
+            Stage bike = new Stage();
+            Scene cpScene = new Scene(new HBox(20), 400, 100);
+            HBox box = (HBox) cpScene.getRoot();
+            box.setPadding(new Insets(5, 5, 5, 5));
+
+            box.getChildren().addAll(colorPicker);
+            bike.setScene(cpScene);
+            bike.show();
+            colorPicker.setOnAction((EventHandler) event -> {
+                actionTierTableView.getSelectionModel().getSelectedItem().setAbilityBorder(colorPicker.getValue().toString());
+                Optional<ActionTier> optAct = Main.cachedActionTiers.stream().filter(p-> p == actionTierTableView.getSelectionModel().getSelectedItem()).findFirst();
+                if (optAct.isPresent()) {
+                    Main.cachedActionTiers.get(Main.cachedActionTiers.indexOf(optAct.get())).setAbilityBorder(Integer.toHexString(colorPicker.getValue().hashCode()));
+                    getSavedData().setCachedActionTiers(cachedActionTiers);
+                }
+                refreshTable();
+            });
+
+        });
+
+        Separator separator2 = new Separator();
+        separator2.setOrientation(Orientation.VERTICAL);
+
+        Separator separator3 = new Separator();
+        separator3.setOrientation(Orientation.VERTICAL);
+
+        HBox hBox = new HBox();
+
+        TitledPane tp = new TitledPane();
+        tp.setContent(pane);
+        tp.setText("Options");
+        tp.setExpanded(true);
+        tp.setFocusTraversable(false);
+
+        hBox.getChildren().add(tp);
+
+        // Add all components to the pane
+        pane.getChildren().addAll(addButton, removeButton, separator2, copyToClipboardButton, changeColorButton, separator3, refreshButton);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+
+        //Vertical separator
+        Separator separator = new Separator();
+        separator.setOrientation(Orientation.HORIZONTAL);
+
+        vbox.getChildren().addAll(topPanel, actionTierTableView, separator, hBox);
+
+        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+
+        actionTierStage.setAlwaysOnTop(true);
+        actionTierStage.setResizable(false);
+        actionTierStage.setScene(scene);
+        actionTierStage.show();
+
+        actionTierTableView.setMaxWidth(576);
+
+        tp.setPrefWidth(576);
+
+        centerScreen(actionTierStage);
+
+        addCloseEventHandler(actionTierStage, false);
+
+        refreshTable();
     }
 
     /**
@@ -632,7 +877,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         topPanel.setSpacing(10);
         topPanel.setPadding(new Insets(3, 0, 3, 0));
 
-        constructTableView(setupStage);
+        constructSetupTableView(setupStage);
 
         HBox pane = new HBox();
         pane.setSpacing(10);
@@ -656,7 +901,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                         Main::processRemoveButtonAction));
 
         // Refresh list button
-        Button refreshButton = new Button("Refresh List", getMenuIcon("refresh.png"));
+        Button refreshButton = new Button("Refresh", getMenuIcon("refresh.png"));
         refreshButton.setFocusTraversable(false);
         addButtonAction(refreshButton, Main::refreshTable);
 
@@ -718,6 +963,135 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
+     * Opens the action tier screen
+     */
+    private static void openActionStyleScreen() {
+        Stage actionStyleStage = new Stage();
+
+        Scene scene = new Scene(new Group());
+        actionStyleStage.setTitle("ActionStyle - List");
+        actionStyleStage.setWidth(600);
+        actionStyleStage.setHeight(565);
+
+        final HBox topPanel = new HBox();
+        final Label searchLabel = new Label("Search: ");
+        final TextField searchBar = new TextField();
+        searchBar.setPrefWidth(412);
+        searchBar.setFocusTraversable(false);
+        final Button searchButton = new Button("Search", getMenuIcon("search.png"));
+        searchButton.setFocusTraversable(false);
+        searchButton.setDisable(true);
+        searchBar.setDisable(true);
+
+        refreshTable();
+
+        Separator sep = new Separator();
+        sep.setOrientation(Orientation.VERTICAL);
+
+        // Add all components to the top panel
+        topPanel.getChildren().addAll(searchLabel, sep, searchBar, searchButton);
+        topPanel.setSpacing(10);
+        topPanel.setPadding(new Insets(3, 0, 3, 0));
+
+        constructActionStyleTableView();
+
+        HBox pane = new HBox();
+        pane.setSpacing(10);
+
+        // Action adding button
+        Button addButton = new Button("Add Style", Main.getMenuIcon("plus.png"));
+        addButton.setFocusTraversable(false);
+        addButton.setDisable(true);
+        Main.addButtonAction(addButton, Main::processAddButtonAction);
+
+        // Action removing button
+        Button removeButton = new Button("Remove Style", getMenuIcon("remove.png"));
+        removeButton.setFocusTraversable(false);
+        removeButton.setDisable(true);
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.DELETE),
+                removeButton::fire
+        );
+        addButtonAction(removeButton, () ->
+                showConfirmationDialog(
+                        "Are you sure you want to delete: " + actionStyleTableView.getSelectionModel().getSelectedItem().name() + "?",
+                        actionStyleStage,
+                        Main::processRemoveButtonAction));
+
+        // Refresh list button
+        Button refreshButton = new Button("Refresh", getMenuIcon("refresh.png"));
+        refreshButton.setFocusTraversable(false);
+        addButtonAction(refreshButton, Main::refreshTable);
+
+        // Copy to clipboard button
+        final Button copyToClipboardButton = new Button("_Copy to Clipboard", getMenuIcon("copy.png"));
+        copyToClipboardButton.setFocusTraversable(false);
+        copyToClipboardButton.setMnemonicParsing(true);
+        addButtonAction(copyToClipboardButton, ()-> {
+            if (actionStyleTableView.getSelectionModel().isEmpty()) {
+                showErrorDialog("Select a row before copying!", actionStyleStage, () -> {
+                });
+                return;
+            }
+            String enumName = actionStyleTableView.getSelectionModel().getSelectedItem().name();
+            StringSelection stringSelection = new StringSelection(enumName);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
+            showInformationDialog("Copy to Clipboard", "You just copied the ActionStyle called: "+enumName, "Now paste it on the Action you desire on the column called ActionStyle!", actionStyleStage);
+        });
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN),
+                copyToClipboardButton::fire
+        );
+
+        Separator separator2 = new Separator();
+        separator2.setOrientation(Orientation.VERTICAL);
+
+        Separator separator3 = new Separator();
+        separator3.setOrientation(Orientation.VERTICAL);
+
+        HBox hBox = new HBox();
+
+        TitledPane tp = new TitledPane();
+        tp.setContent(pane);
+        tp.setText("Options");
+        tp.setExpanded(true);
+        tp.setFocusTraversable(false);
+
+        hBox.getChildren().add(tp);
+
+        // Add all components to the pane
+        pane.getChildren().addAll(addButton, removeButton, separator2, copyToClipboardButton, separator3, refreshButton);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+
+        //Vertical separator
+        Separator separator = new Separator();
+        separator.setOrientation(Orientation.HORIZONTAL);
+
+        vbox.getChildren().addAll(topPanel, actionStyleTableView, separator, hBox);
+
+        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+
+        actionStyleStage.setAlwaysOnTop(true);
+        actionStyleStage.setResizable(false);
+        actionStyleStage.setScene(scene);
+        actionStyleStage.show();
+
+        actionStyleTableView.setMaxWidth(576);
+
+        tp.setPrefWidth(576);
+
+        centerScreen(actionStyleStage);
+
+        addCloseEventHandler(actionStyleStage, false);
+
+        refreshTable();
+    }
+
+    /**
      * Shows a confirmation dialog pane
      * @param contentText The description about the panel
      * @param owner Which stage was this called from (the owner)
@@ -731,6 +1105,23 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }
         a.showAndWait()
                 .filter(response -> response == ButtonType.OK)
+                .ifPresent(response -> exec.run());
+    }
+
+    /**
+     * Shows a confirmation dialog pane
+     * @param contentText The description about the panel
+     * @param headerText The headerText
+     * @param owner Which stage was this called from (the owner)
+     * @param exec The execution when clicking on OK button
+     */
+    private static void showLinkToPatreonDialog(String title, String headerText, String contentText, Stage owner, Runnable exec) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.initOwner(owner);
+        a.setTitle(title);
+        a.setHeaderText(headerText);
+        a.setContentText(contentText);
+        a.showAndWait().filter(response -> response == ButtonType.OK)
                 .ifPresent(response -> exec.run());
     }
 
@@ -749,6 +1140,23 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         a.showAndWait()
                 .filter(response -> response == ButtonType.OK)
                 .ifPresent(response -> exec.run());
+    }
+
+    /**
+     * Shows an information dialog
+     * @param title The dialog title
+     * @param headerText The header text
+     * @param contentText The contentText
+     * @param owner The owner who called
+     */
+    private static void showInformationDialog(String title, String headerText, String contentText, Stage owner) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.initOwner(owner);
+        a.setTitle(title);
+        a.setHeaderText(headerText);
+        a.setContentText(contentText);
+
+        a.showAndWait();
     }
 
 
@@ -835,6 +1243,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * Refresh table
      */
     private static void refreshTable() {
+        actionTierTableView.refresh();
+        actionStyleTableView.refresh();
         setupTableView.refresh();
         setupTableView.getItems().forEach(p-> {
             p.setActionImage(new ImageView(new Image(new File(p.getIconPath()).toURI().toString())));

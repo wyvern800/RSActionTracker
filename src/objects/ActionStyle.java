@@ -1,5 +1,7 @@
 package objects;
 
+import sagacity.Main;
+
 /**
  * Holds the action styles
  *
@@ -8,15 +10,21 @@ package objects;
  * @project RSKeyLogging
  */
 public enum ActionStyle {
-    NONE(0),
-        MELEE(1),
-            RANGED(2),
-                MAGIC(3);
+    NONE(0, "NONE"),
+        MELEE(1, "MELEE"),
+            RANGED(2, "RANGED"),
+                MAGIC(3, "MAGIC");
 
     /**
      * The action style
      */
     private final int id;
+
+    private final String styleName;
+
+    public String getStyleName() {
+        return styleName;
+    }
 
     /**
      * Gets the id of the action style
@@ -26,6 +34,7 @@ public enum ActionStyle {
         return id;
     }
     ;
+
 
     /**
      * Wrapper method to get the action Style
@@ -44,7 +53,21 @@ public enum ActionStyle {
      * Creates an attackStyle object
      * @param id The id
      */
-    ActionStyle(int id) {
+    ActionStyle(int id, String styleName) {
         this.id = id;
+        this.styleName = styleName;
+    }
+
+
+    /**
+     * Generate a default list if the database was deleted / not exist (only used here)
+     */
+    public static void generateDefaultList() {
+        // Load all actions to our cache
+        for (ActionStyle store : ActionStyle.values()) {
+            if (store == null)
+                continue;
+            Main.cachedActionStyles.add(store);
+        }
     }
 }

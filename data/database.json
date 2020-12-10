@@ -21,6 +21,16 @@
       "actionStyle": "MELEE"
     },
     {
+      "actionName": "Quake",
+      "pressedKey": 16,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "data/resources/abilities/melee/strength/quake.png",
+      "actionStyle": "MELEE"
+    },
+    {
       "actionName": "Berserk",
       "pressedKey": 19,
       "ctrlPressed": true,
@@ -489,6 +499,41 @@
       "actionTier": "BASIC_ABILITY",
       "iconPath": "data/resources/abilities/magic/surge.png",
       "actionStyle": "NONE"
+    },
+    {
+      "actionName": "Escape",
+      "pressedKey": 31,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/ranged/escape.png",
+      "actionStyle": "NONE"
+    },
+    {
+      "actionName": "dfgdfgd",
+      "pressedKey": 0,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/placeholder.png",
+      "actionStyle": "NONE"
     }
+  ],
+  "cachedActionTiers": [
+    "CONSUMABLE",
+    "BASIC_ABILITY",
+    "TRESHOLD_ABILITY",
+    "ULTIMATE_ABILITY",
+    "DEFENSIVE_ABILITY",
+    "PRAYER",
+    "WEAPON_SPEC"
+  ],
+  "cachedActionStyles": [
+    "NONE",
+    "MELEE",
+    "RANGED",
+    "MAGIC"
   ]
 }

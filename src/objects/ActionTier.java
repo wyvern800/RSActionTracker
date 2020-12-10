@@ -1,6 +1,8 @@
 package objects;
 
+import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
+import sagacity.Main;
 
 /**
  * Represents an action tier
@@ -14,13 +16,13 @@ import javafx.scene.paint.Color;
      * The actions tier storage
      */
     public enum ActionTier {
-        CONSUMABLE(0, "#9500ff"),
-            BASIC_ABILITY( 1, "#c96236"),
-                TRESHOLD_ABILITY(2, "#1b9400"),
-                        ULTIMATE_ABILITY(3, "#ebac00"),
-                            DEFENSIVE_ABILITY(3, "white"),
-                                    PRAYER( 4, "#007fff"),
-                                            WEAPON_SPEC(4, "#bd0026");
+        CONSUMABLE(0, "CONSUMABLE", "#9500ff"),
+            BASIC_ABILITY( 1, "BASIC_ABILITY", "#c96236"),
+                TRESHOLD_ABILITY(2, "TRESHOLD_ABILITY", "#1b9400"),
+                        ULTIMATE_ABILITY(3, "ULTIMATE_ABILITY", "#ebac00"),
+                            DEFENSIVE_ABILITY(3, "DEFENSIVE_ABILITY", "white"),
+                                    PRAYER( 4, "PRAYER", "#007fff"),
+                                            WEAPON_SPEC(4, "WEAPON_SPEC", "#bd0026");
 
         /**
          * The action id
@@ -38,7 +40,25 @@ import javafx.scene.paint.Color;
         /**
          * The ability border color
          */
-        private final String abilityBorder;
+        private String abilityBorder;
+        private final String tierName;
+        private transient ColorPicker colorPicker;
+
+        public ColorPicker getColorPicker() {
+            return colorPicker;
+        }
+
+        public void setColorPicker(ColorPicker colorPicker) {
+            this.colorPicker = colorPicker;
+        }
+
+        public void setAbilityBorder(String abilityBorder) {
+            this.abilityBorder = abilityBorder;
+        }
+
+        public String getTierName() {
+            return tierName;
+        }
 
         /**
          * Gets the ability border color
@@ -66,8 +86,24 @@ import javafx.scene.paint.Color;
          * @param id The tier Id,
          * @param color The border color
          */
-        ActionTier(int id, String color) {
+        ActionTier(int id, String tierName, String color) {
             this.id = id;
             this.abilityBorder = color;
+            this.tierName = tierName;
+            this.colorPicker = new ColorPicker(Color.web(abilityBorder));
+            colorPicker.setDisable(true);
+        }
+
+
+        /**
+         * Generate a default list if the database was deleted / not exist (only used here)
+         */
+        public static void generateDefaultList() {
+            // Load all actions to our cache
+            for (ActionTier store : ActionTier.values()) {
+                if (store == null)
+                    continue;
+                Main.cachedActionTiers.add(store);
+            }
         }
     }
