@@ -253,10 +253,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem about = new MenuItem("About", getMenuIcon("config.png"));
         final MenuItem discord = new MenuItem("Discord", getMenuIcon("config.png"));
         addMenuItemAction(discord, ()-> sendOpenURL("https://discord.gg/yaUHKTWJSJ"));
+        final MenuItem report = new MenuItem("Bugs Report", getMenuIcon("bug.png"));
+        addMenuItemAction(report, ()-> sendOpenURL("https://github.com/wyvern800/RSActionLogger/issues"));
         final MenuItem purchase = new MenuItem("Purchase a License", getMenuIcon("config.png"));
         purchase.setDisable(true);
         final SeparatorMenuItem sep2 = new SeparatorMenuItem();
-        links.getItems().addAll(help, discord, about, sep2, purchase);
+        links.getItems().addAll(help, discord, about, report, sep2, purchase);
         stopResume = new Menu(stopResumeLabel[0][0], getMenuIcon(stopResumeLabel[0][1]));
         addMenuItemAction(help, ()-> sendOpenURL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md"));
         addMenuItemAction(about, ()-> {
