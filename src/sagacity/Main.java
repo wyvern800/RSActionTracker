@@ -52,6 +52,7 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Software used to log the actions from the player (this is not a keylogger)
@@ -100,6 +101,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static boolean isCombatMode = false;
     private static boolean showActionName = true;
     private static boolean showPatreonMsg = false;
+    private static boolean setKeyBindMode = false;
 
     /**
      * Variables
@@ -426,7 +428,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         );
 
         // Add the keyCode
-        TableColumn keyCode = addTableColumn(new TableColumn<Action, Integer>("KeyCode"), null, new PropertyValueFactory<Action, Integer>("pressedKey"), true);
+        TableColumn keyCode = addTableColumn(new TableColumn<Action, Integer>("KeyCode"), null, new PropertyValueFactory<Action, Integer>("pressedKey"), false);
         keyCode.setCellFactory(
                 TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         keyCode.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, Integer>>) t -> {
@@ -915,7 +917,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Change key bind
         Button changeKeyBindButton = new Button("Set Keybind", getMenuIcon("keybind.png"));
         changeKeyBindButton.setFocusTraversable(false);
-        addButtonAction(changeKeyBindButton, ()-> changeKeyBind(setupTableView.getSelectionModel().getSelectedItem()));
+        addButtonAction(changeKeyBindButton, ()-> changeKeyBind(setupTableView.getSelectionModel().getSelectedItem(), setupStage));
 
         Separator separator2 = new Separator();
         separator2.setOrientation(Orientation.VERTICAL);
@@ -1223,7 +1225,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             stage.close();
             if (exitProgram) {
                 System.runFinalization();
-                System.exit(0);
+                //System.exit(0);
             }
         });
     }
@@ -1287,12 +1289,17 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }
     }
 
+    private static Stage changingKeyBind;
     /**
      * Changes the key bind
      */
-    private static void changeKeyBind(Action action) {
-        if (action == null) {
+    private static void changeKeyBind(Action action, Stage called) {
+        changingKeyBind = new Stage();
+
+        if (action == null || setupTableView.getSelectionModel().isEmpty()) {
             System.out.println("Action isn't selected");
+            showErrorDialog("Select a row before setting the action keybind!", called, () -> {
+            });
             return;
         }
         Optional<Action> optAction = cachedActions.stream().filter(p-> p.getActionName().toLowerCase().equals(action.getActionName().toLowerCase())).findFirst();
@@ -1301,6 +1308,31 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }
 
         System.out.println("changeKeyBind("+action.getActionName()+")");
+
+        Group group = new Group();
+        Scene keyBindScene = new Scene(group, 430, 50);
+
+        Label pressKey = new Label("Press any key you'd like to bind to your action!");
+        pressKey.setStyle("-fx-font-size:20px;" +
+                "-fx-font-color:blue;");
+        AnchorPane.setLeftAnchor(pressKey, 0.0);
+        AnchorPane.setRightAnchor(pressKey, 0.0);
+        pressKey.setAlignment(Pos.CENTER);
+        pressKey.setMaxWidth(Double.MAX_VALUE);
+        pressKey.setPadding(new Insets(10, 10, 10 , 10));
+
+        group.getChildren().add(pressKey);
+
+        changingKeyBind.setTitle("Keybinding");
+        changingKeyBind.setScene(keyBindScene);
+        changingKeyBind.setAlwaysOnTop(true);
+        changingKeyBind.setResizable(false);
+        changingKeyBind.centerOnScreen();
+        changingKeyBind.sizeToScene();
+        changingKeyBind.show();
+        centerScreen(changingKeyBind);
+
+        setKeyBindMode = true;
     }
 
 
@@ -1458,8 +1490,38 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         int key = nativeKeyEvent.getKeyCode();
 
         Platform.runLater(() -> {
-            if (!isCombatMode) {
+            if (nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+                System.out.println("key already pressed");
+                return;
+            }
+
+            if (!isCombatMode && !setKeyBindMode) {
                 System.out.println("Player is in idle mode");
+                return;
+            }
+            if (setKeyBindMode) {
+                System.out.println("the key you selected was :"+nativeKeyEvent.getKeyCode());
+
+                // Sets the new key bind to the selected row item
+                Action selectedAction = setupTableView.getSelectionModel().getSelectedItem();
+                selectedAction.setPressedKey(nativeKeyEvent.getKeyCode());
+                Optional<Action> optAction = cachedActions.stream().filter(action -> action == selectedAction).findFirst();
+                optAction.ifPresent(action -> cachedActions.set(cachedActions.indexOf(optAction.get()), selectedAction));
+
+                // If any other action is using the key, remove it
+                /*List<Action> keysAlreadyUsedList = cachedActions.stream().filter(act -> act.getPressedKey() == nativeKeyEvent.getKeyCode() && act != selectedAction).collect(Collectors.toList());
+                keysAlreadyUsedList.forEach(action -> {
+                    showInformationDialog("Duplicated Keybind", "Key was already bound to "+action.getActionName().toUpperCase()+"!", "The action: "+action.getActionName().toUpperCase()+" got it's key unbound!\nPlease select a new key bind to it!", changingKeyBind);
+                    cachedActions.get(cachedActions.indexOf(action)).setPressedKey(-1);
+                    setupTableView.getFocusModel().focus(cachedActions.indexOf(action));
+                });*/
+
+                getSavedData().setCachedActions(cachedActions);
+
+                refreshTable();
+
+                setKeyBindMode = false;
+                changingKeyBind.close();
                 return;
             }
             for (Action action : cachedActions) {
@@ -1501,6 +1563,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     private static void processKeyAction(Action action, NativeKeyEvent nativeKeyEvent) {
         int key = nativeKeyEvent.getKeyCode();
+
+        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode());
 
         // Adds the action to the screen
         addActionToScreen(action, nativeKeyEvent);
