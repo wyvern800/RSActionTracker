@@ -73,7 +73,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * The combat style you'l be using on the abilities
      * ActionStyle.MELEE For melee | ActionStyle.RANGED for ranged | ActionStyle.MAGIC for magic
      */
-    private static final ActionStyle COMBAT_STYLE = ActionStyle.RANGED;
+    private static final ActionStyle COMBAT_STYLE = ActionStyle.MAGIC;
 
     // The actionStatus
     private static ActionStatus actionStatus = ActionStatus.IDLE;
@@ -98,10 +98,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * {@code True} if in keys should be logged, {@code False} if not
      */
-    private static boolean isCombatMode = false;
+    //private static boolean isCombatMode = false;
     private static boolean showActionName = true;
     private static boolean showPatreonMsg = false;
-    private static boolean setKeyBindMode = false;
+    //private static boolean setKeyBindMode = false;
 
     /**
      * Variables
@@ -127,6 +127,22 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     public static SavedData getSavedData() {
         return savedData;
+    }
+
+    /**
+     * Sets the current actionStatus
+     * @param actionStatus the actionStatus
+     */
+    public static void setActionStatus(ActionStatus actionStatus) {
+        Main.actionStatus = actionStatus;
+    }
+
+    /**
+     * Gets the current actionStatus
+     * @return the actionStatus
+     */
+    public static ActionStatus getActionStatus() {
+        return actionStatus;
     }
 
     /**
@@ -218,7 +234,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     "-fx-border-width: 2;\n" +
                     "-fx-border-color: " + actionToBeAdded.getActionTier().getAbilityBorder());
 
-            actionToBeAdded.getActionImage().setFitWidth(104);
+            actionToBeAdded.getActionImage().setFitWidth(106);
+            actionToBeAdded.getActionImage().setFitHeight(106);
+            actionToBeAdded.getActionImage().setY(-3);
+            actionToBeAdded.getActionImage().setX(-1);
             actionGroup.getChildren().add(actionToBeAdded.getActionImage());
             actionGroup.getChildren().add(actionName);
 
@@ -228,6 +247,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
             // Add the actionBox to the gridPane
             mainGridPane.add(actionBox, i, 0);
+            System.out.println("actions on screen: "+mainGridPane.getChildren().size());
         }
     }
 
@@ -274,21 +294,21 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // add menu items to menu
         menu.getItems().addAll(toggleCombatMode, toggleAbilityName);
 
-        addMenuItemAction(toggleCombatMode, ()-> toggleIdleMode(false));
+        addMenuItemAction(toggleCombatMode, ()-> toggleIdleMode());
 
         addMenuItemAction(toggleAbilityName, () -> {
             showActionName = !showActionName;
             System.out.println("Ability name is now " + (showActionName ? "enabled" : "disabled"));
         });
 
-        addMenuAction(stopResume, ()-> toggleIdleMode(false));
+        addMenuAction(stopResume, ()-> toggleIdleMode());
 
         // Configurations menu
         final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("click.png"));
         final MenuItem actionStyle = new MenuItem("ActionStyles", getMenuIcon("config.png"));
         final MenuItem actionTier = new MenuItem("ActionTiers", getMenuIcon("config.png"));
         addMenuItemAction(configureAbilities, ()-> {
-            toggleIdleMode(true);
+            toggleIdleMode();
             openSetupScreen();
         });
         addMenuItemAction(actionStyle, Main::openActionStyleScreen);
@@ -314,9 +334,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // create a VBox
         VBox verticalBox = new VBox(menuBars);
         // create a scene
-        Scene mainScene = new Scene(verticalBox, 1100, 137);
+        Scene mainScene = new Scene(verticalBox, 1100, 135);
         // set a background color to the vertical box
-        verticalBox.setStyle("-fx-background-color: #000000;");
+        verticalBox.setStyle("-fx-background-color: #ff14f7;");
         // create a grid pane
         mainGridPane = new GridPane();
         // add the grid pane to the vertical box
@@ -343,7 +363,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 new KeyCodeCombination(KeyCode.F12),
                 () -> {
                     stopResume.fire();
-                    toggleIdleMode(false);
+                    toggleIdleMode();
                 }
         );
 
@@ -1332,7 +1352,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         changingKeyBind.show();
         centerScreen(changingKeyBind);
 
-        setKeyBindMode = true;
+        //setKeyBindMode = true;
+        setActionStatus(ActionStatus.SETTING_KEYBIND);
     }
 
 
@@ -1466,23 +1487,23 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * Toggles the idle mode
      */
-    private static void toggleIdleMode(boolean disable) {
-        if (disable) {
-            isCombatMode = false;
-        } else {
-            isCombatMode = !isCombatMode;
-        }
-        System.out.println("Idle mode is now " + (isCombatMode ? "enabled" : "disabled"));
+    private static void toggleIdleMode() {
+        setActionStatus(getActionStatus() == ActionStatus.IDLE ? ActionStatus.LOGGING : ActionStatus.IDLE);
+
         lastKeyPressed = new LastKeyPressed(LocalTime.now(), NativeKeyEvent.VC_F11);
-        actionStatus = (isCombatMode ? ActionStatus.LOGGING : ActionStatus.PAUSED);
         updateTitle(mainStage);
-        if (!isCombatMode) {
-            stopResume.setText(stopResumeLabel[2][0]);
-            System.out.println("stop logging");
-        } else {
+        if (getActionStatus() == ActionStatus.LOGGING)
             stopResume.setText(stopResumeLabel[1][0]);
-            System.out.println("start logging");
-        }
+        else
+            stopResume.setText(stopResumeLabel[2][0]);
+        System.out.println("Status: "+getActionStatus().name()+"!");
+    }
+
+    /**
+     * Used to toggle chat mode
+     */
+    public static void toggleChattingMode() {
+
     }
 
     @Override
@@ -1490,17 +1511,44 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         int key = nativeKeyEvent.getKeyCode();
 
         Platform.runLater(() -> {
-            if (nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+            // Check if player is chatting
+            if (key == NativeKeyEvent.VC_ENTER || key == NativeKeyEvent.VC_TAB) {
+                if (getActionStatus() == ActionStatus.LOGGING) {
+                    setActionStatus(ActionStatus.CHATTING);
+                    System.out.println("Player entered on chatting mode");
+                } else if (getActionStatus() == ActionStatus.CHATTING) {
+                    setActionStatus(ActionStatus.LOGGING);
+                    System.out.println("Player ended chatting mode! Logging back again");
+                }
+            }
+
+            // Checks if player clicked on ESC button
+            if (key == NativeKeyEvent.VC_ESCAPE) {
+                if (getActionStatus() == ActionStatus.CHATTING) {
+                    setActionStatus(ActionStatus.LOGGING);
+                    System.out.println("Cancelled chat mode");
+                }
+            }
+
+            // Checks if player was in CHAT MODE
+            if (getActionStatus() == ActionStatus.CHATTING) {
+                return;
+            }
+
+            // Checks if key was already pressed
+            if (lastKeyPressed != null && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
                 System.out.println("key already pressed");
                 return;
             }
 
-            if (!isCombatMode && !setKeyBindMode) {
+            // Checks if player is in idle mode
+            if (/*!isCombatMode && !setKeyBindMode*/getActionStatus().equals(ActionStatus.IDLE)
+                    && nativeKeyEvent.getKeyCode() != NativeKeyEvent.VC_F12) {
                 System.out.println("Player is in idle mode");
                 return;
             }
-            if (setKeyBindMode) {
-                System.out.println("the key you selected was :"+nativeKeyEvent.getKeyCode());
+            if (getActionStatus().equals(ActionStatus.SETTING_KEYBIND)) { // Choosing a new keybind
+                System.out.println("The key you selected was :"+nativeKeyEvent.getKeyCode());
 
                 // Sets the new key bind to the selected row item
                 Action selectedAction = setupTableView.getSelectionModel().getSelectedItem();
@@ -1520,7 +1568,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
                 refreshTable();
 
-                setKeyBindMode = false;
+                //setKeyBindMode = false;
+                setActionStatus(ActionStatus.IDLE);
                 changingKeyBind.close();
                 return;
             }
