@@ -1,9 +1,12 @@
 package objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jnativehook.keyboard.NativeKeyEvent;
+import sagacity.Main;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicLong;
@@ -21,8 +24,11 @@ public class Action {
     private int pressedKey;
     //private transient String pressedKeyName;
     private boolean ctrlPressed;
+    private transient BooleanProperty ctrlBooleanProperty;
     private boolean shiftPressed;
+    private transient BooleanProperty shiftBooleanProperty;
     private boolean altPressed;
+    private transient BooleanProperty altBooleanProperty;
     private ActionTier actionTier;
     private String iconPath;
     private transient ImageView actionImage;
@@ -35,6 +41,58 @@ public class Action {
     /*public void setTableView(TableView tableView) {
         this.tableView = tableView;
     }*/
+
+    public BooleanProperty shiftBooleanPropertyProperty() {
+        return shiftBooleanProperty;
+    }
+
+    public void setShiftBooleanProperty(boolean shiftBooleanProperty) {
+        this.shiftBooleanProperty.set(shiftBooleanProperty);
+        this.shiftPressed = shiftBooleanProperty;
+        //System.out.println("setShiftBooleanProperty: "+shiftBooleanProperty);
+    }
+
+    public boolean isShiftCheckboxChecked() {
+        if (shiftBooleanProperty == null) {
+            shiftBooleanProperty = new SimpleBooleanProperty(isShiftPressed());
+        }
+        return shiftBooleanProperty.get();
+    }
+
+
+    public BooleanProperty ctrlBooleanPropertyProperty() {
+        return ctrlBooleanProperty;
+    }
+
+    public void setCtrlBooleanProperty(boolean ctrlBooleanProperty) {
+        this.ctrlBooleanProperty.set(ctrlBooleanProperty);
+        this.ctrlPressed = ctrlBooleanProperty;
+        //System.out.println("setCtrlBooleanProperty: "+ctrlBooleanProperty);
+    }
+
+    public boolean isCtrlCheckboxChecked() {
+        if (ctrlBooleanProperty == null) {
+            ctrlBooleanProperty = new SimpleBooleanProperty(isCtrlPressed());
+        }
+        return ctrlBooleanProperty.get();
+    }
+
+    public BooleanProperty altBooleanPropertyProperty() {
+        return altBooleanProperty;
+    }
+
+    public void setAltBooleanProperty(boolean altBooleanProperty) {
+        this.altBooleanProperty.set(altBooleanProperty);
+        this.altPressed = altBooleanProperty;
+        //System.out.println("setShiftBooleanProperty: "+altBooleanProperty);
+    }
+
+    public boolean isAltCheckboxChecked() {
+        if (altBooleanProperty == null) {
+            altBooleanProperty = new SimpleBooleanProperty(isAltPressed());
+        }
+        return altBooleanProperty.get();
+    }
 
     public String getPressedKeyName() {
         return NativeKeyEvent.getKeyText(pressedKey);
@@ -155,8 +213,11 @@ public class Action {
         this.actionName = actionName;
         this.pressedKey = pressedKey;
         this.ctrlPressed = ctrlPressed;
+        this.ctrlBooleanProperty = new SimpleBooleanProperty(ctrlPressed);
         this.shiftPressed = shiftPressed;
+        this.shiftBooleanProperty = new SimpleBooleanProperty(shiftPressed);
         this.altPressed = altPressed;
+        this.altBooleanProperty = new SimpleBooleanProperty(altPressed);
         this.actionImage = new ImageView(new Image(new File(iconPath).toURI().toString()));
         this.actionTier = tier;
         this.iconPath = iconPath;

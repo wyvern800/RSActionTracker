@@ -21,6 +21,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
@@ -29,6 +31,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.BooleanStringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -461,19 +464,27 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     getSavedData().setCachedActions(cachedActions);
                 }
         );*/
+
         // Add the ctrlMask
-        TableColumn ctrlMask = addTableColumn(new TableColumn<Action, Boolean>("CTRL?"), null, new PropertyValueFactory<Action, Boolean>("ctrlPressed"), true);
-        ctrlMask.setCellFactory(
-                TextFieldTableCell.forTableColumn(new BooleanStringConverter()));
+       /*ctrlMask.setCellFactory(TextFieldTableCell.forTableColumn(new BooleanStringConverter()));
         ctrlMask.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, Boolean>>) t -> {
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setCtrlPressed(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setCtrlPressed(t.getNewValue());
 
                     getSavedData().setCachedActions(cachedActions);
                 }
-        );
+        );*/
+        TableColumn ctrlMask = addTableColumn(new TableColumn<Action, Boolean>("CTRL?"), null, new PropertyValueFactory<Action, Boolean>("ctrlBooleanProperty"), true);
+        ctrlMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
+            //System.out.println(observableListData.get(param).getActionName()+" CTRL checkbox changed value to "+observableListData.get(param).isCtrlCheckboxChecked());
+            observableListData.get(param).setCtrlBooleanProperty(observableListData.get(param).isCtrlCheckboxChecked());
+            getSavedData().saveData();
+            return observableListData.get(param).ctrlBooleanPropertyProperty();
+        }));
+
+
         // Add the shiftMask
-        TableColumn shiftMask = addTableColumn(new TableColumn<Action, Boolean>("Shift?"), null, new PropertyValueFactory<Action, Boolean>("shiftPressed"), true);
+        /*TableColumn shiftMask = addTableColumn(new TableColumn<Action, Boolean>("Shift?"), null, new PropertyValueFactory<Action, Boolean>("shiftPressed"), true);
         shiftMask.setCellFactory(
                 TextFieldTableCell.forTableColumn(new BooleanStringConverter()));
         shiftMask.setOnEditCommit(
@@ -492,44 +503,16 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
                     getSavedData().setCachedActions(cachedActions);
                 }
-        );
-        /*TableColumn<Action, Boolean> shiftTableColumn = new TableColumn<>("Shift?");
-        PropertyValueFactory<Action, Boolean> shiftPropertyValueFactory = new PropertyValueFactory<>("shiftPressed");
-        TableColumn<Action, Boolean> shiftMask = addTableColumn(shiftTableColumn, null, shiftPropertyValueFactory, true);
-        shiftMask.setCellValueFactory(shiftPropertyValueFactory);
-        //shiftMask.setCellFactory(CheckBoxTableCell.forTableColumn(shiftTableColumn));
-        shiftMask.setCellFactory( new Callback<TableColumn<Action,Boolean>, TableCell<Action,Boolean>>() {
-            @Override
-            public TableCell<Action,Boolean> call( TableColumn<Action,Boolean> param ) {
-                return new CheckBoxTableCell<Action,Boolean>() {
-                    {
-                        setAlignment( Pos.CENTER );
-                    }
-                    @Override
-                    public void updateItem( Boolean item, boolean empty ) {
-                        if ( ! empty ) {
-                            TableRow  row = getTableRow();
-
-                            if ( row != null ) {
-                                int rowNo = row.getIndex();
-                                TableView.TableViewSelectionModel sm = getTableView().getSelectionModel();
-
-                                if ( item ) sm.select( rowNo );
-                                else  sm.clearSelection( rowNo );
-                            }
-                        }
-                        super.updateItem( item, empty );
-                    }
-                };
-            }
-        } );
-        shiftMask.setOnEditCommit(t -> {
-                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setShiftPressed(t.getNewValue());
-                    cachedActions.get(t.getTablePosition().getRow()).setShiftPressed(t.getNewValue());
-            }
         );*/
+        TableColumn shiftMask = addTableColumn(new TableColumn<Action, Boolean>("Shift?"), null, new PropertyValueFactory<Action, Boolean>("shiftBooleanProperty"), true);
+        shiftMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
+            //System.out.println(observableListData.get(param).getActionName()+" SHIFT checkbox changed value to "+observableListData.get(param).isShiftCheckboxChecked());
+            observableListData.get(param).setShiftBooleanProperty(observableListData.get(param).isShiftCheckboxChecked());
+            getSavedData().saveData();
+            return observableListData.get(param).shiftBooleanPropertyProperty();
+        }));
         // Add the altMask
-        TableColumn altMask = addTableColumn(new TableColumn<Action, Boolean>("Alt?"), null, new PropertyValueFactory<Action, Boolean>("altPressed"), true);
+           /*TableColumn altMask = addTableColumn(new TableColumn<Action, Boolean>("Alt?"), null, new PropertyValueFactory<Action, Boolean>("altPressed"), true);
         altMask.setCellFactory(TextFieldTableCell.forTableColumn(new BooleanStringConverter()));
         altMask.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, Boolean>>) t -> {
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setAltPressed(t.getNewValue());
@@ -537,10 +520,18 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
                     getSavedData().setCachedActions(cachedActions);
                 }
-        );
+        );*/
+        TableColumn altMask = addTableColumn(new TableColumn<Action, Boolean>("Alt?"), null, new PropertyValueFactory<Action, Boolean>("altBooleanProperty"), true);
+        altMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
+            //System.out.println(observableListData.get(param).getActionName()+" ALT checkbox changed value to "+observableListData.get(param).isAltCheckboxChecked());
+            observableListData.get(param).setShiftBooleanProperty(observableListData.get(param).isAltCheckboxChecked());
+            getSavedData().saveData();
+            return observableListData.get(param).altBooleanPropertyProperty();
+        }));
         // Add the actionTier
         TableColumn actionTier = addTableColumn(new TableColumn<Action, ActionTier>("ActionTier"), null, new PropertyValueFactory<Action, ActionTier>("actionTier"), true);
-        actionTier.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter() {
+        actionTier.setCellFactory(ComboBoxTableCell.forTableColumn(ActionTier.values()));
+        /*actionTier.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter() {
             @Override
             public String toString(Object interpolator) {
                 String str = interpolator.toString();
@@ -551,7 +542,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             public ActionTier fromString(String string) {
                 return ActionTier.getWrappedActionTier(string);
             }
-        }));
+        }));*/
         actionTier.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ActionTier>>) t -> {
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionTier(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setActionTier(t.getNewValue());
@@ -569,8 +560,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 }
         );*/
         // Add the actionStyle
-        TableColumn actionStyle = addTableColumn(new TableColumn<Action, ActionStyle>("ActionStyle"), 70, new PropertyValueFactory<Action, ActionStyle>("actionStyle"), true);
-
+        /*TableColumn actionStyle = addTableColumn(new TableColumn<Action, ActionStyle>("ActionStyle"), 70, new PropertyValueFactory<Action, ActionStyle>("actionStyle"), true);
         actionStyle.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter() {
             @Override
             public String toString(Object interpolator) {
@@ -586,6 +576,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         actionStyle.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ActionStyle>>) t -> {
                     t.getTableView().getItems().get(
                             t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
+                    cachedActions.get(t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
+
+                    getSavedData().setCachedActions(cachedActions);
+                }
+        );*/
+        TableColumn actionStyle = addTableColumn(new TableColumn<Action, String>("ActionStyle"), null, new PropertyValueFactory<Action, String>("actionStyle"), true);
+        actionStyle.setCellFactory(ComboBoxTableCell.forTableColumn(ActionStyle.values()));
+        actionStyle.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ActionStyle>>) t -> {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
                     cachedActions.get(t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
 
                     getSavedData().setCachedActions(cachedActions);
