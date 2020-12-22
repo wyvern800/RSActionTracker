@@ -46,7 +46,7 @@
       "ctrlPressed": false,
       "shiftPressed": false,
       "altPressed": false,
-      "actionTier": "DEFENSIVE_ABILITY",
+      "actionTier": "BASIC_ABILITY",
       "iconPath": "data/resources/abilities/melee/strength/cleave.png",
       "actionStyle": "MELEE"
     },
@@ -311,6 +311,156 @@
       "actionStyle": "RANGED"
     },
     {
+      "actionName": "Dragon Breath",
+      "pressedKey": 2,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/magic/dragon_breath.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Sonic Wave",
+      "pressedKey": 3,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/magic/sonic_wave.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Wrack",
+      "pressedKey": 4,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/magic/wrack.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Impact",
+      "pressedKey": 5,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/magic/impact.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Chain",
+      "pressedKey": 2,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/magic/chain.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Tuska\u0027s Wrath",
+      "pressedKey": 3,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/hitpoints/tuska_wrath.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Tsunami",
+      "pressedKey": 4,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "data/resources/abilities/magic/tsunami.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Deep Impact",
+      "pressedKey": 5,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "data/resources/abilities/magic/deep_impact.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Wild Magic",
+      "pressedKey": 16,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "data/resources/abilities/magic/wild_magic.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Asphyxiate",
+      "pressedKey": 17,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "data/resources/abilities/magic/asphyxiate.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Detonate",
+      "pressedKey": 18,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "data/resources/abilities/magic/detonate.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Metamorphosis",
+      "pressedKey": 33,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "ULTIMATE_ABILITY",
+      "iconPath": "data/resources/abilities/magic/metamorphosis.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Corruption Blast",
+      "pressedKey": 30,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/magic/corruption_blast.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Combust",
+      "pressedKey": 19,
+      "ctrlPressed": true,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "BASIC_ABILITY",
+      "iconPath": "data/resources/abilities/magic/combust.png",
+      "actionStyle": "MAGIC"
+    },
+    {
+      "actionName": "Smoke Tendrils",
+      "pressedKey": 19,
+      "ctrlPressed": false,
+      "shiftPressed": false,
+      "altPressed": false,
+      "actionTier": "TRESHOLD_ABILITY",
+      "iconPath": "data/resources/abilities/magic/smoke_tendrils.png",
+      "actionStyle": "MAGIC"
+    },
+    {
       "actionName": "Devotion",
       "pressedKey": 47,
       "ctrlPressed": false,
@@ -421,16 +571,6 @@
       "actionStyle": "NONE"
     },
     {
-      "actionName": "Anguish",
-      "pressedKey": 44,
-      "ctrlPressed": false,
-      "shiftPressed": false,
-      "altPressed": false,
-      "actionTier": "PRAYER",
-      "iconPath": "data/resources/prayers/curses/anguish.png",
-      "actionStyle": "NONE"
-    },
-    {
       "actionName": "Soul Split",
       "pressedKey": 33,
       "ctrlPressed": false,
@@ -498,7 +638,7 @@
       "altPressed": false,
       "actionTier": "BASIC_ABILITY",
       "iconPath": "data/resources/abilities/magic/surge.png",
-      "actionStyle": "RANGED"
+      "actionStyle": "NONE"
     },
     {
       "actionName": "Escape",
@@ -526,6 +666,6 @@
     "RANGED",
     "MAGIC"
   ],
-  "actionStyle": "RANGED",
+  "actionStyle": "MAGIC",
   "showActionName": true
 }

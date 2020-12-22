@@ -2,7 +2,7 @@
 # Compiled class file
 *.class
 /out/*
-/data/dd.json
+/data/database.json
 
 # Log file
 *.log
