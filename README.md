@@ -14,7 +14,9 @@ Basic system used to log your actions during your RS3 boss encounters (to show f
 - **Works in Background** - You capture the window with OBS, then leave it open in another screen or hidden;
 - **OpenSource** - Which means you can help me improving the code but not redistribute it;
 - Support HEX color codes for the abilities borders.
-
+- **Settings** - A settings screen that you can change your preferences.
+- **Persistance** - A persistance layer using JSON to save your data.
+- **Low Memory Usage** - The app uses low memory to work, which means lag-free.
 
 ------------
 

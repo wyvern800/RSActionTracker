@@ -3,7 +3,6 @@ package sagacity;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -73,7 +72,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * The combat style you'l be using on the abilities
      * ActionStyle.MELEE For melee | ActionStyle.RANGED for ranged | ActionStyle.MAGIC for magic
      */
-    private static ActionStyle COMBAT_STYLE;
+    private static ActionStyle actionStyle;
 
     // The actionStatus
     private static ActionStatus actionStatus = ActionStatus.IDLE;
@@ -100,7 +99,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     //private static boolean isCombatMode = false;
     private static boolean showActionName = true;
-    private static boolean showPatreonMsg = false;
+    private static boolean showPatreonMsg = true;
     //private static boolean setKeyBindMode = false;
 
     /**
@@ -160,7 +159,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         cachedActionTiers = getSavedData().getCachedActionTiers();
         cachedActionStyles = getSavedData().getCachedActionStyles();
         cachedActions = getSavedData().getCachedActions();
-        COMBAT_STYLE = getSavedData().getActionStyle();
+        actionStyle = getSavedData().getActionStyle();
 
         // Adds the jNativeHook listener
         try {
@@ -418,7 +417,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                         "- I'd also accept RSGP, so if you want, my discord tag is 'ferreirA#1058', thank you in advance! \n \n Git gud with ur dpsing u nooby scaper =]",
                 mainStage,
                 ()-> {
-                    sendOpenURL("https://www.patreon.com/wyvern800");
+                    sendOpenURL("https://www.patreon.com/join/wyvern800/checkout?ru=undefined");
                 });
     }
 
@@ -909,7 +908,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             System.out.println(observable);
             System.out.println(oldValue);
             System.out.println(newValue);
-            COMBAT_STYLE = newValue;
+            actionStyle = newValue;
             getSavedData().setActionStyle(newValue);
         });
 
@@ -1657,7 +1656,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 return;
             }
             for (Action action : cachedActions) {
-                if (action.getActionStyle() != COMBAT_STYLE
+                if (action.getActionStyle() != actionStyle
                         && action.getActionStyle() != ActionStyle.NONE)
                     continue;
 
