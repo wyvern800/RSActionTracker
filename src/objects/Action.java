@@ -3,6 +3,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.jnativehook.keyboard.NativeKeyEvent;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,6 +19,7 @@ public class Action {
     //private TableView tableView;
     private String actionName;
     private int pressedKey;
+    //private transient String pressedKeyName;
     private boolean ctrlPressed;
     private boolean shiftPressed;
     private boolean altPressed;
@@ -33,6 +35,10 @@ public class Action {
     /*public void setTableView(TableView tableView) {
         this.tableView = tableView;
     }*/
+
+    public String getPressedKeyName() {
+        return NativeKeyEvent.getKeyText(pressedKey);
+    }
 
     public void setActionName(String actionName) {
         this.actionName = actionName;

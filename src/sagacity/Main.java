@@ -451,8 +451,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         );
 
         // Add the keyCode
-        TableColumn keyCode = addTableColumn(new TableColumn<Action, Integer>("KeyCode"), null, new PropertyValueFactory<Action, Integer>("pressedKey"), false);
-        keyCode.setCellFactory(
+        TableColumn keyCode = addTableColumn(new TableColumn<Action, String>("KeyCode"), null, new PropertyValueFactory<Action, String>("pressedKeyName"), false);
+        /*keyCode.setCellFactory(
                 TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         keyCode.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, Integer>>) t -> {
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setPressedKey(t.getNewValue());
@@ -460,7 +460,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
                     getSavedData().setCachedActions(cachedActions);
                 }
-        );
+        );*/
         // Add the ctrlMask
         TableColumn ctrlMask = addTableColumn(new TableColumn<Action, Boolean>("CTRL?"), null, new PropertyValueFactory<Action, Boolean>("ctrlPressed"), true);
         ctrlMask.setCellFactory(
