@@ -110,9 +110,9 @@ NONE(0),
 
 ## Future implementations
 - [X] UI for actions adding/removing (instead of plain coding)
-- [ ] Persistance using JSON serialization
+- [X] Persistance using JSON serialization
     - [X] Implementated the saving basis
-    - [ ] Saving / loading all necessary data
+    - [X] Saving / loading all necessary data
 - [ ] Upgraded version with more functionalities
     - [ ] Node.js API for easier management
     - [X] Menu with basic settings implemented
