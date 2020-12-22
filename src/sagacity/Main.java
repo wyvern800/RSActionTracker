@@ -298,7 +298,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         addMenuItemAction(settings, Main::openSettingsScreen);
 
-        // TODO - Desligar/ligar idle mode  e Ability  name
         /*addMenuItemAction(toggleCombatMode, Main::toggleIdleMode);
 
         addMenuItemAction(toggleAbilityName, () -> {
@@ -1429,6 +1428,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         changingKeyBind.initStyle(StageStyle.UTILITY);
         changingKeyBind.show();
         centerScreen(changingKeyBind);
+
+        // To avoid bug related to setting keybind
+        changingKeyBind.setOnCloseRequest(event -> {
+            changingKeyBind.close();
+            setActionStatus(ActionStatus.IDLE);
+        });
 
         //setKeyBindMode = true;
         setActionStatus(ActionStatus.SETTING_KEYBIND);
