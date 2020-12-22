@@ -23,6 +23,26 @@ public class SavedData implements Constants {
     private List<Action> cachedActions;
     private List<ActionTier> cachedActionTiers;
     private List<ActionStyle> cachedActionStyles;
+    private ActionStyle actionStyle;
+    private boolean showActionName;
+
+    public boolean isShowActionName() {
+        return showActionName;
+    }
+
+    public void setShowActionName(boolean showActionName) {
+        this.showActionName = showActionName;
+        saveData();
+    }
+
+    public ActionStyle getActionStyle() {
+        return actionStyle;
+    }
+
+    public void setActionStyle(ActionStyle actionStyle) {
+        this.actionStyle = actionStyle;
+        saveData();
+    }
 
     public List<ActionStyle> getCachedActionStyles() {
         return cachedActionStyles;
@@ -61,6 +81,8 @@ public class SavedData implements Constants {
         this.cachedActions = new ArrayList<>(Main.cachedActions);
         this.cachedActionTiers = new ArrayList<>(Main.cachedActionTiers);
         this.cachedActionStyles = new ArrayList<>(Main.cachedActionStyles);
+        this.actionStyle = ActionStyle.RANGED;
+        this.showActionName = true;
     }
 
     /**

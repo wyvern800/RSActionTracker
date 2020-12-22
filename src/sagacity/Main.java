@@ -2,6 +2,8 @@ package sagacity;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -27,9 +29,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import javafx.util.StringConverter;
 import javafx.util.converter.BooleanStringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -73,7 +73,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * The combat style you'l be using on the abilities
      * ActionStyle.MELEE For melee | ActionStyle.RANGED for ranged | ActionStyle.MAGIC for magic
      */
-    private static final ActionStyle COMBAT_STYLE = ActionStyle.MAGIC;
+    private static ActionStyle COMBAT_STYLE;
 
     // The actionStatus
     private static ActionStatus actionStatus = ActionStatus.IDLE;
@@ -160,6 +160,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         cachedActionTiers = getSavedData().getCachedActionTiers();
         cachedActionStyles = getSavedData().getCachedActionStyles();
         cachedActions = getSavedData().getCachedActions();
+        COMBAT_STYLE = getSavedData().getActionStyle();
 
         // Adds the jNativeHook listener
         try {
@@ -289,26 +290,30 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         });
         addMenuItemAction(purchase, ()-> System.out.println("purchase"));
         // Combat menu
-        final MenuItem toggleCombatMode = new MenuItem("Toggle Idle mode", getMenuIcon("config.png"));
-        final MenuItem toggleAbilityName = new MenuItem("Toggle display ability name", getMenuIcon("config.png"));
+        //final MenuItem toggleCombatMode = new MenuItem("Toggle Idle mode", getMenuIcon("config.png"));
+        //final MenuItem toggleAbilityName = new MenuItem("Toggle display ability name", getMenuIcon("config.png"));
+        final MenuItem settings = new MenuItem("Settings", getMenuIcon("config.png"));
         // add menu items to menu
-        menu.getItems().addAll(toggleCombatMode, toggleAbilityName);
+        menu.getItems().addAll(settings/*toggleCombatMode, toggleAbilityName*/);
 
-        addMenuItemAction(toggleCombatMode, ()-> toggleIdleMode());
+        addMenuItemAction(settings, Main::openSettingsScreen);
+
+        // TODO - Desligar/ligar idle mode  e Ability  name
+        /*addMenuItemAction(toggleCombatMode, Main::toggleIdleMode);
 
         addMenuItemAction(toggleAbilityName, () -> {
             showActionName = !showActionName;
             System.out.println("Ability name is now " + (showActionName ? "enabled" : "disabled"));
-        });
+        });*/
 
-        addMenuAction(stopResume, ()-> toggleIdleMode());
+        addMenuAction(stopResume, Main::toggleIdleMode);
 
         // Configurations menu
         final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("click.png"));
         final MenuItem actionStyle = new MenuItem("ActionStyles", getMenuIcon("config.png"));
         final MenuItem actionTier = new MenuItem("ActionTiers", getMenuIcon("config.png"));
         addMenuItemAction(configureAbilities, ()-> {
-            toggleIdleMode();
+            toggleIdleMode(); //TODO - Tá dando toggle, teria que desligar o modo se estivesse on apenas.
             openSetupScreen();
         });
         addMenuItemAction(actionStyle, Main::openActionStyleScreen);
@@ -871,6 +876,78 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
+     * Opens the settings screen
+     */
+    private static void openSettingsScreen() {
+        Stage settingsStage = new Stage();
+
+        TabPane tabPane = new TabPane();
+        Tab tabGeneral = new Tab("General");
+        Tab tabAccount = new Tab("Account");
+        tabAccount.setDisable(true);
+        tabPane.getTabs().addAll(tabGeneral, tabAccount);
+
+        // Avoid all tabs from being closed
+        tabPane.getTabs().forEach(tab-> tab.setClosable(false));
+
+        Scene settingsScene = new Scene(new VBox(tabPane));
+
+        //final VBox panel = new VBox();
+        GridPane grid = new GridPane();
+        grid.setVgap(4);
+        grid.setHgap(10);
+        grid.setPadding(new Insets(18, 5, 5, 45));
+
+        List<ActionStyle> resultsWithoutNone = Arrays.stream(ActionStyle.values()).filter(p -> p != ActionStyle.NONE).collect(Collectors.toList());
+        final ObservableList<ActionStyle> options = FXCollections.observableArrayList(resultsWithoutNone);
+        final ComboBox cbCombatStyle = new ComboBox(options);
+        grid.add(new Label("Combat Style: "), 0, 0);
+        cbCombatStyle.setValue(getSavedData().getActionStyle());
+        grid.add(cbCombatStyle, 1,0);
+
+        // Add listener to the comboBox
+        cbCombatStyle.valueProperty().addListener((ChangeListener<ActionStyle>) (observable, oldValue, newValue) -> {
+            System.out.println(observable);
+            System.out.println(oldValue);
+            System.out.println(newValue);
+            COMBAT_STYLE = newValue;
+            getSavedData().setActionStyle(newValue);
+        });
+
+        grid.add(new Separator(), 0, 1);
+
+        final CheckBox cbAbility = new CheckBox();
+        grid.add(new Label("Show ability name: "), 0, 2);
+        grid.add(cbAbility, 1, 2);
+        cbAbility.setSelected(showActionName);
+
+        // Add's listener to the comboBox
+        cbAbility.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println(observable);
+            System.out.println(oldValue);
+            System.out.println(newValue);
+            showActionName = newValue;
+            getSavedData().setShowActionName(newValue);
+        });
+
+        tabGeneral.setContent(grid);
+
+        settingsStage.setTitle("Settings");
+        settingsStage.setWidth(300);
+        settingsStage.setHeight(150);
+
+        ((VBox) settingsScene.getRoot()).getChildren().addAll(grid);
+
+        settingsStage.setAlwaysOnTop(true);
+        settingsStage.setResizable(false);
+        settingsStage.setScene(settingsScene);
+
+        centerScreen(settingsStage);
+
+        settingsStage.show();
+    }
+
+    /**
      * Opens the setup screen
      */
     private static void openSetupScreen() {
@@ -1219,7 +1296,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Just a normal check to avoid things from being deleted while not present on our list
         Optional<Action> optAction = cachedActions.stream().filter(a-> a.getActionName().toLowerCase().equals(selectedRow.getActionName().toLowerCase())).findFirst();
         if (!optAction.isPresent()) {
-            System.out.println("data doesn't exist, nothing is being deleted!");
+            System.out.println("Data doesn't exist, nothing is being deleted!");
             return;
         }
 
@@ -1241,11 +1318,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     private static void addCloseEventHandler(Stage stage, boolean exitProgram) {
         stage.setOnCloseRequest(event -> {
-            System.out.println("Stage " + stage.toString() + " is closing");
+            System.out.println("Stage " + stage + " is closing");
             stage.close();
             if (exitProgram) {
                 System.runFinalization();
-                //System.exit(0);
+                System.exit(0);
             }
         });
     }
@@ -1349,6 +1426,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         changingKeyBind.setResizable(false);
         changingKeyBind.centerOnScreen();
         changingKeyBind.sizeToScene();
+        changingKeyBind.initStyle(StageStyle.UTILITY);
         changingKeyBind.show();
         centerScreen(changingKeyBind);
 
