@@ -123,8 +123,8 @@ NONE(0),
         - [X] Toggle combat mode hotkeys + buttons
         - [X] Saving clicks per minute for stream purposes
             - [ ] Calculation thread for CPM (Clicks per minute)
-        - [ ] Better & advanced functionatities
-- [ ] Free version released for streamers testing
+        - [ ] Better & advanced functionalities
+- [X] Free version released for streamers testing
     - [ ] Premium version with more action slots and more functions...
 ------------
 

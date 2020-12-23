@@ -25,9 +25,19 @@ public class SavedData implements Constants {
     private List<ActionStyle> cachedActionStyles;
     private ActionStyle actionStyle;
     private boolean showActionName;
+    private boolean showAbilityBorder;
 
     public boolean isShowActionName() {
         return showActionName;
+    }
+
+    public boolean isShowAbilityBorder() {
+        return showAbilityBorder;
+    }
+
+    public void setShowAbilityBorder(boolean showAbilityBorder) {
+        this.showAbilityBorder = showAbilityBorder;
+        saveData();
     }
 
     public void setShowActionName(boolean showActionName) {
@@ -83,6 +93,7 @@ public class SavedData implements Constants {
         this.cachedActionStyles = new ArrayList<>(Main.cachedActionStyles);
         this.actionStyle = ActionStyle.RANGED;
         this.showActionName = true;
+        this.showAbilityBorder = true;
     }
 
     /**

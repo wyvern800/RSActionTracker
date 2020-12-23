@@ -103,6 +103,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     //private static boolean isCombatMode = false;
     private static boolean showActionName = true;
     private static boolean showPatreonMsg = true;
+    private static boolean showAbilityBorder = true;
     //private static boolean setKeyBindMode = false;
 
     /**
@@ -163,6 +164,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         cachedActionStyles = getSavedData().getCachedActionStyles();
         cachedActions = getSavedData().getCachedActions();
         actionStyle = getSavedData().getActionStyle();
+        showActionName = getSavedData().isShowActionName();
+        showAbilityBorder = getSavedData().isShowAbilityBorder();
 
         // Adds the jNativeHook listener
         try {
@@ -233,9 +236,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             actionName.setPrefSize(100, 100);
             actionBox.setSpacing(2); // Space between the squares
             actionBox.setPrefSize(60, 60);
+
+
             actionBox.setStyle("-fx-border-style: solid solid solid solid;\n" +
-                    "-fx-border-width: 2;\n" +
-                    "-fx-border-color: " + actionToBeAdded.getActionTier().getAbilityBorder());
+                        "-fx-border-width: 2;\n" +
+                        "-fx-border-color: " + (showAbilityBorder ? actionToBeAdded.getActionTier().getAbilityBorder() : "black"));
+
 
             actionToBeAdded.getActionImage().setFitWidth(106);
             actionToBeAdded.getActionImage().setFitHeight(106);
@@ -314,7 +320,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem actionStyle = new MenuItem("ActionStyles", getMenuIcon("config.png"));
         final MenuItem actionTier = new MenuItem("ActionTiers", getMenuIcon("config.png"));
         addMenuItemAction(configureAbilities, ()-> {
-            //toggleIdleMode(); //TODO - Tá dando toggle, teria que desligar o modo se estivesse on apenas.
+            //toggleIdleMode();
             stopLoggingMode();
             openSetupScreen();
         });
@@ -915,7 +921,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         grid.add(new Separator(), 0, 1);
 
         final CheckBox cbAbility = new CheckBox();
-        grid.add(new Label("Show ability name: "), 0, 2);
+        grid.add(new Label("Show action name: "), 0, 2);
         grid.add(cbAbility, 1, 2);
         cbAbility.setSelected(showActionName);
 
@@ -928,11 +934,24 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             getSavedData().setShowActionName(newValue);
         });
 
+        final CheckBox cbBorder = new CheckBox();
+        grid.add(new Label("Show action borders: "), 0, 3);
+        grid.add(cbBorder, 1, 3);
+        cbBorder.setSelected(showAbilityBorder);
+
+        cbBorder.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println(observable);
+            System.out.println(oldValue);
+            System.out.println(newValue);
+            showAbilityBorder = newValue;
+            getSavedData().setShowAbilityBorder(newValue);
+        });
+
         tabGeneral.setContent(grid);
 
         settingsStage.setTitle("Settings");
         settingsStage.setWidth(300);
-        settingsStage.setHeight(150);
+        settingsStage.setHeight(170);
 
         ((VBox) settingsScene.getRoot()).getChildren().addAll(grid);
 
