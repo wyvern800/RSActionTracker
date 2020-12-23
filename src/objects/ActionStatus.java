@@ -8,6 +8,6 @@ package objects;
  * @project RSKeyLogging
  */
 public enum ActionStatus {
-    IDLE, LOGGING, CHATTING,
+    IDLE, LOGGING, CHATTING, SETUP,
     SETTING_KEYBIND, PAUSED
 }

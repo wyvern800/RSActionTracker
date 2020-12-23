@@ -314,7 +314,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem actionStyle = new MenuItem("ActionStyles", getMenuIcon("config.png"));
         final MenuItem actionTier = new MenuItem("ActionTiers", getMenuIcon("config.png"));
         addMenuItemAction(configureAbilities, ()-> {
-            toggleIdleMode(); //TODO - Tá dando toggle, teria que desligar o modo se estivesse on apenas.
+            //toggleIdleMode(); //TODO - Tá dando toggle, teria que desligar o modo se estivesse on apenas.
+            stopLoggingMode();
             openSetupScreen();
         });
         addMenuItemAction(actionStyle, Main::openActionStyleScreen);
@@ -1055,7 +1056,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         centerScreen(setupStage);
 
-        addCloseEventHandler(setupStage, false);
+        addCloseEventHandler(setupStage, false, ()-> {
+            stopResume.setDisable(false);
+        });
 
         refreshTable();
     }
@@ -1325,6 +1328,28 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
+     * Add a close event handler to a stage
+     *
+     * @param stage       The stage
+     * @param exitProgram {@code True} if program should be finalized - {@code False} if only scene
+     * @param runnable {@code null} if you dont need any runnable | {@code ()-> Lambda function to be ran}
+     */
+    private static void addCloseEventHandler(Stage stage, boolean exitProgram, Runnable runnable) {
+        stage.setOnCloseRequest(event -> {
+            System.out.println("Stage " + stage + " is closing");
+            stage.close();
+            if (runnable != null)
+                runnable.run();
+            if (exitProgram) {
+                System.runFinalization();
+                System.exit(0);
+            }
+        });
+    }
+
+
+
+    /**
      * Gets a menu icon
      *
      * @param iconName The iconName
@@ -1578,6 +1603,21 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         else
             stopResume.setText(stopResumeLabel[2][0]);
         System.out.println("Status: "+getActionStatus().name()+"!");
+    }
+
+    private static void stopLoggingMode() {
+            if (getActionStatus() != ActionStatus.LOGGING)
+                return;
+            setActionStatus(ActionStatus.IDLE);
+            stopResume.setDisable(true);
+
+            lastKeyPressed = new LastKeyPressed(LocalTime.now(), NativeKeyEvent.VC_F11);
+            updateTitle(mainStage);
+            if (getActionStatus() == ActionStatus.LOGGING)
+                stopResume.setText(stopResumeLabel[1][0]);
+            else
+                stopResume.setText(stopResumeLabel[2][0]);
+            System.out.println("Status: "+getActionStatus().name()+"!");
     }
 
     /**
