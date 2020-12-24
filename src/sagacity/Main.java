@@ -319,6 +319,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("click.png"));
         final MenuItem actionStyle = new MenuItem("ActionStyles", getMenuIcon("config.png"));
         final MenuItem actionTier = new MenuItem("ActionTiers", getMenuIcon("config.png"));
+        actionStyle.setDisable(true);
+        actionTier.setDisable(true);
         addMenuItemAction(configureAbilities, ()-> {
             //toggleIdleMode();
             stopLoggingMode();
