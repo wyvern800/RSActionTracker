@@ -348,6 +348,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         VBox verticalBox = new VBox(menuBars);
         // create a scene
         Scene mainScene = new Scene(verticalBox, 1100, 135);
+        mainScene.getStylesheets().add("utils/dark-theme.css");
         // set a background color to the vertical box
         verticalBox.setStyle("-fx-background-color: #ff14f7;");
         // create a grid pane
@@ -461,7 +462,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         );
 
         // Add the keyCode
-        TableColumn keyCode = addTableColumn(new TableColumn<Action, String>("KeyCode"), null, new PropertyValueFactory<Action, String>("pressedKeyName"), false);
+        TableColumn keyCode = addTableColumn(new TableColumn<Action, String>("Key"), null, new PropertyValueFactory<Action, String>("pressedKeyName"), false);
         /*keyCode.setCellFactory(
                 TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         keyCode.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, Integer>>) t -> {
@@ -484,7 +485,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         TableColumn ctrlMask = addTableColumn(new TableColumn<Action, Boolean>("CTRL?"), null, new PropertyValueFactory<Action, Boolean>("ctrlBooleanProperty"), true);
         ctrlMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
             //System.out.println(observableListData.get(param).getActionName()+" CTRL checkbox changed value to "+observableListData.get(param).isCtrlCheckboxChecked());
+
             observableListData.get(param).setCtrlBooleanProperty(observableListData.get(param).isCtrlCheckboxChecked());
+
             getSavedData().saveData();
             return observableListData.get(param).ctrlBooleanPropertyProperty();
         }));
@@ -514,7 +517,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         TableColumn shiftMask = addTableColumn(new TableColumn<Action, Boolean>("Shift?"), null, new PropertyValueFactory<Action, Boolean>("shiftBooleanProperty"), true);
         shiftMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
             //System.out.println(observableListData.get(param).getActionName()+" SHIFT checkbox changed value to "+observableListData.get(param).isShiftCheckboxChecked());
+
             observableListData.get(param).setShiftBooleanProperty(observableListData.get(param).isShiftCheckboxChecked());
+
             getSavedData().saveData();
             return observableListData.get(param).shiftBooleanPropertyProperty();
         }));
@@ -531,10 +536,13 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         TableColumn altMask = addTableColumn(new TableColumn<Action, Boolean>("Alt?"), null, new PropertyValueFactory<Action, Boolean>("altBooleanProperty"), true);
         altMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
             //System.out.println(observableListData.get(param).getActionName()+" ALT checkbox changed value to "+observableListData.get(param).isAltCheckboxChecked());
-            observableListData.get(param).setShiftBooleanProperty(observableListData.get(param).isAltCheckboxChecked());
+
+            observableListData.get(param).setAltBooleanProperty(observableListData.get(param).isAltCheckboxChecked());
+
             getSavedData().saveData();
             return observableListData.get(param).altBooleanPropertyProperty();
         }));
+
         // Add the actionTier
         TableColumn actionTier = addTableColumn(new TableColumn<Action, ActionTier>("ActionTier"), null, new PropertyValueFactory<Action, ActionTier>("actionTier"), true);
         actionTier.setCellFactory(ComboBoxTableCell.forTableColumn(ActionTier.values()));
@@ -588,7 +596,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     getSavedData().setCachedActions(cachedActions);
                 }
         );*/
-        TableColumn actionStyle = addTableColumn(new TableColumn<Action, String>("ActionStyle"), null, new PropertyValueFactory<Action, String>("actionStyle"), true);
+        TableColumn actionStyle = addTableColumn(new TableColumn<Action, String>("ActionStyle"), 110, new PropertyValueFactory<Action, String>("actionStyle"), true);
         actionStyle.setCellFactory(ComboBoxTableCell.forTableColumn(ActionStyle.values()));
         actionStyle.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ActionStyle>>) t -> {
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
@@ -725,6 +733,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Stage actionTierStage = new Stage();
 
         Scene scene = new Scene(new Group());
+        scene.getStylesheets().add("utils/dark-theme.css");
         actionTierStage.setTitle("ActionTier - List");
         actionTierStage.setWidth(600);
         actionTierStage.setHeight(565);
@@ -814,6 +823,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
             Stage bike = new Stage();
             Scene cpScene = new Scene(new HBox(20), 400, 100);
+            cpScene.getStylesheets().add("utils/dark-theme.css");
             HBox box = (HBox) cpScene.getRoot();
             box.setPadding(new Insets(5, 5, 5, 5));
 
@@ -895,6 +905,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         tabPane.getTabs().forEach(tab-> tab.setClosable(false));
 
         Scene settingsScene = new Scene(new VBox(tabPane));
+        settingsScene.getStylesheets().add("utils/dark-theme.css");
 
         //final VBox panel = new VBox();
         GridPane grid = new GridPane();
@@ -971,6 +982,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Stage setupStage = new Stage();
 
         Scene scene = new Scene(new Group());
+        scene.getStylesheets().add("utils/dark-theme.css");
         setupStage.setTitle("Action Management");
         setupStage.setWidth(600);
         setupStage.setHeight(565);
@@ -1089,6 +1101,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Stage actionStyleStage = new Stage();
 
         Scene scene = new Scene(new Group());
+        scene.getStylesheets().add("utils/dark-theme.css");
         actionStyleStage.setTitle("ActionStyle - List");
         actionStyleStage.setWidth(600);
         actionStyleStage.setHeight(565);
