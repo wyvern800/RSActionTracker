@@ -490,6 +490,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
             observableListData.get(param).setCtrlBooleanProperty(observableListData.get(param).isCtrlCheckboxChecked());
 
+
             getSavedData().saveData();
             return observableListData.get(param).ctrlBooleanPropertyProperty();
         }));
@@ -620,12 +621,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      */
     private static void constructActionTierTableView() {
         ObservableList<ActionTier> observableListData = FXCollections.observableArrayList(getSavedData().getCachedActionTiers());
-
-        // Resizes the icons to show for the setup screen
-        /*observableListData.forEach(p -> {
-            p.getActionImage().setFitWidth(30);
-            p.getActionImage().setFitHeight(30);
-        });*/
 
         actionTierTableView.setEditable(true);
         actionTierTableView.setFocusTraversable(false);
@@ -1304,6 +1299,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Lets create the action image so it updates on scren
         newAction.setActionImage(new ImageView(new Image(new File(newAction.getIconPath()).toURI().toString())));
 
+        // Resizes the icons to show for the setup screen
+
+        newAction.getActionImage().setFitWidth(30);
+        newAction.getActionImage().setFitHeight(30);
+
         setupTableView.getItems().add(newAction);
         cachedActions.add(newAction);
 
@@ -1405,6 +1405,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         setupTableView.refresh();
         setupTableView.getItems().forEach(p-> {
             p.setActionImage(new ImageView(new Image(new File(p.getIconPath()).toURI().toString())));
+
+            // Resize the images
+            p.getActionImage().setFitWidth(30);
+            p.getActionImage().setFitHeight(30);
         });
         System.out.println("Table refreshed");
     }

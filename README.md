@@ -136,6 +136,7 @@ Incase you like, please give me a Star here! | Support my future development by 
 ------------
 
 ### Credits
-- [jNativeHook](https://github.com/kwhat/jnativehook/) - for the Keyboard keys listening.
-- [Gson](#) - for the database saving.
+- [jNativeHook](https://github.com/kwhat/jnativehook/) - Thanks for the keyboard keys listener lib.
+- [Gson](https://github.com/google/gson) - Thanks for the persistence lib.
+- [Joffrey  Bion](https://github.com/joffrey-bion/javafx-themes) - Thanks for the javaFX dark theme.
 
