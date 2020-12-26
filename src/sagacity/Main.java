@@ -1742,12 +1742,27 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 optAction.ifPresent(action -> cachedActions.set(cachedActions.indexOf(optAction.get()), selectedAction));
 
                 // If any other action is using the key, remove it
-                /*List<Action> keysAlreadyUsedList = cachedActions.stream().filter(act -> act.getPressedKey() == nativeKeyEvent.getKeyCode() && act != selectedAction).collect(Collectors.toList());
+                List<Action> keysAlreadyUsedList = cachedActions.stream().filter(act -> act.getPressedKey() == nativeKeyEvent.getKeyCode() && act != selectedAction && act.getActionStyle() == selectedAction.getActionStyle()).collect(Collectors.toList());
                 keysAlreadyUsedList.forEach(action -> {
-                    showInformationDialog("Duplicated Keybind", "Key was already bound to "+action.getActionName().toUpperCase()+"!", "The action: "+action.getActionName().toUpperCase()+" got it's key unbound!\nPlease select a new key bind to it!", changingKeyBind);
+                    if (action.isCtrlPressed() && !selectedAction.isCtrlPressed()) {
+                        System.out.println("ctrl mask selected");
+                        return;
+                    } else if (action.isShiftPressed() && !selectedAction.isShiftPressed()) {
+                        System.out.println("shift mask selected");
+                        return;
+                    } else if (action.isAltPressed() && !selectedAction.isAltPressed()) {
+                        System.out.println("alt mask selected");
+                        return;
+                    } else if ((action.isCtrlPressed() && action.isShiftPressed() && action.isAltPressed()) && (!selectedAction.isCtrlPressed() && !selectedAction.isShiftPressed() && !selectedAction.isAltPressed())) {
+                        System.out.println("no masks");
+                        return;
+                    } else {
+                        System.out.println("no masks selected");
+                    }
+                    showInformationDialog("Duplicated Keybind", "Key was already bound to "+action.getActionName().toUpperCase()+"!", "The action: "+action.getActionName().toUpperCase()+" got it's key unbound!\nPlease select a new key bind to it!", changingKeyBindStage);
                     cachedActions.get(cachedActions.indexOf(action)).setPressedKey(-1);
                     setupTableView.getFocusModel().focus(cachedActions.indexOf(action));
-                });*/
+                });
 
                 getSavedData().setCachedActions(cachedActions);
 
