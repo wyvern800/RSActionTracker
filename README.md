@@ -1,6 +1,6 @@
 ![Using ranged actionbar](https://i.imgur.com/m2Ma1jW.gif)
 
-# RSActionLogger
+# RSActionTracker
 Basic system used to log your actions during your RS3 boss encounters (to show for your stream viewers what are you pressing) that was created by me for personal purposes, but as I showed people off, they started asking me for releasing, so thats it, I hope you guys have a good use on your stream!
 
 **NOTE: This is not a keylogger, which means the action logging will only be used to process image drawing on the application, and also this will not steal your game informations, or any other personal info, code is OpenSourced so you guys can read and warrantly this is not a phishing/scamming software**.
