@@ -7,9 +7,9 @@ import sagacity.Main;
 /**
  * The actions storage
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 04/12/2020 - 14:14
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 public enum ActionList implements Constants {
     // Melee rotation

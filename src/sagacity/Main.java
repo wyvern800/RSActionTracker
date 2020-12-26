@@ -10,7 +10,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -56,9 +55,9 @@ import java.util.stream.Collectors;
 /**
  * Software used to log the actions from the player (this is not a keylogger)
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 04/12/2020 - 14:14
- * @project RSActionsLogging
+ * @project RSActionTracker
  */
 public class Main extends Application implements NativeKeyListener, Constants, MasksConstants {
     /**
@@ -148,6 +147,23 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
+     * The bootstrapper
+     *
+     * @param args Program arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
+    }
+
+    @Override
+    public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+    }
+
+    /**
      * The constructor
      */
     public Main() {
@@ -204,11 +220,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         actionsDone++;
 
-        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode(), isControlDown(nativeKeyEvent), isShiftDown(nativeKeyEvent), isAltDown(nativeKeyEvent));
+        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode(), Utils.isControlDown(nativeKeyEvent), Utils.isShiftDown(nativeKeyEvent), Utils.isAltDown(nativeKeyEvent));
 
         keysPressed.add(lastKeyPressed);
 
-        updateTitle(mainStage);
+        Utils.updateTitle(mainStage, TITLE, actionStatus, actionsDone);
 
         // updates the screen
         for (int i = 0; i < actions.size(); i++) {
@@ -289,20 +305,20 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem help = new MenuItem("Help", getMenuIcon("config.png"));
         final MenuItem about = new MenuItem("About", getMenuIcon("config.png"));
         final MenuItem discord = new MenuItem("Discord", getMenuIcon("config.png"));
-        addMenuItemAction(discord, ()-> sendOpenURL("https://discord.gg/yaUHKTWJSJ"));
+        Utils.addMenuItemAction(discord, ()-> sendOpenURL("https://discord.gg/yaUHKTWJSJ"));
         final MenuItem report = new MenuItem("Bugs Report", getMenuIcon("bug.png"));
-        addMenuItemAction(report, ()-> sendOpenURL("https://github.com/wyvern800/RSActionTracker/issues"));
+        Utils.addMenuItemAction(report, ()-> sendOpenURL("https://github.com/wyvern800/RSActionTracker/issues"));
         final MenuItem purchase = new MenuItem("Purchase a License", getMenuIcon("config.png"));
         purchase.setDisable(true);
         final SeparatorMenuItem sep2 = new SeparatorMenuItem();
         links.getItems().addAll(help, discord, about, report, sep2, purchase);
         stopResume = new Menu(stopResumeLabel[0][0], getMenuIcon(stopResumeLabel[0][1]));
-        addMenuItemAction(help, ()-> sendOpenURL("https://github.com/wyvern800/RSActionTracker/blob/master/README.md"));
-        addMenuItemAction(about, ()-> {
+        Utils.addMenuItemAction(help, ()-> sendOpenURL("https://github.com/wyvern800/RSActionTracker/blob/master/README.md"));
+        Utils.addMenuItemAction(about, ()-> {
             System.out.println("about");
             sendPatreonPopup(true);
         });
-        addMenuItemAction(purchase, ()-> System.out.println("purchase"));
+        Utils.addMenuItemAction(purchase, ()-> System.out.println("purchase"));
         // Combat menu
         //final MenuItem toggleCombatMode = new MenuItem("Toggle Idle mode", getMenuIcon("config.png"));
         //final MenuItem toggleAbilityName = new MenuItem("Toggle display ability name", getMenuIcon("config.png"));
@@ -310,16 +326,16 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // add menu items to menu
         menu.getItems().addAll(settings/*toggleCombatMode, toggleAbilityName*/);
 
-        addMenuItemAction(settings, Main::openSettingsScreen);
+        Utils.addMenuItemAction(settings, Main::openSettingsScreen);
 
-        /*addMenuItemAction(toggleCombatMode, Main::toggleIdleMode);
+        /*Utils.addMenuItemAction(toggleCombatMode, Main::toggleIdleMode);
 
-        addMenuItemAction(toggleAbilityName, () -> {
+        Utils.addMenuItemAction(toggleAbilityName, () -> {
             showActionName = !showActionName;
             System.out.println("Ability name is now " + (showActionName ? "enabled" : "disabled"));
         });*/
 
-        addMenuAction(stopResume, Main::toggleIdleMode);
+        Utils.addMenuAction(stopResume, Main::toggleIdleMode);
 
         // Configurations menu
         final MenuItem configureAbilities = new MenuItem("Actions", getMenuIcon("click.png"));
@@ -327,13 +343,13 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem actionTier = new MenuItem("ActionTiers", getMenuIcon("config.png"));
         actionStyle.setDisable(true);
         actionTier.setDisable(true);
-        addMenuItemAction(configureAbilities, ()-> {
+        Utils.addMenuItemAction(configureAbilities, ()-> {
             //toggleIdleMode();
             stopLoggingMode();
             openSetupScreen();
         });
-        addMenuItemAction(actionStyle, Main::openActionStyleScreen);
-        addMenuItemAction(actionTier, Main::openActionTierScreen);
+        Utils.addMenuItemAction(actionStyle, Main::openActionStyleScreen);
+        Utils.addMenuItemAction(actionTier, Main::openActionTierScreen);
         final SeparatorMenuItem sep5 = new SeparatorMenuItem();
         configurations.getItems().addAll(configureAbilities, sep5, actionTier, actionStyle);
 
@@ -373,8 +389,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         mainStage.show();
 
         // Center the window to screen
-        centerScreen(mainStage);
-        addStageIcon(mainStage);
+        Utils.centerScreen(mainStage);
+        Utils.addStageIcon(mainStage);
 
         Main.mainStage = mainStage;
 
@@ -405,31 +421,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
-     * Adds an icon to the stage
-     */
-    private static void addStageIcon(Stage stage) {
-        Image anotherIcon = new Image(ICONS_PATH + "/" + "log.png");
-        stage.getIcons().add(anotherIcon);
-    }
-
-    /**
-     * Centers the window
-     *
-     * @param stage The stage
-     */
-    private static void centerScreen(Stage stage) {
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
-        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
-    }
-
-    /**
      * Sends a popup to tell people to support
      */
     private static void sendPatreonPopup(boolean byMenu) {
         if (!showPatreonMsg && !byMenu)
             return;
-        showLinkToPatreonDialog("RSActionTracker app. created by Matheus G. Ferreira",
+        Utils.showLinkToPatreonDialog("RSActionTracker app. created by Matheus G. Ferreira",
                 "I hope you enjoy using my lovely app!",
                 "Have fun using my software, if you like, please consider becoming my patron on Patreon ♥ \n \n I'd love drinking a coffee with your donations! (Take in consideration " +
                         "that helping isn't necessary but appreciated, so feel free to do whatever you prefer to!\n \n- Also if you want to support me directly, this is my PayPal email: wyvern800@hotmail.com,\n" +
@@ -457,7 +454,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         setupTableView.getSelectionModel().selectedItemProperty().addListener((obs) -> setupTableView.requestFocus());
 
         // Add the actionName
-        TableColumn actionName = addTableColumn(new TableColumn<Action, String>("ActionName"), null, new PropertyValueFactory<Action, String>("actionName"), true);
+        TableColumn actionName = Utils.addTableColumn(new TableColumn<Action, String>("ActionName"), null, new PropertyValueFactory<Action, String>("actionName"), true);
         actionName.setCellFactory(
                 TextFieldTableCell.forTableColumn());
         actionName.setStyle("-fx-align: center");
@@ -470,7 +467,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         );
 
         // Add the keyCode
-        TableColumn keyCode = addTableColumn(new TableColumn<Action, String>("Key"), null, new PropertyValueFactory<Action, String>("pressedKeyName"), false);
+        TableColumn keyCode = Utils.addTableColumn(new TableColumn<Action, String>("Key"), null, new PropertyValueFactory<Action, String>("pressedKeyName"), false);
         /*keyCode.setCellFactory(
                 TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         keyCode.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, Integer>>) t -> {
@@ -490,7 +487,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     getSavedData().setCachedActions(cachedActions);
                 }
         );*/
-        TableColumn ctrlMask = addTableColumn(new TableColumn<Action, Boolean>("CTRL?"), null, new PropertyValueFactory<Action, Boolean>("ctrlBooleanProperty"), true);
+        TableColumn ctrlMask = Utils.addTableColumn(new TableColumn<Action, Boolean>("CTRL?"), null, new PropertyValueFactory<Action, Boolean>("ctrlBooleanProperty"), true);
         ctrlMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
             //System.out.println(observableListData.get(param).getActionName()+" CTRL checkbox changed value to "+observableListData.get(param).isCtrlCheckboxChecked());
 
@@ -523,7 +520,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     getSavedData().setCachedActions(cachedActions);
                 }
         );*/
-        TableColumn shiftMask = addTableColumn(new TableColumn<Action, Boolean>("Shift?"), null, new PropertyValueFactory<Action, Boolean>("shiftBooleanProperty"), true);
+        TableColumn shiftMask = Utils.addTableColumn(new TableColumn<Action, Boolean>("Shift?"), null, new PropertyValueFactory<Action, Boolean>("shiftBooleanProperty"), true);
         shiftMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
             //System.out.println(observableListData.get(param).getActionName()+" SHIFT checkbox changed value to "+observableListData.get(param).isShiftCheckboxChecked());
 
@@ -542,7 +539,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     getSavedData().setCachedActions(cachedActions);
                 }
         );*/
-        TableColumn altMask = addTableColumn(new TableColumn<Action, Boolean>("Alt?"), null, new PropertyValueFactory<Action, Boolean>("altBooleanProperty"), true);
+        TableColumn altMask = Utils.addTableColumn(new TableColumn<Action, Boolean>("Alt?"), null, new PropertyValueFactory<Action, Boolean>("altBooleanProperty"), true);
         altMask.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
             //System.out.println(observableListData.get(param).getActionName()+" ALT checkbox changed value to "+observableListData.get(param).isAltCheckboxChecked());
 
@@ -553,7 +550,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }));
 
         // Add the actionTier
-        TableColumn actionTier = addTableColumn(new TableColumn<Action, ActionTier>("ActionTier"), null, new PropertyValueFactory<Action, ActionTier>("actionTier"), true);
+        TableColumn actionTier = Utils.addTableColumn(new TableColumn<Action, ActionTier>("ActionTier"), null, new PropertyValueFactory<Action, ActionTier>("actionTier"), true);
         actionTier.setCellFactory(ComboBoxTableCell.forTableColumn(ActionTier.values()));
         /*actionTier.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter() {
             @Override
@@ -574,7 +571,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     getSavedData().setCachedActions(cachedActions);
                 }
         );
-        TableColumn actionImage = addTableColumn(new TableColumn<Action, ImageView>("Icon"), null, new PropertyValueFactory<Action, ImageView>("actionImage"), false);
+        TableColumn actionImage = Utils.addTableColumn(new TableColumn<Action, ImageView>("Icon"), null, new PropertyValueFactory<Action, ImageView>("actionImage"), false);
         /*actionImage.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ImageView>>) t -> {
                     t.getTableView().getItems().get(
                             t.getTablePosition().getRow()).setActionImage(t.getNewValue());
@@ -605,7 +602,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     getSavedData().setCachedActions(cachedActions);
                 }
         );*/
-        TableColumn actionStyle = addTableColumn(new TableColumn<Action, String>("ActionStyle"), 110, new PropertyValueFactory<Action, String>("actionStyle"), true);
+        TableColumn actionStyle = Utils.addTableColumn(new TableColumn<Action, String>("ActionStyle"), 110, new PropertyValueFactory<Action, String>("actionStyle"), true);
         actionStyle.setCellFactory(ComboBoxTableCell.forTableColumn(ActionStyle.values()));
         actionStyle.setOnEditCommit((EventHandler<TableColumn.CellEditEvent<Action, ActionStyle>>) t -> {
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setActionStyle(t.getNewValue());
@@ -633,7 +630,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         actionTierTableView.getSelectionModel().selectedItemProperty().addListener((obs) -> actionTierTableView.requestFocus());
 
         // Add the id
-        TableColumn id = addTableColumn(new TableColumn<ActionTier, Integer>("ID"), null, new PropertyValueFactory<ActionTier, Integer>("id"), false);
+        TableColumn id = Utils.addTableColumn(new TableColumn<ActionTier, Integer>("ID"), null, new PropertyValueFactory<ActionTier, Integer>("id"), false);
         id.setCellFactory(
                 TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         id.setStyle("-fx-align: center");
@@ -646,18 +643,18 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         );*/
 
         // Add the tier name
-        TableColumn tierName = addTableColumn(new TableColumn<ActionTier, String>("Name"), null, new PropertyValueFactory<ActionTier, String>("tierName"), false);
+        TableColumn tierName = Utils.addTableColumn(new TableColumn<ActionTier, String>("Name"), null, new PropertyValueFactory<ActionTier, String>("tierName"), false);
         tierName.setCellFactory(
                 TextFieldTableCell.forTableColumn());
         tierName.setStyle("-fx-align: center");
 
         // Add the ability border color
-        TableColumn borderColor = addTableColumn(new TableColumn<ActionTier, String>("Border Color (HEX)"), null, new PropertyValueFactory<ActionTier, String>("abilityBorder"), false);
+        TableColumn borderColor = Utils.addTableColumn(new TableColumn<ActionTier, String>("Border Color (HEX)"), null, new PropertyValueFactory<ActionTier, String>("abilityBorder"), false);
         borderColor.setCellFactory(
                 TextFieldTableCell.forTableColumn());
         borderColor.setStyle("-fx-align: center");
 
-        TableColumn colorPicker = addTableColumn(new TableColumn<ActionTier, ColorPicker>("Border Color"), null, new PropertyValueFactory<ActionTier, ColorPicker>("colorPicker"), false);
+        TableColumn colorPicker = Utils.addTableColumn(new TableColumn<ActionTier, ColorPicker>("Border Color"), null, new PropertyValueFactory<ActionTier, ColorPicker>("colorPicker"), false);
         /*borderColor.setCellFactory(
                 TextFieldTableCell.forTableColumn());*/
 
@@ -696,7 +693,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         actionStyleTableView.getSelectionModel().selectedItemProperty().addListener((obs) -> actionStyleTableView.requestFocus());
 
         // Add the id
-        TableColumn id = addTableColumn(new TableColumn<ActionStyle, Integer>("ID"), null, new PropertyValueFactory<ActionStyle, Integer>("id"), false);
+        TableColumn id = Utils.addTableColumn(new TableColumn<ActionStyle, Integer>("ID"), null, new PropertyValueFactory<ActionStyle, Integer>("id"), false);
         id.setCellFactory(
                 TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         id.setStyle("-fx-align: center");
@@ -709,7 +706,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         );*/
 
         // Add the tier name
-        TableColumn styleName = addTableColumn(new TableColumn<ActionStyle, String>("Name"), 100, new PropertyValueFactory<ActionStyle, String>("styleName"), false);
+        TableColumn styleName = Utils.addTableColumn(new TableColumn<ActionStyle, String>("Name"), 100, new PropertyValueFactory<ActionStyle, String>("styleName"), false);
         styleName.setMinWidth(100);
         styleName.setCellFactory(
                 TextFieldTableCell.forTableColumn());
@@ -770,7 +767,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final Button addButton = new Button("Add Tier", Main.getMenuIcon("plus.png"));
         addButton.setFocusTraversable(false);
         addButton.setDisable(true);
-        Main.addButtonAction(addButton, Main::processAddButtonAction);
+        Utils.addButtonAction(addButton, Main::processAddButtonAction);
 
         // Action removing button
         final Button removeButton = new Button("Remove Tier", getMenuIcon("remove.png"));
@@ -780,8 +777,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 new KeyCodeCombination(KeyCode.DELETE),
                 removeButton::fire
         );
-        addButtonAction(removeButton, () ->
-                showConfirmationDialog(
+        Utils.addButtonAction(removeButton, () ->
+                Utils.showConfirmationDialog(
                         "Are you sure you want to delete: " + actionTierTableView.getSelectionModel().getSelectedItem().name() + "?",
                         actionTierStage,
                         Main::processRemoveButtonAction));
@@ -789,15 +786,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Refresh list button
         final Button refreshButton = new Button("Refresh", getMenuIcon("refresh.png"));
         refreshButton.setFocusTraversable(false);
-        addButtonAction(refreshButton, Main::refreshTable);
+        Utils.addButtonAction(refreshButton, Main::refreshTable);
 
         // Copy to clipboard button
         final Button copyToClipboardButton = new Button("_Copy to Clipboard", getMenuIcon("copy.png"));
         copyToClipboardButton.setFocusTraversable(false);
         copyToClipboardButton.setMnemonicParsing(true);
-        addButtonAction(copyToClipboardButton, ()-> {
+        Utils.addButtonAction(copyToClipboardButton, ()-> {
             if (actionTierTableView.getSelectionModel().isEmpty()) {
-                showErrorDialog("Select a row before copying!", actionTierStage, () -> {
+                Utils.showErrorDialog("Select a row before copying!", actionTierStage, () -> {
                 });
                 return;
             }
@@ -805,7 +802,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             StringSelection stringSelection = new StringSelection(enumName);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
-            showInformationDialog("Copy to Clipboard", "You just copied the ActionTier called: "+enumName, "Now paste it on the Action you desire on the column called ActionTier!", actionTierStage);
+            Utils.showInformationDialog("Copy to Clipboard", "You just copied the ActionTier called: "+enumName, "Now paste it on the Action you desire on the column called ActionTier!", actionTierStage);
         });
         scene.getAccelerators().put(
                 new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN),
@@ -816,9 +813,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Button changeColorButton = new Button("Set Color", getMenuIcon("color.png"));
         changeColorButton.setFocusTraversable(false);
         changeColorButton.setDisable(true);
-        addButtonAction(changeColorButton, ()-> {
+        Utils.addButtonAction(changeColorButton, ()-> {
             if (actionTierTableView.getSelectionModel().isEmpty()) {
-                showErrorDialog("Select a row before copying!", actionTierStage, () -> {
+                Utils.showErrorDialog("Select a row before copying!", actionTierStage, () -> {
                 });
                 return;
             }
@@ -885,7 +882,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         tp.setPrefWidth(576);
 
-        centerScreen(actionTierStage);
+        Utils.centerScreen(actionTierStage);
 
         addCloseEventHandler(actionTierStage, false);
 
@@ -930,6 +927,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             System.out.println(newValue);
             actionStyle = newValue;
             getSavedData().setActionStyle(newValue);
+            actions.clear();
+            mainGridPane.getChildren().clear();
         });
 
         grid.add(new Separator(), 0, 1);
@@ -973,7 +972,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         settingsStage.setResizable(false);
         settingsStage.setScene(settingsScene);
 
-        centerScreen(settingsStage);
+        Utils.centerScreen(settingsStage);
 
         settingsStage.show();
     }
@@ -1018,7 +1017,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Action adding button
         Button addButton = new Button("Add Action", Main.getMenuIcon("plus.png"));
         addButton.setFocusTraversable(false);
-        Main.addButtonAction(addButton, Main::processAddButtonAction);
+        Utils.addButtonAction(addButton, Main::processAddButtonAction);
 
         // Action removing button
         Button removeButton = new Button("Remove Action", getMenuIcon("remove.png"));
@@ -1027,8 +1026,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 new KeyCodeCombination(KeyCode.DELETE),
                 removeButton::fire
         );
-        addButtonAction(removeButton, () ->
-                showConfirmationDialog(
+        Utils.addButtonAction(removeButton, () ->
+                Utils.showConfirmationDialog(
                         "Are you sure you want to delete: " + setupTableView.getSelectionModel().getSelectedItem().getActionName() + "?",
                         setupStage,
                         Main::processRemoveButtonAction));
@@ -1036,17 +1035,17 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Refresh list button
         Button refreshButton = new Button("Refresh", getMenuIcon("refresh.png"));
         refreshButton.setFocusTraversable(false);
-        addButtonAction(refreshButton, Main::refreshTable);
+        Utils.addButtonAction(refreshButton, Main::refreshTable);
 
         // Change action icon button
         Button changeIconButton = new Button("Set Icon", getMenuIcon("image.png"));
         changeIconButton.setFocusTraversable(false);
-        addButtonAction(changeIconButton, ()-> changeAbilityIcon(setupTableView.getSelectionModel().getSelectedItem(), setupStage));
+        Utils.addButtonAction(changeIconButton, ()-> changeAbilityIcon(setupTableView.getSelectionModel().getSelectedItem(), setupStage));
 
         // Change key bind
         Button changeKeyBindButton = new Button("Set Keybind", getMenuIcon("keybind.png"));
         changeKeyBindButton.setFocusTraversable(false);
-        addButtonAction(changeKeyBindButton, ()-> changeKeyBind(setupTableView.getSelectionModel().getSelectedItem(), setupStage));
+        Utils.addButtonAction(changeKeyBindButton, ()-> changeKeyBind(setupTableView.getSelectionModel().getSelectedItem(), setupStage));
 
         Separator separator2 = new Separator();
         separator2.setOrientation(Orientation.VERTICAL);
@@ -1088,7 +1087,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         tp.setPrefWidth(576);
 
-        centerScreen(setupStage);
+        Utils.centerScreen(setupStage);
 
         addCloseEventHandler(setupStage, false, ()-> {
             stopResume.setDisable(false);
@@ -1138,7 +1137,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         Button addButton = new Button("Add Style", Main.getMenuIcon("plus.png"));
         addButton.setFocusTraversable(false);
         addButton.setDisable(true);
-        Main.addButtonAction(addButton, Main::processAddButtonAction);
+        Utils.addButtonAction(addButton, Main::processAddButtonAction);
 
         // Action removing button
         Button removeButton = new Button("Remove Style", getMenuIcon("remove.png"));
@@ -1148,8 +1147,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 new KeyCodeCombination(KeyCode.DELETE),
                 removeButton::fire
         );
-        addButtonAction(removeButton, () ->
-                showConfirmationDialog(
+        Utils.addButtonAction(removeButton, () ->
+                Utils.showConfirmationDialog(
                         "Are you sure you want to delete: " + actionStyleTableView.getSelectionModel().getSelectedItem().name() + "?",
                         actionStyleStage,
                         Main::processRemoveButtonAction));
@@ -1157,15 +1156,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         // Refresh list button
         Button refreshButton = new Button("Refresh", getMenuIcon("refresh.png"));
         refreshButton.setFocusTraversable(false);
-        addButtonAction(refreshButton, Main::refreshTable);
+        Utils.addButtonAction(refreshButton, Main::refreshTable);
 
         // Copy to clipboard button
         final Button copyToClipboardButton = new Button("_Copy to Clipboard", getMenuIcon("copy.png"));
         copyToClipboardButton.setFocusTraversable(false);
         copyToClipboardButton.setMnemonicParsing(true);
-        addButtonAction(copyToClipboardButton, ()-> {
+        Utils.addButtonAction(copyToClipboardButton, ()-> {
             if (actionStyleTableView.getSelectionModel().isEmpty()) {
-                showErrorDialog("Select a row before copying!", actionStyleStage, () -> {
+                Utils.showErrorDialog("Select a row before copying!", actionStyleStage, () -> {
                 });
                 return;
             }
@@ -1173,7 +1172,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             StringSelection stringSelection = new StringSelection(enumName);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
-            showInformationDialog("Copy to Clipboard", "You just copied the ActionStyle called: "+enumName, "Now paste it on the Action you desire on the column called ActionStyle!", actionStyleStage);
+            Utils.showInformationDialog("Copy to Clipboard", "You just copied the ActionStyle called: "+enumName, "Now paste it on the Action you desire on the column called ActionStyle!", actionStyleStage);
         });
         scene.getAccelerators().put(
                 new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN),
@@ -1220,7 +1219,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         tp.setPrefWidth(576);
 
-        centerScreen(actionStyleStage);
+        Utils.centerScreen(actionStyleStage);
 
         addCloseEventHandler(actionStyleStage, false);
 
@@ -1228,83 +1227,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     /**
-     * Shows a confirmation dialog pane
-     * @param contentText The description about the panel
-     * @param owner Which stage was this called from (the owner)
-     * @param exec The execution when clicking on OK button
-     */
-    private static void showConfirmationDialog(String contentText, Stage owner, Runnable exec) {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        a.initOwner(owner);
-        if (contentText != null) {
-            a.setContentText(contentText);
-        }
-        a.showAndWait()
-                .filter(response -> response == ButtonType.OK)
-                .ifPresent(response -> exec.run());
-    }
-
-    /**
-     * Shows a confirmation dialog pane
-     * @param contentText The description about the panel
-     * @param headerText The headerText
-     * @param owner Which stage was this called from (the owner)
-     * @param exec The execution when clicking on OK button
-     */
-    private static void showLinkToPatreonDialog(String title, String headerText, String contentText, Stage owner, Runnable exec) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.initOwner(owner);
-        a.setTitle(title);
-        a.setHeaderText(headerText);
-        a.setContentText(contentText);
-        a.showAndWait().filter(response -> response == ButtonType.OK)
-                .ifPresent(response -> exec.run());
-    }
-
-    /**
-     * Show errro dialog
-     * @param contentText The description about the panel
-     * @param owner Which stage was this called from (the owner)
-     * @param exec The execution when clicking on OK button
-     */
-    private static void showErrorDialog(String contentText, Stage owner, Runnable exec) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.initOwner(owner);
-        if (contentText != null) {
-            a.setContentText(contentText);
-        }
-        a.showAndWait()
-                .filter(response -> response == ButtonType.OK)
-                .ifPresent(response -> {
-                    if (exec != null) {
-                        exec.run();
-                    }
-                });
-    }
-
-    /**
-     * Shows an information dialog
-     * @param title The dialog title
-     * @param headerText The header text
-     * @param contentText The contentText
-     * @param owner The owner who called
-     */
-    private static void showInformationDialog(String title, String headerText, String contentText, Stage owner) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.initOwner(owner);
-        a.setTitle(title);
-        a.setHeaderText(headerText);
-        a.setContentText(contentText);
-
-        a.showAndWait();
-    }
-
-
-    /**
      * Processes the add button action
      */
     private static void processAddButtonAction() {
-        Action newAction = new Action(/*configTable,*/ generateRandomActionName(), 0, false, false, false, ActionTier.BASIC_ABILITY, RESOURCES_PATH + "placeholder.png", ActionStyle.NONE);
+        Action newAction = new Action(/*configTable,*/ Utils.generateRandomActionName(), 0, false, false, false, ActionTier.BASIC_ABILITY, RESOURCES_PATH + "placeholder.png", ActionStyle.NONE);
 
         // Lets create the action image so it updates on scren
         newAction.setActionImage(new ImageView(new Image(new File(newAction.getIconPath()).toURI().toString())));
@@ -1465,7 +1391,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         if (action == null || setupTableView.getSelectionModel().isEmpty()) {
             System.out.println("Action isn't selected");
-            showErrorDialog("Select a row before setting the action keybind!", called, () -> {
+            Utils.showErrorDialog("Select a row before setting the action keybind!", called, () -> {
             });
             return;
         }
@@ -1498,7 +1424,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         changingKeyBindStage.sizeToScene();
         changingKeyBindStage.initStyle(StageStyle.UTILITY);
         changingKeyBindStage.show();
-        centerScreen(changingKeyBindStage);
+        Utils.centerScreen(changingKeyBindStage);
 
         // To avoid bug related to setting keybind
         changingKeyBindStage.setOnCloseRequest(event -> {
@@ -1510,134 +1436,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         setActionStatus(ActionStatus.SETTING_KEYBIND);
     }
 
-
-
-    /**
-     * Returns a random name for the action adding name
-     *
-     * @return The ability name
-     */
-    private static String generateRandomActionName() {
-        String[] prefixes = {"Pretty", "Ugly", "Incredible", "Amazing", "Delicious", "Matty's", "Crazy", "Special", "Great", "Splendorous", "Dirty", "Poopy"};
-        Random random = new Random();
-        int randomInteger = random.nextInt(prefixes.length);
-        return prefixes[randomInteger] + " Action";
-    }
-
-    /**
-     * Create a table column
-     *
-     * @param column       - the table column
-     * @param preferredSize The preferred size {@code null} for automatic
-     * @param prop         - The properties
-     * @return The generated TableColumn
-     */
-    private static TableColumn addTableColumn(TableColumn column, Integer preferredSize, PropertyValueFactory prop, boolean isEditable) {
-        if (preferredSize != null) {
-            column.setMinWidth(preferredSize);
-        }
-        column.setCellValueFactory(prop);
-        column.setEditable(isEditable);
-        return column;
-    }
-
-    private static TableColumn<Action, String> addTableColumn2(TableColumn column, Integer preferredSize, PropertyValueFactory prop, boolean isEditable) {
-        if (preferredSize != null) {
-            column.setMinWidth(preferredSize);
-        }
-        column.setCellValueFactory(prop);
-        column.setEditable(isEditable);
-        return column;
-    }
-
-    /**
-     * The bootstrapper
-     *
-     * @param args Program arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-    }
-
-    /**
-     * Adds a menuItem action when clicking on them
-     *
-     * @param menuItem The menuItem we are clicking
-     * @param action   The action that should it do
-     */
-    private static void addMenuItemAction(MenuItem menuItem, Runnable action) {
-        menuItem.setOnAction(event -> {
-            action.run();
-            System.out.println("clicked at " + menuItem.getText());
-        });
-    }
-
-    /**
-     * Adds a new button action when clicking on it
-     *
-     * @param button The button we are clicking
-     * @param action The action that should it do
-     */
-    public static void addButtonAction(Button button, Runnable action) {
-        button.setOnAction(event -> {
-            action.run();
-            System.out.println("Clicked at button: " + button.getText());
-        });
-    }
-
-    /**
-     * Adds a menu action when clicking on them
-     *
-     * @param menu   The menuItem we are clicking
-     * @param action The action that should it do
-     */
-    private static void addMenuAction(Menu menu, Runnable action) {
-        final MenuItem menuItem = new MenuItem();
-        menu.getItems().add(menuItem);
-
-        menu.addEventHandler(Menu.ON_SHOWN, event -> menu.hide());
-        menu.addEventHandler(Menu.ON_SHOWING, event -> {
-            menu.fire();
-            action.run();
-            System.out.println("clicked at " + menu.getText());
-            event.consume();
-        });
-    }
-
-    /**
-     * Represents the control down
-     *
-     * @param e The key event
-     * @return {@code True} if yes {@code False} if not
-     */
-    private static boolean isControlDown(final NativeKeyEvent e) {
-        return (e.getModifiers() & CTRL_MASK) != 0;
-    }
-
-    /**
-     * Represents the shift down
-     *
-     * @param e The key event
-     * @return {@code True} if yes {@code False} if not
-     */
-    private static boolean isShiftDown(final NativeKeyEvent e) {
-        return (e.getModifiers() & SHIFT_MASK) != 0;
-    }
-
-    /**
-     * Represents the alt down
-     *
-     * @param e The key event
-     * @return {@code True} if yes {@code False} if not
-     */
-    private static boolean isAltDown(final NativeKeyEvent e) {
-        return (e.getModifiers() & ALT_MASK) != 0;
-    }
-
     /**
      * Toggles the idle mode
      */
@@ -1645,7 +1443,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         setActionStatus(getActionStatus() == ActionStatus.IDLE ? ActionStatus.LOGGING : ActionStatus.IDLE);
 
         lastKeyPressed = new LastKeyPressed(LocalTime.now(), NativeKeyEvent.VC_F11);
-        updateTitle(mainStage);
+        Utils.updateTitle(mainStage, TITLE, actionStatus, actionsDone);
         if (getActionStatus() == ActionStatus.LOGGING)
             stopResume.setText(stopResumeLabel[1][0]);
         else
@@ -1653,6 +1451,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         System.out.println("Status: "+getActionStatus().name()+"!");
     }
 
+    /**
+     * Stops logging mode
+     */
     private static void stopLoggingMode() {
             if (getActionStatus() != ActionStatus.LOGGING)
                 return;
@@ -1660,19 +1461,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             stopResume.setDisable(true);
 
             lastKeyPressed = new LastKeyPressed(LocalTime.now(), NativeKeyEvent.VC_F11);
-            updateTitle(mainStage);
+            Utils.updateTitle(mainStage, TITLE, actionStatus, actionsDone);
             if (getActionStatus() == ActionStatus.LOGGING)
                 stopResume.setText(stopResumeLabel[1][0]);
             else
                 stopResume.setText(stopResumeLabel[2][0]);
             System.out.println("Status: "+getActionStatus().name()+"!");
-    }
-
-    /**
-     * Used to toggle chat mode
-     */
-    public static void toggleChattingMode() {
-
     }
 
     @Override
@@ -1705,16 +1499,16 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             }
 
             // Checks if key was already pressed with any operation
-            if (lastKeyPressed != null && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode() && (!isControlDown(nativeKeyEvent) && !lastKeyPressed.isControlDown()) && (!isShiftDown(nativeKeyEvent) && !lastKeyPressed.isShiftDown()) && (!isAltDown(nativeKeyEvent) && !lastKeyPressed.isAltDown())) {
+            if (lastKeyPressed != null && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode() && (!Utils.isControlDown(nativeKeyEvent) && !lastKeyPressed.isControlDown()) && (!Utils.isShiftDown(nativeKeyEvent) && !lastKeyPressed.isShiftDown()) && (!Utils.isAltDown(nativeKeyEvent) && !lastKeyPressed.isAltDown())) {
                 System.out.println("key already pressed");
                 return;
-            } else if (lastKeyPressed != null && lastKeyPressed.isControlDown() && isControlDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+            } else if (lastKeyPressed != null && lastKeyPressed.isControlDown() && Utils.isControlDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
                 System.out.println("key already pressed");
                 return;
-            } else if (lastKeyPressed != null && lastKeyPressed.isShiftDown() && isShiftDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+            } else if (lastKeyPressed != null && lastKeyPressed.isShiftDown() && Utils.isShiftDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
                 System.out.println("key already pressed");
                 return;
-            } else if (lastKeyPressed != null && lastKeyPressed.isAltDown() && isAltDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+            } else if (lastKeyPressed != null && lastKeyPressed.isAltDown() && Utils.isAltDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
                 System.out.println("key already pressed");
                 return;
             }
@@ -1729,9 +1523,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 System.out.println("The key you selected was :"+nativeKeyEvent.getKeyCode());
 
                 // Error if the key is prohibited
-                if (isProhibitedKey(nativeKeyEvent)) {
+                if (Utils.isProhibitedKey(nativeKeyEvent)) {
                     System.out.println("Prohibited key");
-                    showErrorDialog("The key: "+NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode())+" is a prohibited key, please use another", changingKeyBindStage, null);
+                    Utils.showErrorDialog("The key: "+NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode())+" is a prohibited key, please use another", changingKeyBindStage, null);
                     return;
                 }
 
@@ -1759,7 +1553,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     } else {
                         System.out.println("no masks selected");
                     }
-                    showInformationDialog("Duplicated Keybind", "Key was already bound to "+action.getActionName().toUpperCase()+"!", "The action: "+action.getActionName().toUpperCase()+" got it's key unbound!\nPlease select a new key bind to it!", changingKeyBindStage);
+                    Utils.showInformationDialog("Duplicated Keybind", "Key was already bound to "+action.getActionName().toUpperCase()+"!", "The action: "+action.getActionName().toUpperCase()+" got it's key unbound!\nPlease select a new key bind to it!", changingKeyBindStage);
                     cachedActions.get(cachedActions.indexOf(action)).setPressedKey(-1);
                     setupTableView.getFocusModel().focus(cachedActions.indexOf(action));
                 });
@@ -1779,15 +1573,15 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                     continue;
 
                 // If the pressed key exists in our actions array
-                if ((isControlDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Ctrl pressed
+                if ((Utils.isControlDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Ctrl pressed
                     if (!action.isCtrlPressed())
                         continue;
                     processKeyAction(action, nativeKeyEvent);
-                } else if ((isShiftDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Shift pressed
+                } else if ((Utils.isShiftDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Shift pressed
                     if (!action.isShiftPressed())
                         continue;
                     processKeyAction(action, nativeKeyEvent);
-                } else if ((isAltDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Alt pressed
+                } else if ((Utils.isAltDown(nativeKeyEvent)) && (action.getPressedKey() == key)) { // Alt pressed
                     if (!action.isAltPressed())
                         continue;
                     processKeyAction(action, nativeKeyEvent);
@@ -1813,21 +1607,13 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static void processKeyAction(Action action, NativeKeyEvent nativeKeyEvent) {
         int key = nativeKeyEvent.getKeyCode();
 
-        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode(), isControlDown(nativeKeyEvent), isShiftDown(nativeKeyEvent), isAltDown(nativeKeyEvent));
+        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode(), Utils.isControlDown(nativeKeyEvent), Utils.isShiftDown(nativeKeyEvent), Utils.isAltDown(nativeKeyEvent));
 
         // Adds the action to the screen
         addActionToScreen(action, nativeKeyEvent);
 
         // Prints the key we pressed
         System.out.println("actionName='" + action.getActionName() + "', key=" + (action.isCtrlPressed() ? "CTRL+" : action.isShiftPressed() ? "Shift+" : action.isAltPressed() ? "ALT+" : "") + key + ");");
-    }
-
-    private static void updateTitle(Stage stage) {
-        stage.setTitle(TITLE + " | status=" + actionStatus + " | actionsDone=" + actionsDone);
-    }
-
-    @Override
-    public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
     }
 
     /**
@@ -1859,7 +1645,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                         refreshDataTime = apmLocalTime.plusSeconds(5);
                     }
 
-                    //final double apm = actionsPerSec(keysPressed);
+                    //final double apm = Utils.actionsPerSec(keysPressed);
 
                     //System.out.println("APM: "+ (int) apm / 1000);
                     Thread.sleep(1500);
@@ -1870,42 +1656,6 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             }
         });
         apmThread.start();
-    }
-
-    private static double calcActionsPerSec(Collection<Long> events) {
-        long max = events.stream().reduce(Long::max).orElse(0L);
-        long min = events.stream().reduce(Long::min).orElse(0L);
-        if (max == min) {
-            return 0;
-            //throw new IllegalArgumentException("We need at least two events in different times to be able to calc.");
-        }
-        System.out.println("min: "+(int) min + " max:" +(int) max);
-        return events.size() / (double) (max - min);
-    }
-
-    private static double actionsPerSec(Collection<LastKeyPressed> events) {
-        return calcActionsPerSec(events.stream().map(LastKeyPressed::getUsedTimeLong).collect(Collectors.toList()));
-    }
-
-    /**
-     * Returns if the key is a prohibited to be bound
-     * @param nke The nativeKeyEvent
-     * @return {@code True} if the key is free to use | {@code False} if the key is prohibited to use
-     */
-    private static boolean isProhibitedKey(NativeKeyEvent nke) {
-        switch (nke.getKeyCode()) {
-            case NativeKeyEvent.VC_ESCAPE:
-            case NativeKeyEvent.VC_F12:
-            case NativeKeyEvent.VC_DELETE:
-            case NativeKeyEvent.VC_PRINTSCREEN:
-            case NativeKeyEvent.VC_PAUSE:
-            case NativeKeyEvent.VC_SCROLL_LOCK:
-            case NativeKeyEvent.VC_ENTER:
-            case NativeKeyEvent.VC_BACKSPACE:
-                return true;
-            default:
-                return false;
-        }
     }
 
     /**

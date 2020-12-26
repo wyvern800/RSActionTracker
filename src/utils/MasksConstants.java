@@ -3,9 +3,9 @@ package utils;
 /**
  * Used for CTRL, SHIFT, ALT masks, do not touch
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 05/12/2020 - 21:55
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 public interface MasksConstants {
     // Do not touch

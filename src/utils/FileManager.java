@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 /**
  * Default header
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 07/12/2020 - 15:14
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 public class FileManager implements Constants {
     public static void configureFileChooser(final FileChooser fileChooser, String title) {

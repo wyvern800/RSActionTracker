@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * Holds the DTO
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 07/12/2020 - 02:19
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 public class SavedData implements Constants {
     public static final String SAVINGS_PATH = DATA_PATH+"database.json";

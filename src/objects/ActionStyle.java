@@ -5,9 +5,9 @@ import sagacity.Main;
 /**
  * Holds the action styles
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 05/12/2020 - 15:38
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 public enum ActionStyle {
     NONE(0, "NONE"),

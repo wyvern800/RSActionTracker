@@ -12,9 +12,9 @@ import java.time.temporal.TemporalUnit;
 /**
  * Holds the last key we pressed
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 05/12/2020 - 21:10
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 public class LastKeyPressed {
     /**

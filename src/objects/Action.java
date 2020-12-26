@@ -14,9 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Represents an action
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 04/12/2020 - 03:36
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 public class Action {
     //private TableView tableView;

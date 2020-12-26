@@ -7,9 +7,9 @@ import sagacity.Main;
 /**
  * Represents an action tier
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 04/12/2020 - 03:37
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 
     /**

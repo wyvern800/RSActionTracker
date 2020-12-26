@@ -12,9 +12,9 @@ import objects.ActionTier;
 /**
  * Default header
  *
- * @author Sagacity - http://rune-server.org/members/Sagacity
+ * @author wyvern800 - http://github.com/wyvern800
  * @created 06/12/2020 - 03:52
- * @project RSKeyLogging
+ * @project RSActionTracker
  */
 @Deprecated
 public class Action {
