@@ -96,11 +96,9 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * {@code True} if in keys should be logged, {@code False} if not
      */
-    //private static boolean isCombatMode = false;
     private static boolean showActionName = true;
     private static boolean showPatreonMsg = true;
     private static boolean showAbilityBorder = true;
-    //private static boolean setKeyBindMode = false;
 
     /**
      * Variables
