@@ -1,4 +1,4 @@
-![Using ranged actionbar](https://i.imgur.com/i6dTwPo.gif)
+![Using ranged actionbar](https://i.imgur.com/m2Ma1jW.gif)
 
 # RSActionLogger
 Basic system used to log your actions during your RS3 boss encounters (to show for your stream viewers what are you pressing) that was created by me for personal purposes, but as I showed people off, they started asking me for releasing, so thats it, I hope you guys have a good use on your stream!
