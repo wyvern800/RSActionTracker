@@ -428,7 +428,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             return;
         Utils.showLinkToPatreonDialog("RSActionTracker app. created by Matheus G. Ferreira",
                 "I hope you enjoy using my lovely app!",
-                "Have fun using my software, if you like, please consider becoming my patron on Patreon ♥ \n \n I'd love drinking a coffee with your donations! (Take in consideration " +
+                "Have fun using my app, if you like, please consider becoming my patron on Patreon ♥ \n \n I'd love drinking a coffee with your donations! (Take in consideration " +
                         "that helping isn't necessary but appreciated, so feel free to do whatever you prefer to!\n \n- Also if you want to support me directly, this is my PayPal email: wyvern800@hotmail.com,\n" +
                         "- I'd also accept RSGP, so if you want, my discord tag is 'ferreirA#1058', thank you in advance! \n \n Git gud with ur dpsing u nooby scaper =]",
                 mainStage,
