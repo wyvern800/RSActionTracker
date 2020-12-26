@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RSActionLogger.iml" filepath="$PROJECT_DIR$/RSActionLogger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RSActionTracker.iml" filepath="$PROJECT_DIR$/RSActionTracker.iml" />
     </modules>
   </component>
 </project>

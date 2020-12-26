@@ -1,6 +1,13 @@
 package objects;
 
+import sagacity.Main;
+
+import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
 
 /**
  * Holds the last key we pressed
@@ -15,6 +22,22 @@ public class LastKeyPressed {
      */
     private final LocalTime usedTime;
 
+    private final boolean controlDown;
+    private final boolean shiftDown;
+    private final boolean altDown;
+
+    public boolean isControlDown() {
+        return controlDown;
+    }
+
+    public boolean isShiftDown() {
+        return shiftDown;
+    }
+
+    public boolean isAltDown() {
+        return altDown;
+    }
+
     /**
      * The nativeEvent key we used
      */
@@ -26,6 +49,10 @@ public class LastKeyPressed {
      */
     public LocalTime getUsedTime() {
         return usedTime;
+    }
+
+    public long getUsedTimeLong() {
+        return usedTime.get(ChronoField.MILLI_OF_SECOND);
     }
 
     /**
@@ -41,8 +68,20 @@ public class LastKeyPressed {
      * @param usedTime The time we last pressed the key
      * @param nativeKeyEvent The key we pressed
      */
+    public LastKeyPressed(LocalTime usedTime, int nativeKeyEvent, boolean controlDown, boolean shiftDown, boolean altDown) {
+        this.usedTime = usedTime;
+        this.keyCode = nativeKeyEvent;
+        this.controlDown = controlDown;
+        this.shiftDown = shiftDown;
+        this.altDown = altDown;
+    }
+
     public LastKeyPressed(LocalTime usedTime, int nativeKeyEvent) {
         this.usedTime = usedTime;
         this.keyCode = nativeKeyEvent;
+        this.controlDown = false;
+        this.shiftDown = false;
+        this.altDown = false;
     }
+
 }

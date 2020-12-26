@@ -2,7 +2,7 @@
   <artifact type="jar" name="RSActionLogger:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/RSActionLogger_jar</output-path>
     <root id="archive" name="RSActionLogger.jar">
-      <element id="module-output" name="RSActionLogger" />
+      <element id="module-output" name="RSActionTracker" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/jnativehook-2.1.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/gson-2.3.1.jar" path-in-jar="/" />
     </root>

@@ -31,9 +31,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
-import javafx.util.converter.BooleanStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import objects.*;
 import org.jnativehook.GlobalScreen;
@@ -67,7 +64,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     /**
      * The title
      */
-    private static final String TITLE = "RSActionLogger - by wyvern800"; //Do not touch
+    private static final String TITLE = "RSActionTracker - by wyvern800"; //Do not touch
 
     public static Desktop desktop = Desktop.getDesktop();
 
@@ -113,6 +110,8 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static int actionsDone;
     public static LastKeyPressed lastKeyPressed;
     private static SavedData savedData;
+    private static LocalTime apmLocalTime;
+    private static Collection<LastKeyPressed> keysPressed;
 
     /**
      * The grid pane
@@ -157,6 +156,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         cachedActionTiers = new ArrayList<>();
         cachedActionStyles = new ArrayList<>();
         actions = new ArrayList<>();
+        keysPressed = new ArrayList<>();
 
         loadDatabase();
 
@@ -186,6 +186,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * @param nativeKeyEvent The nativeKeyEvent
      */
     private static void addActionToScreen(Action action, NativeKeyEvent nativeKeyEvent) {
+        if (actions.size() == 0) {
+            apmThread();
+        }
+
         // Handles the keys pressing
         actions.add(action);
 
@@ -200,8 +204,10 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         actionsDone++;
 
-        FileWritter.write(TOTAl_ACTIONS[0], TOTAl_ACTIONS[1], new String[]{Integer.toString(actionsDone)});
-        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode());
+        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode(), isControlDown(nativeKeyEvent), isShiftDown(nativeKeyEvent), isAltDown(nativeKeyEvent));
+
+        keysPressed.add(lastKeyPressed);
+
         updateTitle(mainStage);
 
         // updates the screen
@@ -256,7 +262,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
             // Add the actionBox to the gridPane
             mainGridPane.add(actionBox, i, 0);
-            System.out.println("actions on screen: "+mainGridPane.getChildren().size());
+            //System.out.println("actions on screen: "+mainGridPane.getChildren().size());
         }
     }
 
@@ -285,13 +291,13 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         final MenuItem discord = new MenuItem("Discord", getMenuIcon("config.png"));
         addMenuItemAction(discord, ()-> sendOpenURL("https://discord.gg/yaUHKTWJSJ"));
         final MenuItem report = new MenuItem("Bugs Report", getMenuIcon("bug.png"));
-        addMenuItemAction(report, ()-> sendOpenURL("https://github.com/wyvern800/RSActionLogger/issues"));
+        addMenuItemAction(report, ()-> sendOpenURL("https://github.com/wyvern800/RSActionTracker/issues"));
         final MenuItem purchase = new MenuItem("Purchase a License", getMenuIcon("config.png"));
         purchase.setDisable(true);
         final SeparatorMenuItem sep2 = new SeparatorMenuItem();
         links.getItems().addAll(help, discord, about, report, sep2, purchase);
         stopResume = new Menu(stopResumeLabel[0][0], getMenuIcon(stopResumeLabel[0][1]));
-        addMenuItemAction(help, ()-> sendOpenURL("https://github.com/wyvern800/RSActionLogger/blob/master/README.md"));
+        addMenuItemAction(help, ()-> sendOpenURL("https://github.com/wyvern800/RSActionTracker/blob/master/README.md"));
         addMenuItemAction(about, ()-> {
             System.out.println("about");
             sendPatreonPopup(true);
@@ -423,7 +429,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static void sendPatreonPopup(boolean byMenu) {
         if (!showPatreonMsg && !byMenu)
             return;
-        showLinkToPatreonDialog("RSActionLogger app. created by Matheus G. Ferreira",
+        showLinkToPatreonDialog("RSActionTracker app. created by Matheus G. Ferreira",
                 "I hope you enjoy using my lovely app!",
                 "Have fun using my software, if you like, please consider becoming my patron on Patreon ♥ \n \n I'd love drinking a coffee with your donations! (Take in consideration " +
                         "that helping isn't necessary but appreciated, so feel free to do whatever you prefer to!\n \n- Also if you want to support me directly, this is my PayPal email: wyvern800@hotmail.com,\n" +
@@ -1269,7 +1275,11 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }
         a.showAndWait()
                 .filter(response -> response == ButtonType.OK)
-                .ifPresent(response -> exec.run());
+                .ifPresent(response -> {
+                    if (exec != null) {
+                        exec.run();
+                    }
+                });
     }
 
     /**
@@ -1446,12 +1456,12 @@ public class Main extends Application implements NativeKeyListener, Constants, M
         }
     }
 
-    private static Stage changingKeyBind;
+    private static Stage changingKeyBindStage;
     /**
      * Changes the key bind
      */
     private static void changeKeyBind(Action action, Stage called) {
-        changingKeyBind = new Stage();
+        changingKeyBindStage = new Stage();
 
         if (action == null || setupTableView.getSelectionModel().isEmpty()) {
             System.out.println("Action isn't selected");
@@ -1480,19 +1490,19 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         group.getChildren().add(pressKey);
 
-        changingKeyBind.setTitle("Keybinding");
-        changingKeyBind.setScene(keyBindScene);
-        changingKeyBind.setAlwaysOnTop(true);
-        changingKeyBind.setResizable(false);
-        changingKeyBind.centerOnScreen();
-        changingKeyBind.sizeToScene();
-        changingKeyBind.initStyle(StageStyle.UTILITY);
-        changingKeyBind.show();
-        centerScreen(changingKeyBind);
+        changingKeyBindStage.setTitle("Keybinding");
+        changingKeyBindStage.setScene(keyBindScene);
+        changingKeyBindStage.setAlwaysOnTop(true);
+        changingKeyBindStage.setResizable(false);
+        changingKeyBindStage.centerOnScreen();
+        changingKeyBindStage.sizeToScene();
+        changingKeyBindStage.initStyle(StageStyle.UTILITY);
+        changingKeyBindStage.show();
+        centerScreen(changingKeyBindStage);
 
         // To avoid bug related to setting keybind
-        changingKeyBind.setOnCloseRequest(event -> {
-            changingKeyBind.close();
+        changingKeyBindStage.setOnCloseRequest(event -> {
+            changingKeyBindStage.close();
             setActionStatus(ActionStatus.IDLE);
         });
 
@@ -1604,7 +1614,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * @param e The key event
      * @return {@code True} if yes {@code False} if not
      */
-    private boolean isControlDown(final NativeKeyEvent e) {
+    private static boolean isControlDown(final NativeKeyEvent e) {
         return (e.getModifiers() & CTRL_MASK) != 0;
     }
 
@@ -1614,7 +1624,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * @param e The key event
      * @return {@code True} if yes {@code False} if not
      */
-    private boolean isShiftDown(final NativeKeyEvent e) {
+    private static boolean isShiftDown(final NativeKeyEvent e) {
         return (e.getModifiers() & SHIFT_MASK) != 0;
     }
 
@@ -1624,7 +1634,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
      * @param e The key event
      * @return {@code True} if yes {@code False} if not
      */
-    private boolean isAltDown(final NativeKeyEvent e) {
+    private static boolean isAltDown(final NativeKeyEvent e) {
         return (e.getModifiers() & ALT_MASK) != 0;
     }
 
@@ -1671,7 +1681,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
         Platform.runLater(() -> {
             // Check if player is chatting
-            if (key == NativeKeyEvent.VC_ENTER || key == NativeKeyEvent.VC_TAB) {
+            if (key == NativeKeyEvent.VC_ENTER || key == NativeKeyEvent.VC_TAB && getActionStatus() != ActionStatus.SETTING_KEYBIND) {
                 if (getActionStatus() == ActionStatus.LOGGING) {
                     setActionStatus(ActionStatus.CHATTING);
                     System.out.println("Player entered on chatting mode");
@@ -1694,8 +1704,17 @@ public class Main extends Application implements NativeKeyListener, Constants, M
                 return;
             }
 
-            // Checks if key was already pressed
-            if (lastKeyPressed != null && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+            // Checks if key was already pressed with any operation
+            if (lastKeyPressed != null && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode() && (!isControlDown(nativeKeyEvent) && !lastKeyPressed.isControlDown()) && (!isShiftDown(nativeKeyEvent) && !lastKeyPressed.isShiftDown()) && (!isAltDown(nativeKeyEvent) && !lastKeyPressed.isAltDown())) {
+                System.out.println("key already pressed");
+                return;
+            } else if (lastKeyPressed != null && lastKeyPressed.isControlDown() && isControlDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+                System.out.println("key already pressed");
+                return;
+            } else if (lastKeyPressed != null && lastKeyPressed.isShiftDown() && isShiftDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
+                System.out.println("key already pressed");
+                return;
+            } else if (lastKeyPressed != null && lastKeyPressed.isAltDown() && isAltDown(nativeKeyEvent) && nativeKeyEvent.getKeyCode() == lastKeyPressed.getKeyCode()) {
                 System.out.println("key already pressed");
                 return;
             }
@@ -1708,6 +1727,13 @@ public class Main extends Application implements NativeKeyListener, Constants, M
             }
             if (getActionStatus().equals(ActionStatus.SETTING_KEYBIND)) { // Choosing a new keybind
                 System.out.println("The key you selected was :"+nativeKeyEvent.getKeyCode());
+
+                // Error if the key is prohibited
+                if (isProhibitedKey(nativeKeyEvent)) {
+                    System.out.println("Prohibited key");
+                    showErrorDialog("The key: "+NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode())+" is a prohibited key, please use another", changingKeyBindStage, null);
+                    return;
+                }
 
                 // Sets the new key bind to the selected row item
                 Action selectedAction = setupTableView.getSelectionModel().getSelectedItem();
@@ -1729,7 +1755,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
 
                 //setKeyBindMode = false;
                 setActionStatus(ActionStatus.IDLE);
-                changingKeyBind.close();
+                changingKeyBindStage.close();
                 return;
             }
             for (Action action : cachedActions) {
@@ -1772,7 +1798,7 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     private static void processKeyAction(Action action, NativeKeyEvent nativeKeyEvent) {
         int key = nativeKeyEvent.getKeyCode();
 
-        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode());
+        lastKeyPressed = new LastKeyPressed(LocalTime.now(), nativeKeyEvent.getKeyCode(), isControlDown(nativeKeyEvent), isShiftDown(nativeKeyEvent), isAltDown(nativeKeyEvent));
 
         // Adds the action to the screen
         addActionToScreen(action, nativeKeyEvent);
@@ -1782,11 +1808,89 @@ public class Main extends Application implements NativeKeyListener, Constants, M
     }
 
     private static void updateTitle(Stage stage) {
-        stage.setTitle(TITLE + " | status=" + actionStatus + " | actionsDone=" + actionsDone + " | user=Sagacity");
+        stage.setTitle(TITLE + " | status=" + actionStatus + " | actionsDone=" + actionsDone);
     }
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+    }
+
+    /**
+     * Holds the actions per minute thread
+     */
+    private static void apmThread() {
+        Thread apmThread = new Thread(() -> {
+            apmLocalTime = LocalTime.now();
+            LocalTime finishTime = apmLocalTime.plusMinutes(1);
+            LocalTime refreshDataTime = apmLocalTime.plusSeconds(5);
+
+            System.out.println("APM thread started!");
+
+            while (true) {
+                try {
+                    // Reset after 1 min
+                    if (LocalTime.now().isAfter(finishTime)) {
+                        apmLocalTime = LocalTime.now();
+                        finishTime = apmLocalTime.plusMinutes(1);
+
+                        System.out.println("APM thread resetted");
+                    }
+
+                    // Refresh data time
+                    if (LocalTime.now().isAfter(refreshDataTime)) {
+                        FileWritter.write(TOTAl_ACTIONS[0], TOTAl_ACTIONS[1], new String[]{Integer.toString(actionsDone)});
+                        System.out.println("Saved actionsDone="+actionsDone+" to data/");
+                        apmLocalTime = LocalTime.now();
+                        refreshDataTime = apmLocalTime.plusSeconds(5);
+                    }
+
+                    //final double apm = actionsPerSec(keysPressed);
+
+                    //System.out.println("APM: "+ (int) apm / 1000);
+                    Thread.sleep(1500);
+                } catch (Exception e) {
+                    System.out.println("Problem with APM thread");
+                    e.printStackTrace();
+                }
+            }
+        });
+        apmThread.start();
+    }
+
+    private static double calcActionsPerSec(Collection<Long> events) {
+        long max = events.stream().reduce(Long::max).orElse(0L);
+        long min = events.stream().reduce(Long::min).orElse(0L);
+        if (max == min) {
+            return 0;
+            //throw new IllegalArgumentException("We need at least two events in different times to be able to calc.");
+        }
+        System.out.println("min: "+(int) min + " max:" +(int) max);
+        return events.size() / (double) (max - min);
+    }
+
+    private static double actionsPerSec(Collection<LastKeyPressed> events) {
+        return calcActionsPerSec(events.stream().map(LastKeyPressed::getUsedTimeLong).collect(Collectors.toList()));
+    }
+
+    /**
+     * Returns if the key is a prohibited to be bound
+     * @param nke The nativeKeyEvent
+     * @return {@code True} if the key is free to use | {@code False} if the key is prohibited to use
+     */
+    private static boolean isProhibitedKey(NativeKeyEvent nke) {
+        switch (nke.getKeyCode()) {
+            case NativeKeyEvent.VC_ESCAPE:
+            case NativeKeyEvent.VC_F12:
+            case NativeKeyEvent.VC_DELETE:
+            case NativeKeyEvent.VC_PRINTSCREEN:
+            case NativeKeyEvent.VC_PAUSE:
+            case NativeKeyEvent.VC_SCROLL_LOCK:
+            case NativeKeyEvent.VC_ENTER:
+            case NativeKeyEvent.VC_BACKSPACE:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
